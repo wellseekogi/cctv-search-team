@@ -13,7 +13,7 @@ A–G 팀원 전체 코드를 모아 병합하는 공용 저장소입니다. 현
 
 ## 팀원 시작
 
-비공개 저장소이므로 관리자의 collaborator 초대를 먼저 수락하세요.
+공개 저장소이므로 누구나 조회·복제할 수 있습니다. 원본 저장소에 직접 push하려면 관리자의 collaborator 초대를 수락해야 합니다. 초대 없이 기여하려면 fork에서 작업한 뒤 PR을 보내세요.
 
 ```powershell
 git clone https://github.com/wellseekogi/cctv-search-team.git
