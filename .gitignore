@@ -1,0 +1,43 @@
+# Credentials and local settings
+.env
+.env.*
+!.env.example
+*.local.json
+configs/local.yaml
+*.pem
+*.key
+
+# Python environments and caches
+.venv*/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Model weights, private media, and generated outputs
+models/
+weights/
+data/
+videos/
+runs/
+outputs/
+.cache/
+*.safetensors
+*.pt
+*.pth
+*.onnx
+*.gguf
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.zip
+*.bundle
+
+# Editor and OS files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
