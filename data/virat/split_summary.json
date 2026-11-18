@@ -1,0 +1,58 @@
+{
+  "dataset": "virat",
+  "seed": 42,
+  "group_unit": "scene_id (VIRAT_S_XXYY)",
+  "target_ratio": {
+    "dev": 0.7,
+    "eval": 0.3
+  },
+  "total_duration_ms": 1501718,
+  "splits": {
+    "dev": {
+      "groups": [
+        "0002",
+        "0100",
+        "0101",
+        "0400",
+        "0401",
+        "0503"
+      ],
+      "n_groups": 6,
+      "n_videos": 7,
+      "duration_ms": 996825,
+      "candidate_tracks_evaluable": 183,
+      "tracks_by_class": {
+        "person": 183
+      },
+      "activities": 92,
+      "queries": {
+        "text": 8,
+        "image": 3
+      },
+      "qrels": 21,
+      "duration_ratio": 0.6638
+    },
+    "eval": {
+      "groups": [
+        "0102",
+        "0500",
+        "0502"
+      ],
+      "n_groups": 3,
+      "n_videos": 4,
+      "duration_ms": 504893,
+      "candidate_tracks_evaluable": 104,
+      "tracks_by_class": {
+        "person": 104
+      },
+      "activities": 68,
+      "queries": {
+        "text": 7,
+        "image": 2
+      },
+      "qrels": 17,
+      "duration_ratio": 0.3362
+    }
+  },
+  "note": "그룹 9개 단위 분할이라 비율이 정확히 70/30이 되지 않음 (eval 실제 비율 참조)"
+}

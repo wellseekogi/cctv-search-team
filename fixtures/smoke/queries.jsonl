@@ -1,0 +1,2 @@
+{"query_id": "vq_d04", "modality": "text", "split": "dev", "language": "en", "text": "a little girl in a pink outfit", "image_path": null, "gallery_id": "virat_dev_v1", "dataset": "virat", "query_version": "virat_queries_v1"}
+{"query_id": "vq_d05", "modality": "text", "split": "dev", "language": "en", "text": "a man pulling a green cart", "image_path": null, "gallery_id": "virat_dev_v1", "dataset": "virat", "query_version": "virat_queries_v1"}
