@@ -54,7 +54,7 @@ def run(input_path, output_dir, expected_frames=None):
         track_buffer=30, match_thresh=0.70, fuse_score=False,
     )
     # Previous T3 implementation used ByteTrack's default frame_rate=30.
-    tracker = BYTETracker(args=args, frame_rate=30)
+    tracker = BYTETracker(args=args)
     video_id = None
     seen = set()
     counts = Counter()
