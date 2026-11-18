@@ -6,7 +6,11 @@ sys.path.insert(0,str(Path(__file__).resolve().parent))
 from run_litedetr_bytetrack_cpu import read_records, tracker_args, input_boxes
 from ultralytics.trackers.byte_tracker import BYTETracker
 
-tracker = BYTETracker(args=params)
+
+JOBS = {
+    "c007": ("cityflow_S02_c007", 983),
+    "c034": ("cityflow_S05_c034", 1713),
+}
 
 def sha256(p):
  h=hashlib.sha256()
