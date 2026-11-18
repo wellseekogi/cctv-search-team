@@ -1,0 +1,14 @@
+{
+  "source": "fixtures/smoke predictions.jsonl + qrels.jsonl, GT 트랙 실험(순위가 GT track_uid)",
+  "definition": {
+    "recall@K": "질의별 (상위 K 안의 정답 트랙 수 / 그 질의의 전체 정답 트랙 수)의 평균",
+    "mrr": "질의별 첫 정답 순위의 역수 평균 (순위에 정답이 없으면 0)"
+  },
+  "per_query": {
+    "vq_d04": {"n_relevant": 3, "relevant_ranks": {"g006": 1, "g016": 4, "g005": null},
+               "recall@5": 0.6667, "recall@10": 0.6667, "rr": 1.0},
+    "vq_d05": {"n_relevant": 1, "relevant_ranks": {"g014": 8},
+               "recall@5": 0.0, "recall@10": 1.0, "rr": 0.125}
+  },
+  "all": {"n_queries": 2, "recall@5": 0.3333, "recall@10": 0.8333, "mrr": 0.5625}
+}

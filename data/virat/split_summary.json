@@ -29,7 +29,7 @@
         "text": 8,
         "image": 3
       },
-      "qrels": 21,
+      "qrels": 19,
       "duration_ratio": 0.6638
     },
     "eval": {

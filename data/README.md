@@ -1,6 +1,6 @@
 # data/ — VIRAT·MEVA 평가 데이터 (F 담당)
 
-스키마 `cctv-3.0` · 질의 버전 `virat_queries_v1`, `meva_queries_v1` · 갱신 2026-11-18
+스키마 `cctv-3.0` · 질의 버전 `virat_queries_v1`, `meva_queries_v1` · 갱신 2026-11-19
 
 이 폴더에는 평가에 필요한 **작은 메타데이터만** 들어 있습니다. 영상과 GT 관측(`tracks_gt.jsonl`, VIRAT 60MB·MEVA 48MB)은 Git에 넣지 않으므로 아래 방법으로 각자 받습니다.
 
@@ -19,7 +19,7 @@
 | `manifest.jsonl` | 11 | 6 | 영상별 크기·길이·fps·split·SHA256. `relative_path`는 `data_root` 기준 |
 | `targets.jsonl` | 890 | 3,470 | 평가 대상(track·activity)과 `evaluable`, `na_reason` |
 | `queries.jsonl` | 20 (text 15 + image 5) | 37 (text 27 + image 10) | 영어 질의 |
-| `qrels.jsonl` | 38 | 83 | 질의별 정답 트랙 |
+| `qrels.jsonl` | 36 | 83 | 질의별 정답 트랙 |
 | `excluded_queries.jsonl` | 22 | 2 | 사람만 탐지 기준으로 뺀 질의·트랙 |
 | `data_inventory.csv` | 11 | 6 | 출처 URL·릴리스·주석 버전·SHA256·크기·라이선스 |
 | `split_summary.json` | – | – | 분할별 그룹·영상·길이·평가 가능 트랙·질의 수 |
