@@ -1,0 +1,42 @@
+vision:
+  schema_version: cctv-3.0
+
+  candidate_step_ms: 200
+  max_frame_error_ms: 100
+
+  detector_model: Lite-DETR
+  checkpoint: r50_s2ex3_49.9.pth
+
+  input_size:
+    short_side: 480
+    max_side: 854
+
+  confidence: 0.10
+  nms_iou: 0.50
+
+  tracker: ByteTrack
+  tracker_settings:
+    track_high_thresh: 0.35
+    track_low_thresh: 0.10
+    new_track_thresh: 0.35
+    track_buffer: 30
+    match_thresh: 0.70
+    fuse_score: false
+
+  publication_min_confidence: 0.25
+  sample_processing_rate_hz: 5
+
+  coordinate_system: original_image_xyxy_pixels
+  source_id: det01
+
+  class_map:
+    1: person
+
+  quality:
+    area_ratio: clamped_bbox_area / original_frame_area
+    blur_var: Laplacian variance of grayscale bbox crop resized 128x128
+    border_touch: x1=0 or y1=0 or x2=width or y2=height
+
+  experiment: T3
+  model_change_approval: approved
+  model_change_note: "YOLO11n replaced with Lite-DETR by team agreement"
