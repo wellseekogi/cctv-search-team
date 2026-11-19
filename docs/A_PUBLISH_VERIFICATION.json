@@ -1,0 +1,12 @@
+{
+  "date": "2026-11-19",
+  "unit_tests": 68,
+  "unit_tests_status": "PASS",
+  "external_input_runs": 30,
+  "external_input_summary_matches_v10": true,
+  "B_frame_track_identity": "PASS",
+  "F_exclusion_leaks": 0,
+  "real_video_tested": false,
+  "real_embedding_tested": false,
+  "note": "Inputs and generated outputs remain external; no detector inference rerun."
+}

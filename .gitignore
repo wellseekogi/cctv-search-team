@@ -41,3 +41,9 @@ outputs/
 .vscode/
 .DS_Store
 Thumbs.db
+
+# Local handoff and review material
+handoff/
+reviews/
+.setup/
+media/

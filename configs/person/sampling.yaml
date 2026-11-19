@@ -1,0 +1,35 @@
+{
+  "schema_version": "cctv-3.0",
+  "event": {
+    "gap_after_ms": 1000,
+    "position_ratio": 0.02,
+    "quality_gain": 0.15,
+    "float_epsilon": 1e-09,
+    "area_scale": 0.05,
+    "blur_scale": 100,
+    "area_weight": 0.5,
+    "sharp_weight": 0.5,
+    "border_multiplier": 0.8
+  },
+  "sampling": {
+    "policy": "object_event",
+    "fixed_step_ms": 2000,
+    "motion_threshold": 0.03,
+    "periodic_scene_ms": 5000,
+    "min_scene_gap_ms": 200,
+    "min_object_gap_ms": 500,
+    "max_scene_per_minute": 120,
+    "max_object_per_track": 30
+  },
+  "supported_classes": [
+    "car",
+    "person",
+    "truck",
+    "bus",
+    "bicycle",
+    "motorcycle"
+  ],
+  "target_classes": [
+    "person"
+  ]
+}
