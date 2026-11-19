@@ -21,7 +21,7 @@
   let mockVideoUrl = C.mock_video_url;
   let lastSeekErrorMs = null;
 
-  el.modeBadge.textContent = C.mock ? "mock (예시 응답)" : "API " + C.apiBase;
+  el.modeBadge.textContent = C.mock ? "mock (예시 응답)" : "API " + (C.apiBase || "(같은 주소)");
   el.modeBadge.classList.toggle("mock", !!C.mock);
   el.mockFile.hidden = !C.mock;
 
