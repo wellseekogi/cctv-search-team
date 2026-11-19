@@ -1,0 +1,2 @@
+# Install alongside requirements-embedding.txt or requirements-siglip2.txt.
+av==16.0.1
