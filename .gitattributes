@@ -1,2 +1,6 @@
+* text=auto eol=lf
+*.png binary
+*.npy binary
+
 # The fixture manifest hashes this file byte for byte.
 fixtures/embedding/frames_source.json -text whitespace=cr-at-eol

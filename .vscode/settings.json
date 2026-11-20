@@ -1,0 +1,3 @@
+{
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv-siglip2/Scripts/python.exe"
+}

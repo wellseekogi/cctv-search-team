@@ -34,7 +34,7 @@ A 샘플이 있으면 A의 선택 결과와 출처를 그대로 사용합니다.
 .\run-search.cmd ask --index runs/a-dev
 ```
 
-B 산출물을 직접 쓰면 성공적으로 디코딩한 프레임은 전체 장면으로, 추적 관측은 객체로 인덱싱합니다. `--frames`만 주면 전체 장면, `--tracks`만 주면 객체를 검색할 수 있습니다. GitHub에서 확인한 브랜치와 PR 범위에는 A의 샘플링 코드가 없어 이 경로를 추가했습니다.
+B 산출물을 직접 쓰면 성공적으로 디코딩한 프레임은 전체 장면으로, 추적 관측은 객체로 인덱싱합니다. `--frames`만 주면 전체 장면, `--tracks`만 주면 객체를 검색할 수 있습니다.
 
 ```powershell
 .\run-search.cmd build --manifest data/dev/manifest.jsonl --data-root data/videos --frames data/dev/frames.jsonl --tracks data/dev/tracks.jsonl --output runs/b-dev
