@@ -1,0 +1,1 @@
+{"schema_version": "cctv-3.0", "video_id": "v001", "dataset": "synthetic_A8", "camera_id": "synthetic_cam", "relative_path": "synthetic/no-video.mp4", "width": 1920, "height": 1080, "duration_ms": 3200, "fps": 30, "time_base": "1/30", "source_offset_ms": 0, "available_start_ms": 0, "available_end_ms": 3200, "split": "dev", "file_sha256": null}

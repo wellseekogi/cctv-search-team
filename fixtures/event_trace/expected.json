@@ -1,0 +1,32 @@
+{
+  "counts": {
+    "events": 9,
+    "object": 5,
+    "scene": 8
+  },
+  "object_timestamps_ms": [
+    0,
+    600,
+    1200,
+    2400,
+    3000
+  ],
+  "scene_timestamps_ms": [
+    0,
+    400,
+    600,
+    800,
+    1000,
+    1200,
+    2400,
+    3000
+  ],
+  "event_types": {
+    "TRACK_START": 1,
+    "POSITION_SHIFT": 2,
+    "QUALITY_GAIN": 3,
+    "TRACK_GAP": 1,
+    "TRACK_RESUME": 1,
+    "VIDEO_END": 1
+  }
+}

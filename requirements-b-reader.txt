@@ -1,0 +1,4 @@
+# Python 3.11: B's listed av 19.0.2 requires Python >=3.12.
+# Decoder version differs; original CCTV frame equality still requires validation.
+av==18.1.0
+PyYAML==6.0.3

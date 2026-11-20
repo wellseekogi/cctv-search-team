@@ -1,0 +1,1 @@
+{"available_end_ms": 800, "available_start_ms": 0, "camera_id": "synthetic_cam", "dataset": "synthetic_motion", "duration_ms": 800, "file_sha256": null, "fps": 30, "height": 90, "relative_path": "synthetic/no-video.mp4", "schema_version": "cctv-3.0", "source_offset_ms": 0, "split": "dev", "time_base": "1/30", "video_id": "v001", "width": 160}
