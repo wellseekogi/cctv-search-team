@@ -1,0 +1,486 @@
+{
+  "index_version": "94210f5076",
+  "candidates": [
+    141
+  ],
+  "requests": 100,
+  "follow_up_requests": 15,
+  "median_seconds": 2.6944999999999997,
+  "p95_seconds": 5.239,
+  "single": {
+    "absent_pool": {
+      "requests": 5,
+      "generated": 5,
+      "distinct_rankings": 1,
+      "distinct_score_lists": 1,
+      "distinct_answers": 1,
+      "answer_time": {
+        "matched": 5
+      },
+      "first_result": {
+        "item_id": "item_c8ba146d5a7d2563e3a3f2cd",
+        "video_id": "meva_2018-03-15.15-45-01.15-50-01.bus.G506",
+        "frame_index": 54,
+        "timestamp_ms": 1800,
+        "playback_time_ms": 1800,
+        "score": 0.11998322606086731
+      }
+    },
+    "absent_ski": {
+      "requests": 5,
+      "generated": 5,
+      "distinct_rankings": 1,
+      "distinct_score_lists": 1,
+      "distinct_answers": 1,
+      "answer_time": {
+        "matched": 5
+      },
+      "first_result": {
+        "item_id": "item_18838de69ea3c80d8d23e7c0",
+        "video_id": "meva_2018-03-07.11-00-04.11-05-04.hospital.G341",
+        "frame_index": 234,
+        "timestamp_ms": 7800,
+        "playback_time_ms": 7800,
+        "score": 0.11344833672046661
+      }
+    },
+    "absent_space": {
+      "requests": 5,
+      "generated": 5,
+      "distinct_rankings": 1,
+      "distinct_score_lists": 1,
+      "distinct_answers": 1,
+      "answer_time": {
+        "matched": 5
+      },
+      "first_result": {
+        "item_id": "item_394047e60efaf10038c09d83",
+        "video_id": "meva_2018-03-15.15-45-01.15-50-01.bus.G506",
+        "frame_index": 210,
+        "timestamp_ms": 7000,
+        "playback_time_ms": 7000,
+        "score": 0.09984032809734344
+      }
+    },
+    "cafe": {
+      "requests": 5,
+      "generated": 5,
+      "distinct_rankings": 1,
+      "distinct_score_lists": 1,
+      "distinct_answers": 3,
+      "answer_time": {
+        "unspecified": 1,
+        "matched": 4
+      },
+      "first_result": {
+        "item_id": "item_1ef33babcdf63880b06edcf6",
+        "video_id": "meva_2018-03-15.14-50-00.14-55-00.school.G421",
+        "frame_index": 0,
+        "timestamp_ms": 0,
+        "playback_time_ms": 0,
+        "score": 0.11980493366718292
+      }
+    },
+    "cafe_reworded": {
+      "requests": 5,
+      "generated": 5,
+      "distinct_rankings": 1,
+      "distinct_score_lists": 1,
+      "distinct_answers": 3,
+      "answer_time": {
+        "matched": 5
+      },
+      "first_result": {
+        "item_id": "item_2d7585c1df4fda2f6d353a34",
+        "video_id": "meva_2018-03-15.14-50-00.14-55-00.school.G421",
+        "frame_index": 149,
+        "timestamp_ms": 5033,
+        "playback_time_ms": 5033,
+        "score": 0.10904531925916672
+      }
+    },
+    "mq_d01": {
+      "requests": 5,
+      "generated": 5,
+      "distinct_rankings": 1,
+      "distinct_score_lists": 1,
+      "distinct_answers": 3,
+      "answer_time": {
+        "unspecified": 2,
+        "matched": 3
+      },
+      "first_result": {
+        "item_id": "item_1ef33babcdf63880b06edcf6",
+        "video_id": "meva_2018-03-15.14-50-00.14-55-00.school.G421",
+        "frame_index": 0,
+        "timestamp_ms": 0,
+        "playback_time_ms": 0,
+        "score": 0.10675352811813354
+      },
+      "first_trial_temporal_rank_in_top5": null
+    },
+    "mq_d02": {
+      "requests": 5,
+      "generated": 5,
+      "distinct_rankings": 1,
+      "distinct_score_lists": 1,
+      "distinct_answers": 1,
+      "answer_time": {
+        "matched": 5
+      },
+      "first_result": {
+        "item_id": "item_998c89d64d49a9bbc961b276",
+        "video_id": "2018-03-15.14-50-00.14-55-00.school.G421",
+        "frame_index": 54,
+        "timestamp_ms": 260200,
+        "playback_time_ms": 1800,
+        "score": 0.13629382848739624
+      },
+      "first_trial_temporal_rank_in_top5": 1
+    },
+    "mq_d03": {
+      "requests": 5,
+      "generated": 5,
+      "distinct_rankings": 1,
+      "distinct_score_lists": 1,
+      "distinct_answers": 2,
+      "answer_time": {
+        "matched": 5
+      },
+      "first_result": {
+        "item_id": "item_c8516222e68be7d193b4bb36",
+        "video_id": "meva_2018-03-07.11-05-06.11-10-06.bus.G340",
+        "frame_index": 0,
+        "timestamp_ms": 0,
+        "playback_time_ms": 0,
+        "score": 0.1446855664253235
+      },
+      "first_trial_temporal_rank_in_top5": null
+    },
+    "mq_d04": {
+      "requests": 5,
+      "generated": 5,
+      "distinct_rankings": 1,
+      "distinct_score_lists": 1,
+      "distinct_answers": 1,
+      "answer_time": {
+        "matched": 5
+      },
+      "first_result": {
+        "item_id": "item_9081ddbf1e43d4504c39aaf9",
+        "video_id": "meva_2018-03-07.11-00-04.11-05-04.hospital.G341",
+        "frame_index": 66,
+        "timestamp_ms": 2200,
+        "playback_time_ms": 2200,
+        "score": 0.1151212751865387
+      },
+      "first_trial_temporal_rank_in_top5": null
+    },
+    "mq_d05": {
+      "requests": 5,
+      "generated": 5,
+      "distinct_rankings": 1,
+      "distinct_score_lists": 1,
+      "distinct_answers": 2,
+      "answer_time": {
+        "matched": 5
+      },
+      "first_result": {
+        "item_id": "item_c8516222e68be7d193b4bb36",
+        "video_id": "meva_2018-03-07.11-05-06.11-10-06.bus.G340",
+        "frame_index": 0,
+        "timestamp_ms": 0,
+        "playback_time_ms": 0,
+        "score": 0.13275159895420074
+      },
+      "first_trial_temporal_rank_in_top5": null
+    },
+    "mq_d06": {
+      "requests": 5,
+      "generated": 5,
+      "distinct_rankings": 1,
+      "distinct_score_lists": 1,
+      "distinct_answers": 1,
+      "answer_time": {
+        "matched": 5
+      },
+      "first_result": {
+        "item_id": "item_66710786e6b22bba6e377fbf",
+        "video_id": "meva_2018-03-07.11-00-04.11-05-04.hospital.G341",
+        "frame_index": 0,
+        "timestamp_ms": 0,
+        "playback_time_ms": 0,
+        "score": 0.09616537392139435
+      },
+      "first_trial_temporal_rank_in_top5": null
+    },
+    "mq_d07": {
+      "requests": 5,
+      "generated": 5,
+      "distinct_rankings": 1,
+      "distinct_score_lists": 1,
+      "distinct_answers": 2,
+      "answer_time": {
+        "matched": 5
+      },
+      "first_result": {
+        "item_id": "item_274f124a5fb151b049245bd3",
+        "video_id": "meva_2018-03-15.15-45-01.15-50-01.bus.G506",
+        "frame_index": 216,
+        "timestamp_ms": 7200,
+        "playback_time_ms": 7200,
+        "score": 0.10139571130275726
+      },
+      "first_trial_temporal_rank_in_top5": null
+    },
+    "mq_d08": {
+      "requests": 5,
+      "generated": 5,
+      "distinct_rankings": 1,
+      "distinct_score_lists": 1,
+      "distinct_answers": 1,
+      "answer_time": {
+        "matched": 5
+      },
+      "first_result": {
+        "item_id": "item_1ef33babcdf63880b06edcf6",
+        "video_id": "meva_2018-03-15.14-50-00.14-55-00.school.G421",
+        "frame_index": 0,
+        "timestamp_ms": 0,
+        "playback_time_ms": 0,
+        "score": 0.14939522743225098
+      },
+      "first_trial_temporal_rank_in_top5": null
+    },
+    "mq_d09": {
+      "requests": 5,
+      "generated": 5,
+      "distinct_rankings": 1,
+      "distinct_score_lists": 1,
+      "distinct_answers": 2,
+      "answer_time": {
+        "matched": 5
+      },
+      "first_result": {
+        "item_id": "item_60415deeee56e5615e853452",
+        "video_id": "meva_2018-03-15.14-50-00.14-55-00.school.G421",
+        "frame_index": 0,
+        "timestamp_ms": 0,
+        "playback_time_ms": 0,
+        "score": 0.11010384559631348
+      },
+      "first_trial_temporal_rank_in_top5": null
+    },
+    "mq_d10": {
+      "requests": 5,
+      "generated": 5,
+      "distinct_rankings": 1,
+      "distinct_score_lists": 1,
+      "distinct_answers": 1,
+      "answer_time": {
+        "matched": 5
+      },
+      "first_result": {
+        "item_id": "item_ab9b35d88e6633615b71fa2d",
+        "video_id": "meva_2018-03-15.14-50-00.14-55-00.school.G421",
+        "frame_index": 281,
+        "timestamp_ms": 9433,
+        "playback_time_ms": 9433,
+        "score": 0.13978546857833862
+      },
+      "first_trial_temporal_rank_in_top5": null
+    },
+    "mq_d11": {
+      "requests": 5,
+      "generated": 5,
+      "distinct_rankings": 1,
+      "distinct_score_lists": 1,
+      "distinct_answers": 2,
+      "answer_time": {
+        "matched": 5
+      },
+      "first_result": {
+        "item_id": "item_19f4a73e71aecf889cd868a1",
+        "video_id": "meva_2018-03-15.14-50-00.14-55-00.school.G421",
+        "frame_index": 65,
+        "timestamp_ms": 2233,
+        "playback_time_ms": 2233,
+        "score": 0.12309785187244415
+      },
+      "first_trial_temporal_rank_in_top5": null
+    },
+    "mq_d12": {
+      "requests": 5,
+      "generated": 5,
+      "distinct_rankings": 1,
+      "distinct_score_lists": 1,
+      "distinct_answers": 1,
+      "answer_time": {
+        "matched": 5
+      },
+      "first_result": {
+        "item_id": "item_6f13657081d9ef4fa2ef4875",
+        "video_id": "meva_2018-03-15.14-50-00.14-55-00.school.G421",
+        "frame_index": 293,
+        "timestamp_ms": 9833,
+        "playback_time_ms": 9833,
+        "score": 0.10138805210590363
+      },
+      "first_trial_temporal_rank_in_top5": null
+    },
+    "mq_d13": {
+      "requests": 5,
+      "generated": 5,
+      "distinct_rankings": 1,
+      "distinct_score_lists": 1,
+      "distinct_answers": 1,
+      "answer_time": {
+        "matched": 5
+      },
+      "first_result": {
+        "item_id": "item_85ae58c8dd8be1914812862f",
+        "video_id": "meva_2018-03-15.14-50-00.14-55-00.school.G421",
+        "frame_index": 293,
+        "timestamp_ms": 9833,
+        "playback_time_ms": 9833,
+        "score": 0.1669045090675354
+      },
+      "first_trial_temporal_rank_in_top5": null
+    },
+    "mq_d14": {
+      "requests": 5,
+      "generated": 5,
+      "distinct_rankings": 1,
+      "distinct_score_lists": 1,
+      "distinct_answers": 2,
+      "answer_time": {
+        "matched": 5
+      },
+      "first_result": {
+        "item_id": "item_23c0241ebef5fa6573b81cee",
+        "video_id": "meva_2018-03-15.15-45-01.15-50-01.bus.G506",
+        "frame_index": 228,
+        "timestamp_ms": 7600,
+        "playback_time_ms": 7600,
+        "score": 0.08959636092185974
+      },
+      "first_trial_temporal_rank_in_top5": null
+    },
+    "mq_d15": {
+      "requests": 5,
+      "generated": 5,
+      "distinct_rankings": 1,
+      "distinct_score_lists": 1,
+      "distinct_answers": 2,
+      "answer_time": {
+        "matched": 5
+      },
+      "first_result": {
+        "item_id": "item_c8516222e68be7d193b4bb36",
+        "video_id": "meva_2018-03-07.11-05-06.11-10-06.bus.G340",
+        "frame_index": 0,
+        "timestamp_ms": 0,
+        "playback_time_ms": 0,
+        "score": 0.13397690653800964
+      },
+      "first_trial_temporal_rank_in_top5": null
+    }
+  },
+  "follow_up": {
+    "cafe": {
+      "requests": 3,
+      "generated": 3,
+      "distinct_rankings": 1,
+      "distinct_score_lists": 1,
+      "distinct_answers": 2,
+      "answer_time": {
+        "wrong": 3
+      },
+      "first_result": {
+        "item_id": "item_c8516222e68be7d193b4bb36",
+        "video_id": "meva_2018-03-07.11-05-06.11-10-06.bus.G340",
+        "frame_index": 0,
+        "timestamp_ms": 0,
+        "playback_time_ms": 0,
+        "score": 0.10586510598659515
+      },
+      "previous_second_still_second": 0
+    },
+    "mq_d02": {
+      "requests": 3,
+      "generated": 3,
+      "distinct_rankings": 1,
+      "distinct_score_lists": 1,
+      "distinct_answers": 2,
+      "answer_time": {
+        "wrong": 3
+      },
+      "first_result": {
+        "item_id": "item_c8516222e68be7d193b4bb36",
+        "video_id": "meva_2018-03-07.11-05-06.11-10-06.bus.G340",
+        "frame_index": 0,
+        "timestamp_ms": 0,
+        "playback_time_ms": 0,
+        "score": 0.10586510598659515
+      },
+      "previous_second_still_second": 0
+    },
+    "mq_d04": {
+      "requests": 3,
+      "generated": 3,
+      "distinct_rankings": 1,
+      "distinct_score_lists": 1,
+      "distinct_answers": 1,
+      "answer_time": {
+        "wrong": 3
+      },
+      "first_result": {
+        "item_id": "item_c8516222e68be7d193b4bb36",
+        "video_id": "meva_2018-03-07.11-05-06.11-10-06.bus.G340",
+        "frame_index": 0,
+        "timestamp_ms": 0,
+        "playback_time_ms": 0,
+        "score": 0.10586510598659515
+      },
+      "previous_second_still_second": 0
+    },
+    "mq_d07": {
+      "requests": 3,
+      "generated": 3,
+      "distinct_rankings": 1,
+      "distinct_score_lists": 1,
+      "distinct_answers": 1,
+      "answer_time": {
+        "wrong": 3
+      },
+      "first_result": {
+        "item_id": "item_c8516222e68be7d193b4bb36",
+        "video_id": "meva_2018-03-07.11-05-06.11-10-06.bus.G340",
+        "frame_index": 0,
+        "timestamp_ms": 0,
+        "playback_time_ms": 0,
+        "score": 0.10586510598659515
+      },
+      "previous_second_still_second": 0
+    },
+    "mq_d14": {
+      "requests": 3,
+      "generated": 3,
+      "distinct_rankings": 1,
+      "distinct_score_lists": 1,
+      "distinct_answers": 2,
+      "answer_time": {
+        "matched": 3
+      },
+      "first_result": {
+        "item_id": "item_c8516222e68be7d193b4bb36",
+        "video_id": "meva_2018-03-07.11-05-06.11-10-06.bus.G340",
+        "frame_index": 0,
+        "timestamp_ms": 0,
+        "playback_time_ms": 0,
+        "score": 0.10586510598659515
+      },
+      "previous_second_still_second": 0
+    }
+  }
+}

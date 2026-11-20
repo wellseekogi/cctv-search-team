@@ -1,0 +1,587 @@
+{
+  "model": "google/siglip2-base-patch16-224",
+  "revision": "75de2d55ec2d0b4efc50b3e9ad70dba96a7b2fa2",
+  "gallery_frames": 592,
+  "source_hashes": {
+    "G299": "9f25ee3c5a4f582fe3287e7b1727450f33f3ef9c557eba2cd7dc5a9519ee6ab7",
+    "G638": "840ba29cb425fb578bee6e40808292d96071cf51f9ab05f6d09a2d847be6da15"
+  },
+  "queries": [
+    {
+      "query": "mq_e01",
+      "language": "en",
+      "full_scene": {
+        "rank": 12,
+        "relevant": 16,
+        "candidates": 592
+      },
+      "first_scene": {
+        "video_id": "2018-03-15.15-45-00.15-50-00.school.G638",
+        "timestamp_ms": 283000,
+        "frame_index": 8490
+      },
+      "hybrid_frame": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      },
+      "hybrid_person": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      }
+    },
+    {
+      "query": "mq_e01",
+      "language": "ko",
+      "full_scene": {
+        "rank": 11,
+        "relevant": 16,
+        "candidates": 592
+      },
+      "first_scene": {
+        "video_id": "2018-03-15.15-45-00.15-50-00.school.G638",
+        "timestamp_ms": 263000,
+        "frame_index": 7890
+      },
+      "hybrid_frame": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      },
+      "hybrid_person": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      }
+    },
+    {
+      "query": "mq_e02",
+      "language": "en",
+      "full_scene": {
+        "rank": 1,
+        "relevant": 61,
+        "candidates": 592
+      },
+      "first_scene": {
+        "video_id": "2018-03-15.15-45-00.15-50-00.school.G638",
+        "timestamp_ms": 283000,
+        "frame_index": 8490
+      },
+      "hybrid_frame": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      },
+      "hybrid_person": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      }
+    },
+    {
+      "query": "mq_e02",
+      "language": "ko",
+      "full_scene": {
+        "rank": 1,
+        "relevant": 61,
+        "candidates": 592
+      },
+      "first_scene": {
+        "video_id": "2018-03-15.15-45-00.15-50-00.school.G638",
+        "timestamp_ms": 263000,
+        "frame_index": 7890
+      },
+      "hybrid_frame": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      },
+      "hybrid_person": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      }
+    },
+    {
+      "query": "mq_e03",
+      "language": "en",
+      "full_scene": {
+        "rank": 24,
+        "relevant": 9,
+        "candidates": 592
+      },
+      "first_scene": {
+        "video_id": "2018-03-15.15-45-00.15-50-00.school.G638",
+        "timestamp_ms": 236000,
+        "frame_index": 7080
+      },
+      "hybrid_frame": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      },
+      "hybrid_person": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      }
+    },
+    {
+      "query": "mq_e03",
+      "language": "ko",
+      "full_scene": {
+        "rank": 25,
+        "relevant": 9,
+        "candidates": 592
+      },
+      "first_scene": {
+        "video_id": "2018-03-15.15-45-00.15-50-00.school.G638",
+        "timestamp_ms": 236000,
+        "frame_index": 7080
+      },
+      "hybrid_frame": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      },
+      "hybrid_person": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      }
+    },
+    {
+      "query": "mq_e04",
+      "language": "en",
+      "full_scene": {
+        "rank": 21,
+        "relevant": 2,
+        "candidates": 592
+      },
+      "first_scene": {
+        "video_id": "2018-03-15.15-45-00.15-50-00.school.G638",
+        "timestamp_ms": 283000,
+        "frame_index": 8490
+      },
+      "hybrid_frame": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      },
+      "hybrid_person": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      }
+    },
+    {
+      "query": "mq_e04",
+      "language": "ko",
+      "full_scene": {
+        "rank": 22,
+        "relevant": 2,
+        "candidates": 592
+      },
+      "first_scene": {
+        "video_id": "2018-03-15.15-45-00.15-50-00.school.G638",
+        "timestamp_ms": 283000,
+        "frame_index": 8490
+      },
+      "hybrid_frame": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      },
+      "hybrid_person": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      }
+    },
+    {
+      "query": "mq_e05",
+      "language": "en",
+      "full_scene": {
+        "rank": 9,
+        "relevant": 100,
+        "candidates": 592
+      },
+      "first_scene": {
+        "video_id": "2018-03-15.15-45-00.15-50-00.school.G638",
+        "timestamp_ms": 284000,
+        "frame_index": 8520
+      },
+      "hybrid_frame": {
+        "rank": 1,
+        "relevant": 5,
+        "candidates": 30
+      },
+      "hybrid_person": {
+        "rank": 1,
+        "relevant": 1,
+        "candidates": 30
+      }
+    },
+    {
+      "query": "mq_e05",
+      "language": "ko",
+      "full_scene": {
+        "rank": 7,
+        "relevant": 100,
+        "candidates": 592
+      },
+      "first_scene": {
+        "video_id": "2018-03-15.15-45-00.15-50-00.school.G638",
+        "timestamp_ms": 284000,
+        "frame_index": 8520
+      },
+      "hybrid_frame": {
+        "rank": 1,
+        "relevant": 5,
+        "candidates": 30
+      },
+      "hybrid_person": {
+        "rank": 1,
+        "relevant": 1,
+        "candidates": 30
+      }
+    },
+    {
+      "query": "mq_e06",
+      "language": "en",
+      "full_scene": {
+        "rank": 101,
+        "relevant": 5,
+        "candidates": 592
+      },
+      "first_scene": {
+        "video_id": "2018-03-09.10-15-00.10-20-00.school.G299",
+        "timestamp_ms": 261000,
+        "frame_index": 7830
+      },
+      "hybrid_frame": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      },
+      "hybrid_person": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      }
+    },
+    {
+      "query": "mq_e06",
+      "language": "ko",
+      "full_scene": {
+        "rank": 83,
+        "relevant": 5,
+        "candidates": 592
+      },
+      "first_scene": {
+        "video_id": "2018-03-09.10-15-00.10-20-00.school.G299",
+        "timestamp_ms": 211000,
+        "frame_index": 6330
+      },
+      "hybrid_frame": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      },
+      "hybrid_person": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      }
+    },
+    {
+      "query": "mq_e07",
+      "language": "en",
+      "full_scene": {
+        "rank": 2,
+        "relevant": 159,
+        "candidates": 592
+      },
+      "first_scene": {
+        "video_id": "2018-03-09.10-15-00.10-20-00.school.G299",
+        "timestamp_ms": 0,
+        "frame_index": 0
+      },
+      "hybrid_frame": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      },
+      "hybrid_person": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      }
+    },
+    {
+      "query": "mq_e07",
+      "language": "ko",
+      "full_scene": {
+        "rank": 6,
+        "relevant": 159,
+        "candidates": 592
+      },
+      "first_scene": {
+        "video_id": "2018-03-09.10-15-00.10-20-00.school.G299",
+        "timestamp_ms": 206000,
+        "frame_index": 6180
+      },
+      "hybrid_frame": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      },
+      "hybrid_person": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      }
+    },
+    {
+      "query": "mq_e08",
+      "language": "en",
+      "full_scene": {
+        "rank": 83,
+        "relevant": 10,
+        "candidates": 592
+      },
+      "first_scene": {
+        "video_id": "2018-03-09.10-15-00.10-20-00.school.G299",
+        "timestamp_ms": 94000,
+        "frame_index": 2820
+      },
+      "hybrid_frame": {
+        "rank": 1,
+        "relevant": 10,
+        "candidates": 30
+      },
+      "hybrid_person": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      }
+    },
+    {
+      "query": "mq_e08",
+      "language": "ko",
+      "full_scene": {
+        "rank": 160,
+        "relevant": 10,
+        "candidates": 592
+      },
+      "first_scene": {
+        "video_id": "2018-03-09.10-15-00.10-20-00.school.G299",
+        "timestamp_ms": 271000,
+        "frame_index": 8130
+      },
+      "hybrid_frame": {
+        "rank": 2,
+        "relevant": 10,
+        "candidates": 30
+      },
+      "hybrid_person": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      }
+    },
+    {
+      "query": "mq_e09",
+      "language": "en",
+      "full_scene": {
+        "rank": 105,
+        "relevant": 6,
+        "candidates": 592
+      },
+      "first_scene": {
+        "video_id": "2018-03-09.10-15-00.10-20-00.school.G299",
+        "timestamp_ms": 94000,
+        "frame_index": 2820
+      },
+      "hybrid_frame": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      },
+      "hybrid_person": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      }
+    },
+    {
+      "query": "mq_e09",
+      "language": "ko",
+      "full_scene": {
+        "rank": 5,
+        "relevant": 6,
+        "candidates": 592
+      },
+      "first_scene": {
+        "video_id": "2018-03-09.10-15-00.10-20-00.school.G299",
+        "timestamp_ms": 185000,
+        "frame_index": 5550
+      },
+      "hybrid_frame": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      },
+      "hybrid_person": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      }
+    },
+    {
+      "query": "mq_e10",
+      "language": "en",
+      "full_scene": {
+        "rank": 33,
+        "relevant": 13,
+        "candidates": 592
+      },
+      "first_scene": {
+        "video_id": "2018-03-09.10-15-00.10-20-00.school.G299",
+        "timestamp_ms": 33000,
+        "frame_index": 990
+      },
+      "hybrid_frame": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      },
+      "hybrid_person": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      }
+    },
+    {
+      "query": "mq_e10",
+      "language": "ko",
+      "full_scene": {
+        "rank": 67,
+        "relevant": 13,
+        "candidates": 592
+      },
+      "first_scene": {
+        "video_id": "2018-03-09.10-15-00.10-20-00.school.G299",
+        "timestamp_ms": 188000,
+        "frame_index": 5640
+      },
+      "hybrid_frame": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      },
+      "hybrid_person": {
+        "rank": null,
+        "relevant": 0,
+        "candidates": 30
+      }
+    },
+    {
+      "query": "mq_e11",
+      "language": "en",
+      "full_scene": {
+        "rank": 1,
+        "relevant": 62,
+        "candidates": 592
+      },
+      "first_scene": {
+        "video_id": "2018-03-09.10-15-00.10-20-00.school.G299",
+        "timestamp_ms": 45000,
+        "frame_index": 1350
+      },
+      "hybrid_frame": {
+        "rank": 1,
+        "relevant": 25,
+        "candidates": 30
+      },
+      "hybrid_person": {
+        "rank": 1,
+        "relevant": 1,
+        "candidates": 30
+      }
+    },
+    {
+      "query": "mq_e11",
+      "language": "ko",
+      "full_scene": {
+        "rank": 31,
+        "relevant": 62,
+        "candidates": 592
+      },
+      "first_scene": {
+        "video_id": "2018-03-09.10-15-00.10-20-00.school.G299",
+        "timestamp_ms": 253000,
+        "frame_index": 7590
+      },
+      "hybrid_frame": {
+        "rank": 1,
+        "relevant": 25,
+        "candidates": 30
+      },
+      "hybrid_person": {
+        "rank": 1,
+        "relevant": 1,
+        "candidates": 30
+      }
+    },
+    {
+      "query": "mq_e13",
+      "language": "en",
+      "full_scene": {
+        "rank": 141,
+        "relevant": 28,
+        "candidates": 592
+      },
+      "first_scene": {
+        "video_id": "2018-03-15.15-45-00.15-50-00.school.G638",
+        "timestamp_ms": 291000,
+        "frame_index": 8730
+      },
+      "hybrid_frame": {
+        "rank": 1,
+        "relevant": 5,
+        "candidates": 30
+      },
+      "hybrid_person": {
+        "rank": 1,
+        "relevant": 1,
+        "candidates": 30
+      }
+    },
+    {
+      "query": "mq_e13",
+      "language": "ko",
+      "full_scene": {
+        "rank": 93,
+        "relevant": 28,
+        "candidates": 592
+      },
+      "first_scene": {
+        "video_id": "2018-03-15.15-45-00.15-50-00.school.G638",
+        "timestamp_ms": 291000,
+        "frame_index": 8730
+      },
+      "hybrid_frame": {
+        "rank": 1,
+        "relevant": 5,
+        "candidates": 30
+      },
+      "hybrid_person": {
+        "rank": 1,
+        "relevant": 1,
+        "candidates": 30
+      }
+    }
+  ]
+}
