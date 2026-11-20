@@ -75,6 +75,25 @@ class LocalLLM:
             "presence_penalty": 1.0, "chat_template_kwargs": {"enable_thinking": False},
             "reasoning_effort": "none", "response_format": {"type": "json_schema", "json_schema": {
                 "name": "frame_recommendation_intro", "strict": True, "schema": schema}}}
+        return validate_summary(json.loads(self.complete(payload))["summary"])
+
+    def chat(self, question, history, evidence):
+        messages = [{"role": "system", "content":
+            "CCTV 검색 결과의 재생을 돕는 한국어 도우미입니다. 짧고 자연스럽게 답하세요. "
+            "당신이 아는 사실은 후보의 순위, 프레임 번호와 재생 시각뿐입니다. "
+            "첫 번째 후보의 재생 시각을 알려주고 결과를 눌러 확인하도록 안내하세요. "
+            "후속 질문에서 요청한 후보가 있으면 그 후보를 안내하세요. "
+            "영상에 무엇이 있다거나 없다는 판정, 색상·행동·정확도 추측은 금지합니다. "
+            "예: 첫 번째 후보를 누르면 2.5초부터 확인할 수 있어요. "
+            "예문의 숫자는 사용하지 말고 실제 후보 시각을 쓰세요."}]
+        messages.extend(history)
+        messages.append({"role": "user", "content": json.dumps(
+            {"질문": question, "검색 후보": evidence}, ensure_ascii=False)})
+        return self.complete({"model": "local-rag", "messages": messages,
+                              "max_tokens": self.output_tokens, "temperature": 0.2,
+                              "chat_template_kwargs": {"enable_thinking": False}, "reasoning_effort": "none"})
+
+    def complete(self, payload):
         request = Request(f"http://127.0.0.1:{self.port}/v1/chat/completions",
                           data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
                           headers={"Content-Type": "application/json", "Authorization": "Bearer " + self.api_key},
@@ -83,7 +102,10 @@ class LocalLLM:
             data = json.load(response)
         if data["choices"][0].get("finish_reason") != "stop":
             raise ValueError("Local model output was incomplete")
-        return validate_summary(json.loads(data["choices"][0]["message"]["content"])["summary"])
+        content = data["choices"][0]["message"]["content"].strip()
+        if not content:
+            raise ValueError("Local model returned an empty answer")
+        return content
 
     def close(self):
         if self.process is not None:

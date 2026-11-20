@@ -47,3 +47,20 @@ button:disabled{opacity:.5;cursor:not-allowed}
 #info dd.pass{color:var(--ok);font-weight:600}
 #info dd.fail{color:var(--err);font-weight:600}
 @media (max-width:760px){main{grid-template-columns:1fr}}
+h2{font-size:16px;margin:0 0 12px}
+header{padding:16px max(20px,calc((100% - 1400px) / 2));justify-content:space-between}
+main{max-width:1440px;margin:auto;padding:20px;grid-template-columns:minmax(320px,0.85fr) minmax(360px,1.15fr)}
+section{padding:18px}
+#ingest{border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:20px}
+#ingest small,summary{color:var(--muted);font-size:13px}
+.fileButton{position:relative;display:block;flex:none;border-radius:6px;padding:7px 12px;background:var(--accent);color:white;cursor:pointer}
+.fileButton input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
+.fileButton:focus-within{outline:2px solid var(--ink)}
+#jobs{list-style:none;padding:0;margin:8px 0 0;max-height:130px;overflow:auto}
+#jobs li{display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between;padding:4px 0;font-size:13px;overflow-wrap:anywhere}
+#uploadStatus:empty,#chat:empty{display:none}
+#chat{max-height:340px;overflow:auto;margin-bottom:12px}
+#chat p{padding:10px 12px;border-radius:8px;white-space:pre-wrap;background:var(--bg);overflow-wrap:anywhere}
+#chat strong{display:block;font-size:12px;margin-bottom:3px;color:var(--muted)}
+#chat .user{margin-left:12%;border-left:2px solid var(--accent)}
+@media(max-width:760px){main{grid-template-columns:minmax(0,1fr);padding:10px}section{padding:12px}}

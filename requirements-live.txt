@@ -1,0 +1,6 @@
+-r requirements-siglip2.txt
+-r requirements-track-input.txt
+fastapi==0.116.1
+uvicorn==0.35.0
+python-multipart==0.0.20
+pydantic>=2,<3

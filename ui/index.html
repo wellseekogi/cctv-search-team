@@ -8,13 +8,26 @@
 </head>
 <body>
 <header>
-  <h1>CCTV 영상 검색</h1>
+  <h1>CCTV 장면 검색</h1>
   <span id="modeBadge" class="badge"></span>
 </header>
 
 <main>
   <section id="left" aria-label="검색">
+    <div id="ingest" hidden>
+      <h2>영상 입력</h2>
+      <div class="row">
+        <label class="fileButton">영상 구간 올리기<input id="clip" type="file" accept="video/mp4"></label>
+        <button type="button" id="demo">예제 영상 등록</button>
+      </div>
+      <small>MP4 구간당 최대 120초 · 128 MiB</small>
+      <p id="uploadStatus" role="status"></p>
+      <ul id="jobs" aria-label="최근 영상 처리 상태"></ul>
+    </div>
+    <h2>장면에 질문하기</h2>
+    <div id="chat" role="log" aria-label="채팅 기록" aria-live="polite"></div>
     <form id="form" novalidate>
+      <details><summary>검색 범위</summary>
       <div class="row">
         <label>데이터셋(gallery)
           <select id="gallery">
@@ -26,14 +39,15 @@
         </label>
       </div>
 
+      </details>
       <div class="tabs" role="tablist">
         <button type="button" role="tab" id="tabText" aria-selected="true">텍스트</button>
         <button type="button" role="tab" id="tabImage" aria-selected="false">이미지</button>
       </div>
 
       <div id="textBox">
-        <label>검색어 (영어, 1~500자)
-          <input id="text" type="text" placeholder="a white car near an intersection" autocomplete="off">
+        <label>질문
+          <input id="text" type="text" placeholder="빨간 자동차가 나오는 장면을 찾아줘" autocomplete="off">
         </label>
       </div>
       <div id="imageBox" hidden>
@@ -52,9 +66,9 @@
           </select>
         </label>
         <label>top_k (1~50)
-          <input id="topK" type="number" min="1" max="50" value="10">
+          <input id="topK" type="number" min="1" max="50" value="3">
         </label>
-        <button id="submit" type="submit">검색</button>
+        <button id="submit" type="submit">보내기</button>
       </div>
     </form>
 
@@ -64,6 +78,7 @@
   </section>
 
   <section id="right" aria-label="원본 재생">
+    <h2>원본 영상</h2>
     <div id="stage">
       <video id="video" controls playsinline preload="metadata"></video>
       <canvas id="overlay"></canvas>
@@ -81,5 +96,6 @@
 
 <script src="config.js"></script>
 <script src="app.js"></script>
+<script src="live.js"></script>
 </body>
 </html>

@@ -35,6 +35,28 @@ class FrameRecommender:
                 "embedding_model": self.encoder.metadata["model_id"],
                 "embedding_dim": self.encoder.dim, "index_sha256": self.index_hash}
 
+    def ranked_frames(self, query, candidates, top_k):
+        recommendations = []
+        check_vectors(query, 1, self.encoder.dim)
+        scores = self.vectors @ query[0]
+        best = {}
+        for row in candidates:
+            stamp = row.get("actual_timestamp_ms", row["timestamp_ms"])
+            score = float(np.clip(scores[row["vector_row"]], -1, 1))
+            order = (-score, row["video_id"], row["frame_index"], row["item_id"])
+            key = (row["video_id"], row["frame_index"], stamp)
+            if key not in best or order < best[key][0]:
+                best[key] = (order, row, stamp, score)
+        for _, row, stamp, score in heapq.nsmallest(top_k, best.values(), key=lambda v: v[0]):
+            offset = row.get("source_offset_ms", 0)
+            recommendations.append({"rank": len(recommendations) + 1, "item_id": row["item_id"],
+                                    "video_id": row["video_id"], "frame_index": row["frame_index"],
+                                    "timestamp_ms": stamp, "seconds": stamp / 1000,
+                                    "source_offset_ms": offset, "playback_time_ms": stamp - offset,
+                                    "score": score, "representation": row["representation"],
+                                    "bbox": row["bbox"]})
+        return recommendations
+
     def recommend(self, question, top_k=5, video_ids=None, representation="combined", use_llm=True):
         started = time.perf_counter()
         if not isinstance(question, str) or not 1 <= len(question.strip()) <= 1000:
@@ -66,24 +88,7 @@ class FrameRecommender:
                 if "too long" in str(exc).lower() or "TEXT_TOO_LONG" in str(exc):
                     raise RagError("TEXT_TOO_LONG", "Question exceeds the embedding encoder token limit") from exc
                 raise
-            check_vectors(query, 1, self.encoder.dim)
-            scores = self.vectors @ query[0]
-            best = {}
-            for row in candidates:
-                stamp = row.get("actual_timestamp_ms", row["timestamp_ms"])
-                score = float(np.clip(scores[row["vector_row"]], -1, 1))
-                order = (-score, row["video_id"], row["frame_index"], row["item_id"])
-                key = (row["video_id"], row["frame_index"], stamp)
-                if key not in best or order < best[key][0]:
-                    best[key] = (order, row, stamp, score)
-            for _, row, stamp, score in heapq.nsmallest(top_k, best.values(), key=lambda v: v[0]):
-                offset = row.get("source_offset_ms", 0)
-                recommendations.append({"rank": len(recommendations) + 1, "item_id": row["item_id"],
-                                        "video_id": row["video_id"], "frame_index": row["frame_index"],
-                                        "timestamp_ms": stamp, "seconds": stamp / 1000,
-                                        "source_offset_ms": offset, "playback_time_ms": stamp - offset,
-                                        "score": score, "representation": row["representation"],
-                                        "bbox": row["bbox"]})
+            recommendations = self.ranked_frames(query, candidates, top_k)
         if not recommendations:
             summary, llm_status = "검색 가능한 프레임 후보가 없습니다.", "skipped_empty"
         else:

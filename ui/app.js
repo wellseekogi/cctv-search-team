@@ -20,6 +20,18 @@
   let stopAt = null;          // 구간 재생 종료 시각(초)
   let mockVideoUrl = C.mock_video_url;
   let lastSeekErrorMs = null;
+  const turns = [];
+
+  function addTurn(role, content) {
+    const bubble = document.createElement("p");
+    const who = document.createElement("strong");
+    who.textContent = role === "user" ? "나" : "Qwen3.5";
+    bubble.className = role;
+    bubble.append(who, document.createTextNode(content));
+    $("chat").append(bubble);
+    $("chat").scrollTop = $("chat").scrollHeight;
+    turns.push({role, content: content.slice(0, 1200)});
+  }
 
   el.modeBadge.textContent = C.mock ? "mock (예시 응답)" : "API " + (C.apiBase || "(같은 주소)");
   el.modeBadge.classList.toggle("mock", !!C.mock);
@@ -144,6 +156,7 @@
       if (text.length < 1) return setStatus("error", "검색어를 입력하세요.");
       if (text.length > C.text_max_len) return setStatus("error", `검색어는 ${C.text_max_len}자 이하여야 합니다. (현재 ${text.length}자)`);
       payload.text = text;
+      payload.history = turns.slice(-4);
     } else {
       file = el.image.files[0];
       const r = await checkImage(file);
@@ -167,7 +180,13 @@
       const code = res.body && res.body.error && res.body.error.code;
       const rid = res.body && res.body.request_id;
       el.results.innerHTML = ""; el.meta.textContent = "";
-      return setStatus("error", `${ERR_KO[code] || "오류가 발생했습니다."} (HTTP ${res.status}${code ? ", " + code : ""}${rid ? ", " + rid : ""})`);
+      const detail = res.body && res.body.detail;
+      return setStatus("error", `${typeof detail === "string" ? detail : ERR_KO[code] || "오류가 발생했습니다."} (HTTP ${res.status}${code ? ", " + code : ""}${rid ? ", " + rid : ""})`);
+    }
+    if (res.body.answer) {
+      addTurn("user", text);
+      if (res.body.llm_status === "generated") addTurn("assistant", res.body.answer);
+      el.text.value = "";
     }
     render(res.body);
   });
@@ -195,9 +214,9 @@
       const d = document.createElement("div");
       d.innerHTML = "";
       const a = document.createElement("div"); a.className = "t1";
-      a.textContent = `#${r.rank}  ${r.video_id}  ${fmt(r.representative_ms)}`;
+      a.textContent = `#${r.rank}  ${r.display_name || r.video_id}  ${fmt(r.representative_ms)}`;
       const s = document.createElement("div"); s.className = "t2";
-      s.textContent = `score ${r.score} (${b.score_type}) · ${r.track_uid} · bbox [${r.bbox.join(", ")}]`;
+      s.textContent = `유사도 ${Number(r.score).toFixed(3)} · ${r.track_uid || "전체 장면"}`;
       d.append(a, s); li.appendChild(d);
       const pick = () => { [...el.results.children].forEach((x) => x.setAttribute("aria-selected", "false")); li.setAttribute("aria-selected", "true"); select(r, b); };
       li.onclick = pick;
@@ -281,7 +300,7 @@
     const g = cv.getContext("2d");
     g.setTransform(dpr, 0, 0, dpr, 0, 0);
     g.clearRect(0, 0, vw, vh);
-    if (!current) return;
+    if (!current || !current.bbox) return;
     const t = boxTransform(current);
     g.lineWidth = 3; g.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue("--box").trim() || "#ffcc00";
     g.strokeRect(t.x, t.y, t.w, t.h);
@@ -294,9 +313,9 @@
       ["video_id", r.video_id], ["track_uid", r.track_uid],
       ["구간", `${r.start_ms}–${r.end_ms} ms`],
       ["대표 시각", `${r.representative_ms} ms (source_offset ${r.source_offset_ms} ms)`],
-      ["bbox(원본 px)", `[${r.bbox.join(", ")}] / ${r.width}×${r.height}`],
+      ["원본 영역", `${r.bbox ? r.bbox.join(", ") : "전체 장면"} / ${r.width}×${r.height}`],
     ];
-    if (window.__lastBox) {
+    if (r.bbox && window.__lastBox) {
       const t = window.__lastBox;
       rows.push(["화면 박스", `x ${t.x.toFixed(1)}, y ${t.y.toFixed(1)}, ${t.w.toFixed(1)}×${t.h.toFixed(1)} (scale ${t.scale.toFixed(4)})`]);
     }

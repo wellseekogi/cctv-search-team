@@ -1,6 +1,6 @@
 // UI 설정. 실제 D의 API를 연결할 때는 mock을 false로, apiBase를 API 주소로 바꾼다.
 window.UI_CONFIG = {
-  mock: true,                         // true: mock/ 폴더의 예시 응답 사용
+  mock: !location.pathname.startsWith("/ui/"), // serve.py는 독립적인 정적 UI 점검 서버
   apiBase: "",                        // "" = 화면을 제공한 서버와 같은 주소(D 합의: FastAPI의 /ui/ 경로). 따로 띄우면 "http://127.0.0.1:8000"
   seek_tolerance_ms: 250,             // 명세 E 2: seek 허용 오차
   top_k_default: 10,                  // 명세 D 4
