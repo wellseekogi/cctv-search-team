@@ -214,7 +214,7 @@
       const d = document.createElement("div");
       d.innerHTML = "";
       const a = document.createElement("div"); a.className = "t1";
-      a.textContent = `#${r.rank}  ${r.display_name || r.video_id}  ${fmt(r.representative_ms)}`;
+      a.textContent = `#${r.rank}  ${r.display_name || r.video_id}  ${fmt(r.representative_ms - r.source_offset_ms)}`;
       const s = document.createElement("div"); s.className = "t2";
       s.textContent = `유사도 ${Number(r.score).toFixed(3)} · ${r.track_uid || "전체 장면"}`;
       d.append(a, s); li.appendChild(d);

@@ -1,125 +1,88 @@
-"""Generate a small video with known objects and synthetic B metadata."""
-
+"""Build the MEVA dev example from the source recording and its annotated person track."""
+import csv
+import json
+import os
+import shutil
+import tempfile
 from pathlib import Path
+from urllib.request import urlopen
 
 import av
-from PIL import Image, ImageDraw
 
 from embedding.contracts import SCHEMA, file_sha256, write_jsonl
 
-
-def draw_car(draw, x):
-    red = "#e92d38"
-    draw.polygon([(x + 17, 119), (x + 32, 97), (x + 76, 97), (x + 93, 119)], fill=red)
-    draw.polygon([(x + 27, 116), (x + 36, 102), (x + 53, 102), (x + 53, 116)], fill="#bedde3")
-    draw.polygon([(x + 59, 102), (x + 74, 102), (x + 84, 116), (x + 59, 116)], fill="#bedde3")
-    draw.rounded_rectangle((x, 117, x + 109, 144), radius=8, fill=red)
-    draw.rectangle((x + 100, 122, x + 107, 128), fill="#fff1ad")
-    for wheel in (x + 10, x + 78):
-        draw.ellipse((wheel, 133, wheel + 20, 153), fill="#181c21")
-        draw.ellipse((wheel + 5, 138, wheel + 15, 148), fill="#afb3b7")
-    return [x, 97, x + 110, 154]
+ROOT = Path(__file__).resolve().parents[1]
+VIDEO_ID = "2018-03-15.14-50-00.14-55-00.school.G421"
+TRACK_ID = "m0222"
+FIRST_FRAME, END_FRAME, FPS = 7752, 7872, 30
+DEMO_NAME = "MEVA G421 · 카페의 보행자"
+DEMO_KEY = "meva-g421-m0222-v1"
 
 
-def draw_bicycle(draw, x):
-    blue = "#1688fc"
-    rear, front = (x + 22, 137), (x + 85, 137)
-    seat, pedal, steering = (x + 40, 104), (x + 48, 136), (x + 72, 105)
-    for cx, cy in (rear, front):
-        draw.ellipse((cx - 17, cy - 17, cx + 17, cy + 17), outline="#181c21", width=4)
-        draw.line((cx - 13, cy, cx + 13, cy), fill="#d0d4de", width=1)
-        draw.line((cx, cy - 13, cx, cy + 13), fill="#d0d4de", width=1)
-    draw.line([rear, seat, pedal, rear], fill=blue, width=5)
-    draw.line([seat, steering, pedal], fill=blue, width=5)
-    draw.line([front, (x + 68, 92), (x + 78, 89)], fill=blue, width=5)
-    draw.line([(x + 32, 99), (x + 46, 99)], fill="#181c21", width=5)
-    return [x + 4, 86, x + 103, 155]
+def recording():
+    with (ROOT / "data/meva/data_inventory.csv").open(encoding="utf-8-sig", newline="") as f:
+        row = next(r for r in csv.DictReader(f) if r["video_id"] == VIDEO_ID and r["split"] == "dev")
+    cache = ROOT / ".cache/meva-demo/G421.avi"
+    if cache.is_file() and file_sha256(cache) == row["file_sha256"]:
+        return cache
+    cache.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.NamedTemporaryFile(dir=cache.parent, delete=False) as f:
+        partial = Path(f.name)
+    try:
+        with urlopen(row["source_url"], timeout=90) as response, partial.open("wb") as f:
+            shutil.copyfileobj(response, f, length=1024 * 1024)
+        if file_sha256(partial) != row["file_sha256"]:
+            raise ValueError("MEVA 원본 SHA-256이 팀 데이터 목록과 일치하지 않습니다.")
+        os.replace(partial, cache)
+    finally:
+        partial.unlink(missing_ok=True)
+    return cache
 
 
 def make_demo(directory):
-    """Write the demo's MP4, manifest, frame rows and track observations."""
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=True)
-    video_path = directory / "synthetic-traffic.mp4"
-    manifest_path = directory / "manifest.jsonl"
-    frames_path = directory / "frames.jsonl"
-    tracks_path = directory / "tracks.jsonl"
-    video_id, track_source_id = "synthetic-traffic", "synthetic-demo"
-    width, height = 320, 192
-    fps, frames_per_object = 2, 6
+    path = directory / "G421-m0222.mp4"
+    boxes = json.loads((ROOT / "fixtures/meva_person/m0222.json").read_text(encoding="utf-8"))
+    first_ms = FIRST_FRAME * 1000 // FPS
+    end_ms = END_FRAME * 1000 // FPS
     frames, tracks = [], []
-
-    with av.open(str(video_path), "w") as container:
-        stream = container.add_stream("libx264", rate=fps)
+    width, height = 960, 536
+    written = 0
+    with av.open(str(recording())) as src, av.open(str(path), "w") as out:
+        original = src.streams.video[0]
+        original.thread_type = "AUTO"
+        stream = out.add_stream("libx264", rate=FPS)
         stream.width, stream.height, stream.pix_fmt = width, height, "yuv420p"
-        for object_number, (class_name, draw_object) in enumerate(
-            [("car", draw_car), ("bicycle", draw_bicycle)], start=1
-        ):
-            local_track_id = f"t{object_number:06d}"
-            for step in range(frames_per_object):
-                frame_index = len(frames)
-                timestamp_ms = frame_index * 1000 // fps
-                image = Image.new("RGB", (width, height), "#a9bdbc")
-                draw = ImageDraw.Draw(image)
-                draw.rectangle((0, 80, width, height), fill="#646972")
-                draw.line((0, 83, width, 83), fill="#ddddcf", width=3)
-                for mark in range(0, width, 64):
-                    draw.line((mark, 170, mark + 34, 170), fill="#e4dec7", width=3)
-                bbox = draw_object(draw, 45 + step * 18)
-                for packet in stream.encode(av.VideoFrame.from_image(image)):
-                    container.mux(packet)
-
-                frame_fields = {
-                    "schema_version": SCHEMA,
-                    "video_id": video_id,
-                    "frame_index": frame_index,
-                    "timestamp_ms": timestamp_ms,
-                }
-                frames.append({
-                    **frame_fields,
-                    "requested_timestamp_ms": timestamp_ms,
-                    "time_source": "pts",
-                    "source_offset_ms": 0,
-                    "width": width,
-                    "height": height,
-                    "decode_status": "success",
-                    "detector_status": "not_run",
-                })
-                tracks.append({
-                    **frame_fields,
-                    "source": "pred",
-                    "track_source_id": track_source_id,
-                    "local_track_id": local_track_id,
-                    "track_uid": f"{track_source_id}:{video_id}:{local_track_id}",
-                    "class_name": class_name,
-                    "bbox": bbox,
-                    "confidence": 1.0,
-                    "quality": {
-                        "area_ratio": (bbox[2] - bbox[0]) * (bbox[3] - bbox[1]) / (width * height),
-                        "blur_var": 100.0,
-                        "border_touch": False,
-                    },
-                })
+        # F's AVI annotations use decoded frame numbers. Container PTS can arrive out of order.
+        for idx, frame in enumerate(src.decode(original)):
+            if idx < FIRST_FRAME:
+                continue
+            if idx >= END_FRAME:
+                break
+            local = frame.reformat(width=width, height=height, format="yuv420p")
+            local.pts = None
+            for packet in stream.encode(local):
+                out.mux(packet)
+            written += 1
+            if str(idx) not in boxes:
+                continue
+            stamp = round(idx * 1000 / FPS)
+            fields = dict(schema_version=SCHEMA, video_id=VIDEO_ID, frame_index=idx-FIRST_FRAME,
+                          timestamp_ms=stamp)
+            frames.append(dict(**fields, requested_timestamp_ms=stamp, time_source="pts",
+                               source_offset_ms=first_ms, width=width, height=height,
+                               decode_status="success", detector_status="skipped"))
+            tracks.append(dict(**fields, source="gt", track_source_id="gtm1", local_track_id=TRACK_ID,
+                               track_uid=f"gtm1:{VIDEO_ID}:{TRACK_ID}", class_name="person",
+                               bbox=[n / 2 for n in boxes[str(idx)]], confidence=None, quality=None))
         for packet in stream.encode():
-            container.mux(packet)
-
-    duration_ms = len(frames) * 1000 // fps
-    write_jsonl(manifest_path, [{
-        "schema_version": SCHEMA,
-        "video_id": video_id,
-        "dataset": "synthetic-demo",
-        "camera_id": "demo-camera",
-        "relative_path": video_path.name,
-        "width": width,
-        "height": height,
-        "duration_ms": duration_ms,
-        "fps": fps,
-        "source_offset_ms": 0,
-        "available_start_ms": 0,
-        "available_end_ms": duration_ms,
-        "split": "dev",
-        "file_sha256": file_sha256(video_path),
-    }])
-    write_jsonl(frames_path, frames)
-    write_jsonl(tracks_path, tracks)
-    return manifest_path, frames_path, tracks_path
+            out.mux(packet)
+    if written != END_FRAME-FIRST_FRAME or len(tracks) != len(boxes):
+        raise ValueError("MEVA 예제 영상 또는 사람 주석이 누락됐습니다.")
+    manifest = dict(schema_version=SCHEMA, video_id=VIDEO_ID, display_name=DEMO_NAME, dataset="meva",
+                    camera_id="G421", relative_path=path.name, width=width, height=height, fps=FPS,
+                    duration_ms=300066, source_offset_ms=first_ms, available_start_ms=first_ms,
+                    available_end_ms=end_ms, split="dev", file_sha256=file_sha256(path))
+    for name, rows in (("manifest", [manifest]), ("frames", frames), ("tracks", tracks)):
+        write_jsonl(directory / (name + ".jsonl"), rows)

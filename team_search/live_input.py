@@ -52,7 +52,9 @@ def clip_inputs(path, key, name):
     return manifest, frames
 
 
-def process_segment(kind, key, name, source, stage, config, encoder):
+def process_segment(kind, key, name, source, stage, config, encoder, *,
+                    cache=ROOT / ".cache/embedding",
+                    vision_config=ROOT / "modules/b_detection_tracking/configs/vision.yaml"):
     stage = Path(stage)
     work = stage / "input"
     work.mkdir()
@@ -65,8 +67,8 @@ def process_segment(kind, key, name, source, stage, config, encoder):
         make_demo(work)
         root = work
         manifests = read_jsonl(root / "manifest.jsonl")
-        frames = [dict(row, detector_status="skipped") for row in read_jsonl(root / "frames.jsonl")]
-        tracks = [dict(row, source="gt", confidence=None) for row in read_jsonl(root / "tracks.jsonl")]
+        frames = read_jsonl(root / "frames.jsonl")
+        tracks = read_jsonl(root / "tracks.jsonl")
         policy = "hybrid"
     else:
         root = source
@@ -81,7 +83,7 @@ def process_segment(kind, key, name, source, stage, config, encoder):
     statuses = (read_jsonl(within(root, "video_status.jsonl")) if kind == "handoff" else
                 [dict(video_id=m["video_id"], available_end_ms=m["available_end_ms"],
                       video_status="completed") for m in manifests])
-    settings = json.loads((ROOT / "configs" / (policy + ".yaml")).read_text(encoding="utf-8"))
+    settings = json.loads((ROOT / "configs/person" / (policy + ".yaml")).read_text(encoding="utf-8"))
     if not tracks:
         settings["track_source_id"] = "segment-" + key
     if kind == "clip":
@@ -102,9 +104,9 @@ def process_segment(kind, key, name, source, stage, config, encoder):
     if not samples:
         raise ValueError("이 구간에서 검색에 사용할 장면이 선택되지 않았습니다.")
     status = build_index_from_team(manifest=stage / "manifest.jsonl", data_root=root,
-                                   output=stage / "index", cache=ROOT / ".cache/embedding",
+                                   output=stage / "index", cache=cache,
                                    embedding_config=config, encoder=encoder,
-                                   vision_config=ROOT / "modules/b_detection_tracking/configs/vision.yaml",
+                                   vision_config=vision_config,
                                    samples=stage / "samples.jsonl")
     if status["status"] != "success":
         raise ValueError("임베딩 실패 " + str(read_jsonl(stage / "index/errors.jsonl")[:1]))

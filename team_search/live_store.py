@@ -28,6 +28,7 @@ class LiveStore:
                 state TEXT NOT NULL, events INTEGER DEFAULT 0, vectors INTEGER DEFAULT 0,
                 error TEXT DEFAULT '')""")
             db.execute("UPDATE jobs SET state='queued' WHERE state='processing'")
+            db.execute("UPDATE jobs SET state='archived' WHERE kind='demo' AND id='demo-v1'")
             for job in db.execute("SELECT * FROM jobs WHERE state='ready'"):
                 self.load(job["id"])
         self.worker = threading.Thread(target=self.run, daemon=True)
@@ -61,7 +62,8 @@ class LiveStore:
 
     def status(self):
         with closing(self.connect()) as db:
-            return [dict(row) for row in db.execute("SELECT * FROM jobs ORDER BY rowid DESC LIMIT 32")]
+            return [dict(row) for row in db.execute(
+                "SELECT * FROM jobs WHERE state != 'archived' ORDER BY rowid DESC LIMIT 32")]
 
     def process(self, job):
         key, kind = job["id"], job["kind"]

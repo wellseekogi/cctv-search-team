@@ -29,6 +29,7 @@ from rag.assets import ensure_assets
 from rag.runtime import LocalLLM
 from .__main__ import ROOT, get_config
 from .live_store import LiveStore
+from .demo import DEMO_KEY, DEMO_NAME
 
 
 class Turn(BaseModel):
@@ -98,7 +99,7 @@ def create_app(args):
 
     @app.post("/api/events/demo", status_code=202)
     def demo():
-        return enqueue("demo", "demo-v1", "합성 교통 영상")
+        return enqueue("demo", DEMO_KEY, DEMO_NAME)
 
     @app.post("/api/events/handoff/{batch}", status_code=202)
     def handoff(batch: str):

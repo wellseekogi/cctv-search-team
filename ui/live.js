@@ -38,7 +38,11 @@ if (!window.UI_CONFIG.mock) {
       message.textContent = err.message;
     }
   }
-  byId("demo").onclick = () => sendEvent("/api/events/demo");
+  byId("demo").onclick = () => {
+    byId("representation").value = "object";
+    if (!byId("text").value.trim()) byId("text").value = byId("text").placeholder;
+    return sendEvent("/api/events/demo");
+  };
   byId("clip").onchange = async (event) => {
     const file = event.target.files[0];
     if (file) await sendEvent("/api/events/clip?name=" + encodeURIComponent(file.name), file);

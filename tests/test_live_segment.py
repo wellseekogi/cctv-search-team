@@ -3,8 +3,10 @@ import time
 import unittest
 from pathlib import Path
 
+import av
+from PIL import Image
+
 from embedding.contracts import file_sha256
-from team_search.demo import make_demo
 from team_search.live_store import LiveStore
 from test_embedding import TestEncoder
 
@@ -14,8 +16,15 @@ class LiveSegmentTests(unittest.TestCase):
         config = {"crop_margin_ratio": 0.1, "batch_size_cpu": 2}
         with tempfile.TemporaryDirectory(dir=Path(__file__).resolve().parents[1]) as temp:
             root = Path(temp)
-            make_demo(root / "upstream")
-            video = root / "upstream/synthetic-traffic.mp4"
+            video = root / "upload.mp4"
+            with av.open(str(video), "w") as output:
+                stream = output.add_stream("libx264", rate=5)
+                stream.width = stream.height = 64
+                for color in ("black", "white"):
+                    for packet in stream.encode(av.VideoFrame.from_image(Image.new("RGB", (64, 64), color))):
+                        output.mux(packet)
+                for packet in stream.encode():
+                    output.mux(packet)
             key = file_sha256(video)
             store = LiveStore(root, config, TestEncoder())
             try:

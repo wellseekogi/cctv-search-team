@@ -96,8 +96,8 @@ def main():
         prepare.add_argument(f"--{option}", type=Path)
     query = commands.add_parser("ask", parents=[model, ask_options], help="기존 인덱스 질의")
     query.add_argument("--index", required=True, type=Path)
-    demo = commands.add_parser("demo", parents=[model, build_options, ask_options], help="합성 영상으로 바로 질의")
-    demo.add_argument("--output", type=Path, default=ROOT / "runs/team-demo")
+    demo = commands.add_parser("demo", parents=[model, build_options, ask_options], help="MEVA 카페 사람 영상으로 질의")
+    demo.add_argument("--output", type=Path, default=ROOT / "runs/team-demo-meva-g421")
     args = parser.parse_args()
 
     try:
@@ -114,18 +114,18 @@ def main():
             ask(args, args.index, encoder)
             return 0
 
-        from .demo import make_demo
+        from .demo import DEMO_KEY, DEMO_NAME
+        from .live_input import process_segment
 
         if not args.output.exists():
             args.output.parent.mkdir(parents=True, exist_ok=True)
             with tempfile.TemporaryDirectory(prefix=".team-demo-", dir=args.output.parent) as temp:
                 workspace = Path(temp) / "demo"
-                inputs = workspace / "inputs"
-                manifest, frames, tracks = make_demo(inputs)
-                build(args, config, manifest=manifest, data_root=inputs, output=workspace / "index",
-                      frames=frames, tracks=tracks, encoder=encoder)
+                workspace.mkdir()
+                process_segment("demo", DEMO_KEY, DEMO_NAME, None, workspace, config, encoder,
+                                cache=args.cache, vision_config=args.vision_config)
                 workspace.rename(args.output)
-        print("합성 영상 예시 질의 '빨간 자동차', '파란 자전거'.")
+        print("MEVA 카페 예시 질의 '회색 후드티를 입은 사람이 테이블을 떠나는 장면을 찾아줘'.")
         ask(args, args.output / "index", encoder)
         return 0
     except (KeyError, OSError, ValueError, RuntimeError, RagError) as exc:

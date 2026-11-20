@@ -18,9 +18,10 @@
       <h2>영상 입력</h2>
       <div class="row">
         <label class="fileButton">영상 구간 올리기<input id="clip" type="file" accept="video/mp4"></label>
-        <button type="button" id="demo">예제 영상 등록</button>
+        <button type="button" id="demo">MEVA 사람 영상 등록</button>
       </div>
       <small>MP4 구간당 최대 120초 · 128 MiB</small>
+      <small>예제 영상은 Kitware·IARPA의 MEVA G421 카페 영상에서 4초를 발췌했습니다. <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></small>
       <p id="uploadStatus" role="status"></p>
       <ul id="jobs" aria-label="최근 영상 처리 상태"></ul>
     </div>
@@ -47,7 +48,7 @@
 
       <div id="textBox">
         <label>질문
-          <input id="text" type="text" placeholder="빨간 자동차가 나오는 장면을 찾아줘" autocomplete="off">
+          <input id="text" type="text" placeholder="회색 후드티를 입은 사람이 테이블을 떠나는 장면을 찾아줘" autocomplete="off">
         </label>
       </div>
       <div id="imageBox" hidden>
@@ -60,9 +61,9 @@
       <div class="row">
         <label>표현
           <select id="representation">
-            <option value="combined">combined</option>
-            <option value="scene">scene</option>
-            <option value="object">object</option>
+            <option value="combined">장면과 사람</option>
+            <option value="scene">전체 장면</option>
+            <option value="object">사람 박스</option>
           </select>
         </label>
         <label>top_k (1~50)
