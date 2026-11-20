@@ -1,0 +1,31 @@
+# F 7 평가 설정
+evaluation_version: eval_v1
+evaluation:
+  iou_threshold: 0.50
+  min_match_frames: 3
+  min_match_ratio: 0.50
+  min_visible_fraction: 0.50
+  min_input_side_px: 8
+  image_query_exclusion_ms: 1000
+  time_tolerance_ms: 100
+  recall_k: [5, 10]
+  model_input_size: 224          # CLIP ViT-B/32 (짧은 변 resize + center crop)
+  crop_margin_ratio: 0.10        # C 1 과 동일
+datasets:
+  virat:
+    gallery_ids: {dev: virat_dev_v1, eval: virat_eval_v1}
+    manifest: data/virat/manifest.jsonl
+    gt_tracks: data/virat/tracks_gt.jsonl
+    queries: data/virat/queries.jsonl
+    qrels: data/virat/qrels.jsonl
+    targets: data/virat/targets.jsonl
+    activity_labels: data/virat/activity_labels.jsonl
+  meva:
+    gallery_ids: {dev: meva_dev_v1, eval: meva_eval_v1}
+    manifest: data/meva/manifest.jsonl
+    gt_tracks: data/meva/tracks_gt.jsonl
+    queries: data/meva/queries.jsonl
+    qrels: data/meva/qrels.jsonl
+    targets: data/meva/targets.jsonl
+    activity_labels: data/meva/activity_labels.jsonl
+# 아래 해시는 data/virat/release_hashes.json 에서 확정 (freeze_virat.py)

@@ -19,7 +19,19 @@ __pycache__/
 # Model weights, private media, and generated outputs
 models/
 weights/
-data/
+data/**
+# F: 평가 메타데이터만 예외로 커밋 (영상·tracks_gt·질의 이미지는 계속 제외)
+!data/
+!data/README.md
+!data/virat/
+!data/meva/
+!data/*/manifest.jsonl
+!data/*/queries.jsonl
+!data/*/qrels.jsonl
+!data/*/targets.jsonl
+!data/*/excluded_queries.jsonl
+!data/*/data_inventory.csv
+!data/*/split_summary.json
 videos/
 runs/
 outputs/

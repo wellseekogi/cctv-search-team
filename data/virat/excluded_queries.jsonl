@@ -1,0 +1,22 @@
+{"query_id": "vq_d01", "modality": "text", "split": "dev", "reason": "no_supported_class_target", "removed_targets": [{"ref": "050300_03:g094", "class_name": "car"}]}
+{"query_id": "vq_d02", "modality": "text", "split": "dev", "reason": "no_supported_class_target", "removed_targets": [{"ref": "050300_03:g104", "class_name": "car"}, {"ref": "010108_02:g058", "class_name": "car"}, {"ref": "010108_02:g065", "class_name": "car"}, {"ref": "010114_00:g046", "class_name": "car"}]}
+{"query_id": "vq_d03", "modality": "text", "split": "dev", "reason": "no_supported_class_target", "removed_targets": [{"ref": "040103_03:g021", "class_name": "car"}]}
+{"query_id": "vq_d05", "modality": "text", "split": "dev", "reason": "kept_with_unsupported_targets_removed", "removed_targets": [{"ref": "040103_03:g031", "class_name": "car"}]}
+{"query_id": "vq_d07", "modality": "text", "split": "dev", "reason": "no_supported_class_target", "removed_targets": [{"ref": "050300_03:g082", "class_name": "car"}]}
+{"query_id": "vq_d09", "modality": "text", "split": "dev", "reason": "kept_with_unsupported_targets_removed", "removed_targets": [{"ref": "000206_09:g031", "class_name": "bicycle"}]}
+{"query_id": "vq_d13", "modality": "text", "split": "dev", "reason": "no_supported_class_target", "removed_targets": [{"ref": "000206_09:g019", "class_name": "vehicle"}]}
+{"query_id": "vq_d14", "modality": "text", "split": "dev", "reason": "no_supported_class_target", "removed_targets": [{"ref": "010114_00:g036", "class_name": "bicycle"}, {"ref": "010114_00:g024", "class_name": "bicycle"}]}
+{"query_id": "vq_d15", "modality": "text", "split": "dev", "reason": "no_supported_class_target", "removed_targets": [{"ref": "010114_00:g039", "class_name": "car"}]}
+{"query_id": "vq_e01", "modality": "text", "split": "eval", "reason": "no_supported_class_target", "removed_targets": [{"ref": "050000_01:g085", "class_name": "car"}]}
+{"query_id": "vq_e02", "modality": "text", "split": "eval", "reason": "no_supported_class_target", "removed_targets": [{"ref": "050000_01:g025", "class_name": "car"}]}
+{"query_id": "vq_e03", "modality": "text", "split": "eval", "reason": "no_supported_class_target", "removed_targets": [{"ref": "050000_01:g015", "class_name": "car"}]}
+{"query_id": "vq_e04", "modality": "text", "split": "eval", "reason": "no_supported_class_target", "removed_targets": [{"ref": "050000_01:g008", "class_name": "car"}]}
+{"query_id": "vq_e05", "modality": "text", "split": "eval", "reason": "no_supported_class_target", "removed_targets": [{"ref": "050000_01:g079", "class_name": "car"}]}
+{"query_id": "vq_e06", "modality": "text", "split": "eval", "reason": "no_supported_class_target", "removed_targets": [{"ref": "050000_01:g061", "class_name": "car"}, {"ref": "050000_01:g078", "class_name": "car"}, {"ref": "050202_02:g008", "class_name": "car"}]}
+{"query_id": "vq_e08", "modality": "text", "split": "eval", "reason": "no_supported_class_target", "removed_targets": [{"ref": "050000_01:g034", "class_name": "bicycle"}]}
+{"query_id": "vq_di01", "modality": "image", "split": "dev", "reason": "no_supported_class_target", "removed_targets": [{"ref": "050300_03:g094", "class_name": "car"}]}
+{"query_id": "vq_di02", "modality": "image", "split": "dev", "reason": "no_supported_class_target", "removed_targets": [{"ref": "040103_03:g021", "class_name": "car"}]}
+{"query_id": "vq_di03", "modality": "image", "split": "dev", "reason": "kept_with_unsupported_targets_removed", "removed_targets": [{"ref": "000206_09:g031", "class_name": "bicycle"}]}
+{"query_id": "vq_ei01", "modality": "image", "split": "eval", "reason": "no_supported_class_target", "removed_targets": [{"ref": "050000_01:g085", "class_name": "car"}]}
+{"query_id": "vq_ei02", "modality": "image", "split": "eval", "reason": "no_supported_class_target", "removed_targets": [{"ref": "050000_01:g025", "class_name": "car"}]}
+{"query_id": "vq_ei05", "modality": "image", "split": "eval", "reason": "no_supported_class_target", "removed_targets": [{"ref": "050000_01:g015", "class_name": "car"}]}

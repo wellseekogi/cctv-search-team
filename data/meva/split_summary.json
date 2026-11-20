@@ -1,0 +1,123 @@
+{
+  "dataset": "meva",
+  "seed": 42,
+  "group_unit": "physical location (camera FOV, MEVA KF1 site map v1.3)",
+  "target_ratio": {
+    "dev": 0.7,
+    "eval": 0.3
+  },
+  "total_duration_ms": 1800432,
+  "splits": {
+    "dev": {
+      "groups": [
+        "bus_area",
+        "school_cafe"
+      ],
+      "cameras": [
+        "G340",
+        "G341",
+        "G421",
+        "G506"
+      ],
+      "n_groups": 2,
+      "n_videos": 4,
+      "duration_ms": 1200066,
+      "candidate_tracks_evaluable": 447,
+      "tracks_by_class": {
+        "person": 447
+      },
+      "activities": 410,
+      "activities_evaluable": 326,
+      "activities_by_type": {
+        "person_talks_to_person": 42,
+        "person_opens_facility_door": 28,
+        "person_exits_scene_through_structure": 28,
+        "person_sits_down": 16,
+        "vehicle_turns_right": 9,
+        "vehicle_stops": 16,
+        "person_texts_on_phone": 40,
+        "vehicle_starts": 17,
+        "vehicle_turns_left": 6,
+        "person_opens_vehicle_door": 10,
+        "person_exits_vehicle": 12,
+        "person_closes_vehicle_door": 10,
+        "person_enters_scene_through_structure": 37,
+        "person_opens_trunk": 4,
+        "person_unloads_vehicle": 2,
+        "person_carries_heavy_object": 7,
+        "person_picks_up_object": 27,
+        "person_puts_down_object": 14,
+        "person_closes_trunk": 4,
+        "vehicle_reverses": 5,
+        "person_transfers_object": 14,
+        "person_stands_up": 13,
+        "person_embraces_person": 7,
+        "person_talks_on_phone": 6,
+        "person_enters_vehicle": 17,
+        "person_loads_vehicle": 1,
+        "person_purchases": 6,
+        "hand_interacts_with_person": 4,
+        "person_steals_object": 2,
+        "vehicle_drops_off_person": 1,
+        "vehicle_picks_up_person": 2,
+        "person_rides_bicycle": 3
+      },
+      "queries": {
+        "text": 15,
+        "image": 5
+      },
+      "qrels": 35,
+      "duration_ratio": 0.6665
+    },
+    "eval": {
+      "groups": [
+        "school_gym",
+        "school_plaza"
+      ],
+      "cameras": [
+        "G299",
+        "G638"
+      ],
+      "n_groups": 2,
+      "n_videos": 2,
+      "duration_ms": 600366,
+      "candidate_tracks_evaluable": 707,
+      "tracks_by_class": {
+        "person": 707
+      },
+      "activities": 833,
+      "activities_evaluable": 576,
+      "activities_by_type": {
+        "person_texts_on_phone": 21,
+        "person_talks_to_person": 60,
+        "person_carries_heavy_object": 177,
+        "person_puts_down_object": 199,
+        "person_transfers_object": 36,
+        "person_picks_up_object": 170,
+        "person_talks_on_phone": 5,
+        "person_enters_scene_through_structure": 26,
+        "person_exits_scene_through_structure": 33,
+        "person_closes_facility_door": 2,
+        "person_sits_down": 46,
+        "hand_interacts_with_person": 5,
+        "person_opens_facility_door": 9,
+        "person_stands_up": 19,
+        "person_embraces_person": 2,
+        "person_rides_bicycle": 14,
+        "vehicle_stops": 2,
+        "vehicle_starts": 2,
+        "vehicle_drops_off_person": 1,
+        "person_opens_vehicle_door": 1,
+        "person_exits_vehicle": 2,
+        "person_closes_vehicle_door": 1
+      },
+      "queries": {
+        "text": 12,
+        "image": 5
+      },
+      "qrels": 48,
+      "duration_ratio": 0.3335
+    }
+  },
+  "note": "위치 4개 단위(실내/실외 층화) 분할이라 비율이 정확히 70/30이 되지 않음 (eval 실제 비율 참조)"
+}

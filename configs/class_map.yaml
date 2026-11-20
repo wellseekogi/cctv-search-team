@@ -1,0 +1,31 @@
+# 데이터셋 클래스 → 공통 클래스 대응 (F 1-5). B와 확정 필요.
+version: class_map_v1
+common_classes: [person, car, vehicle, bicycle, object]
+# Event·검색 대상 지원 클래스 (공통 2 "유효 관측"). 팀 결정으로 사람만 탐지·검색한다.
+# car·vehicle·bicycle·object는 GT에 보존하지만 지원 대상 아님 → targets evaluable=false (na_reason=unsupported_class)
+supported_classes: [person]
+datasets:
+  virat:
+    1: person        # person
+    2: car           # car (승용차·픽업 포함)
+    3: vehicle       # vehicles (공사차량 등 기타 차량)
+    4: object        # object (주로 들고 다니는 물건)
+    5: bicycle       # bike, bicycles (오토바이 포함 가능)
+  meva:              # KPF types.yml cset3 이름 → 공통 클래스
+    person: person
+    vehicle: vehicle   # 승용차·버스·트럭 모두 'vehicle' 한 종류로 주석됨
+    bicycle: bicycle
+    bag: object        # 가방 (활동 소품)
+    other: object      # 기타 소품 (상자·컵·문서 등)
+# YOLO11n(COCO) → 공통 클래스 (B 출력 변환용 제안값)
+yolo_coco:
+  person: person
+  car: car
+  truck: car         # VIRAT은 픽업트럭을 car로 주석
+  bus: vehicle
+  train: vehicle
+  bicycle: bicycle
+  motorcycle: bicycle
+  backpack: object
+  handbag: object
+  suitcase: object

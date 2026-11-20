@@ -1,0 +1,4 @@
+{"query_id": "vq_d04", "target_id": "t:gtv1:VIRAT_S_040103_03_000284_000425:g006", "gt_track_uid": "gtv1:VIRAT_S_040103_03_000284_000425:g006", "video_id": "VIRAT_S_040103_03_000284_000425", "start_ms": 43043, "end_ms": 50784, "relevance": 1}
+{"query_id": "vq_d04", "target_id": "t:gtv1:VIRAT_S_040103_03_000284_000425:g016", "gt_track_uid": "gtv1:VIRAT_S_040103_03_000284_000425:g016", "video_id": "VIRAT_S_040103_03_000284_000425", "start_ms": 60060, "end_ms": 86353, "relevance": 1}
+{"query_id": "vq_d04", "target_id": "t:gtv1:VIRAT_S_040103_03_000284_000425:g005", "gt_track_uid": "gtv1:VIRAT_S_040103_03_000284_000425:g005", "video_id": "VIRAT_S_040103_03_000284_000425", "start_ms": 32699, "end_ms": 50784, "relevance": 1}
+{"query_id": "vq_d05", "target_id": "t:gtv1:VIRAT_S_040103_03_000284_000425:g014", "gt_track_uid": "gtv1:VIRAT_S_040103_03_000284_000425:g014", "video_id": "VIRAT_S_040103_03_000284_000425", "start_ms": 120120, "end_ms": 131464, "relevance": 1}

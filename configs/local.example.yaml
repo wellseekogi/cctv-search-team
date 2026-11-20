@@ -1,0 +1,3 @@
+# configs/local.yaml 로 복사한 뒤 자기 경로로 수정
+data_root: D:/cctv_data
+model_root: D:/cctv_models
