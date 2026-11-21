@@ -160,7 +160,7 @@ def create_app(args):
                           and query.representation in ("combined", r["representation"])]
             total += len(candidates)
             lookup = {r["item_id"]: r for r in candidates}
-            for hit in engine.ranked_frames(vector, candidates, query.top_k):
+            for hit in engine.ranked_frames(vector, candidates, query.top_k, text_search=image is None):
                 r = lookup[hit["item_id"]]
                 base = f"/media/{key}/{r['vector_row']}"
                 stamp = hit["timestamp_ms"]
@@ -171,7 +171,7 @@ def create_app(args):
                                     end_ms=min(stamp + 2000, media[r["video_id"]][1]),
                                     thumbnail_url=base + "/frame", video_url=base + "/video",
                                     event_ids=r["event_ids"], reasons=r["reasons"]))
-        results.sort(key=lambda r: (-r["score"], r["video_id"], r["frame_index"], r["thumbnail_url"]))
+        results.sort(key=lambda r: (-r["ranking_score"], r["video_id"], r["frame_index"], r["thumbnail_url"]))
         unique = {}
         for row in results:
             frame = (row["source_sha256"], row["frame_index"], row["playback_time_ms"])

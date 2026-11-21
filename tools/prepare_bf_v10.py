@@ -16,6 +16,7 @@ def main():
     p=argparse.ArgumentParser()
     p.add_argument('--out',type=Path,required=True)
     p.add_argument('--b-inputs',type=Path,required=True,help='Directory of B per-camera inputs from v8/v10 delivery')
+    p.add_argument('--b-manifests',type=Path,help='Read A-submitted per-camera provisional manifests from this directory')
     p.add_argument('--f-data',type=Path,required=True,help='F checkout data/meva directory')
     args=p.parse_args()
     if args.out.exists():raise FileExistsError('Use a fresh output path')
@@ -34,8 +35,11 @@ def main():
         camera=old.name
         frames=rows((old/'frames.jsonl').read_bytes())
         tracks=rows((old/'tracks.jsonl').read_bytes())
-        manifest_path=old/'manifest.PROVISIONAL.jsonl'
-        if not manifest_path.exists():manifest_path=old/'manifest.jsonl'
+        if args.b_manifests:
+            manifest_path=args.b_manifests/camera/'manifest.PROVISIONAL.jsonl'
+        else:
+            manifest_path=old/'manifest.PROVISIONAL.jsonl'
+            if not manifest_path.exists():manifest_path=old/'manifest.jsonl'
         b=rows(manifest_path.read_bytes())[0]
         manifest=align_manifest(b,ms,frames)
         exclusions=image_exclusions(queries,manifest)

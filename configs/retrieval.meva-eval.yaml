@@ -1,0 +1,10 @@
+encoder:
+  factory: retrieval.encoder:TeamSiglip2Encoder
+
+galleries:
+  meva_eval_v1:
+    split: eval
+    run_dir: runs/meva-public/first-50/eval-index
+    data_root: runs/meva-public/media
+    manifest: runs/final-a/manifest.B_ALIASED.jsonl
+    tracks: runs/final-a/eval-tracks.jsonl

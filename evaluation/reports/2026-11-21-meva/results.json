@@ -1,0 +1,1335 @@
+{
+  "model": "google/siglip2-base-patch16-224",
+  "revision": "75de2d55ec2d0b4efc50b3e9ad70dba96a7b2fa2",
+  "scene_counts": {
+    "dev": 298,
+    "eval": 149
+  },
+  "hybrid_items": 71,
+  "tracks": 24,
+  "observations": 638,
+  "source_sha256": {
+    "2018-03-07.11-00-04.11-05-04.hospital.G341": "521041e05734d16d8ae9d6c496f24ab21ba3136f8f8281e2cf55563eb4e70808",
+    "2018-03-07.11-05-06.11-10-06.bus.G340": "408691db783e035b8777a4687ec94c3fac87b006cab783315c2eea598df6332f",
+    "2018-03-09.10-15-00.10-20-00.school.G299": "9f25ee3c5a4f582fe3287e7b1727450f33f3ef9c557eba2cd7dc5a9519ee6ab7",
+    "2018-03-15.14-50-00.14-55-00.school.G421": "05bd976c402f035662baa20bc0409a3e6bd01ed8229a74b6be260317ef89a9c2",
+    "2018-03-15.15-45-00.15-50-00.school.G638": "840ba29cb425fb578bee6e40808292d96071cf51f9ab05f6d09a2d847be6da15",
+    "2018-03-15.15-45-01.15-50-01.bus.G506": "f8ce36b2173e6eaf22a9f00249fcd0f1be445d210908397c4ed361d222c04c31"
+  },
+  "scene_index_sha256": {
+    "dev": "742e3d9c3dee476f07357680b5f23180d3368082d8a45b4f1a691922d09729a4",
+    "eval": "a585042dde2185c48d21b48eaf7beebb04b3eff0a5d8fec5c33affcc7031aa6a"
+  },
+  "queries": [
+    {
+      "id": "mq_d01",
+      "split": "dev",
+      "kind": "event",
+      "language": "ko",
+      "full": 39,
+      "scene": 50
+    },
+    {
+      "id": "mq_d01",
+      "split": "dev",
+      "kind": "event",
+      "language": "en",
+      "full": 21,
+      "scene": 34
+    },
+    {
+      "id": "mq_d02",
+      "split": "dev",
+      "kind": "event",
+      "language": "ko",
+      "full": 12,
+      "scene": 51
+    },
+    {
+      "id": "mq_d02",
+      "split": "dev",
+      "kind": "event",
+      "language": "en",
+      "full": 66,
+      "scene": 63
+    },
+    {
+      "id": "mq_d03",
+      "split": "dev",
+      "kind": "event",
+      "language": "ko",
+      "full": 10,
+      "scene": 4
+    },
+    {
+      "id": "mq_d03",
+      "split": "dev",
+      "kind": "event",
+      "language": "en",
+      "full": 5,
+      "scene": 2
+    },
+    {
+      "id": "mq_d04",
+      "split": "dev",
+      "kind": "event",
+      "language": "ko",
+      "full": 157,
+      "scene": 74
+    },
+    {
+      "id": "mq_d04",
+      "split": "dev",
+      "kind": "event",
+      "language": "en",
+      "full": 50,
+      "scene": 45
+    },
+    {
+      "id": "mq_d05",
+      "split": "dev",
+      "kind": "event",
+      "language": "ko",
+      "full": 124,
+      "scene": 85
+    },
+    {
+      "id": "mq_d05",
+      "split": "dev",
+      "kind": "event",
+      "language": "en",
+      "full": 114,
+      "scene": 163
+    },
+    {
+      "id": "mq_d06",
+      "split": "dev",
+      "kind": "event",
+      "language": "ko",
+      "full": 2,
+      "scene": 5
+    },
+    {
+      "id": "mq_d06",
+      "split": "dev",
+      "kind": "event",
+      "language": "en",
+      "full": 3,
+      "scene": 4
+    },
+    {
+      "id": "mq_d07",
+      "split": "dev",
+      "kind": "event",
+      "language": "ko",
+      "full": 162,
+      "scene": 156
+    },
+    {
+      "id": "mq_d07",
+      "split": "dev",
+      "kind": "event",
+      "language": "en",
+      "full": 62,
+      "scene": 50
+    },
+    {
+      "id": "mq_d08",
+      "split": "dev",
+      "kind": "event",
+      "language": "ko",
+      "full": 15,
+      "scene": 14
+    },
+    {
+      "id": "mq_d08",
+      "split": "dev",
+      "kind": "event",
+      "language": "en",
+      "full": 9,
+      "scene": 6
+    },
+    {
+      "id": "mq_d09",
+      "split": "dev",
+      "kind": "event",
+      "language": "ko",
+      "full": null,
+      "scene": null
+    },
+    {
+      "id": "mq_d09",
+      "split": "dev",
+      "kind": "event",
+      "language": "en",
+      "full": null,
+      "scene": null
+    },
+    {
+      "id": "mq_d10",
+      "split": "dev",
+      "kind": "event",
+      "language": "ko",
+      "full": 2,
+      "scene": 3
+    },
+    {
+      "id": "mq_d10",
+      "split": "dev",
+      "kind": "event",
+      "language": "en",
+      "full": 3,
+      "scene": 3
+    },
+    {
+      "id": "mq_d11",
+      "split": "dev",
+      "kind": "event",
+      "language": "ko",
+      "full": null,
+      "scene": null
+    },
+    {
+      "id": "mq_d11",
+      "split": "dev",
+      "kind": "event",
+      "language": "en",
+      "full": null,
+      "scene": null
+    },
+    {
+      "id": "mq_d12",
+      "split": "dev",
+      "kind": "event",
+      "language": "ko",
+      "full": 8,
+      "scene": 2
+    },
+    {
+      "id": "mq_d12",
+      "split": "dev",
+      "kind": "event",
+      "language": "en",
+      "full": 3,
+      "scene": 1
+    },
+    {
+      "id": "mq_d13",
+      "split": "dev",
+      "kind": "event",
+      "language": "ko",
+      "full": 152,
+      "scene": 73
+    },
+    {
+      "id": "mq_d13",
+      "split": "dev",
+      "kind": "event",
+      "language": "en",
+      "full": 102,
+      "scene": 30
+    },
+    {
+      "id": "mq_d14",
+      "split": "dev",
+      "kind": "event",
+      "language": "ko",
+      "full": 26,
+      "scene": 28
+    },
+    {
+      "id": "mq_d14",
+      "split": "dev",
+      "kind": "event",
+      "language": "en",
+      "full": 50,
+      "scene": 27
+    },
+    {
+      "id": "mq_d15",
+      "split": "dev",
+      "kind": "event",
+      "language": "ko",
+      "full": 253,
+      "scene": 253
+    },
+    {
+      "id": "mq_d15",
+      "split": "dev",
+      "kind": "event",
+      "language": "en",
+      "full": 165,
+      "scene": 119
+    },
+    {
+      "id": "mq_e01",
+      "split": "eval",
+      "kind": "appearance",
+      "language": "ko",
+      "full": 6,
+      "scene": 2,
+      "api_status": 200,
+      "track_time": null,
+      "track_person": null,
+      "top5_items": [
+        "item_af28ae691fb0328e60b6e505",
+        "item_b6a98f37cb2d9a4835076299",
+        "item_12a3fe6e6e3afe131e0dff13",
+        "item_8bda136022422f5baf5f125e",
+        "item_8ac2e1d76076dff313394ff6"
+      ],
+      "time_available": false
+    },
+    {
+      "id": "mq_e01",
+      "split": "eval",
+      "kind": "appearance",
+      "language": "en",
+      "full": 7,
+      "scene": 2,
+      "api_status": 200,
+      "track_time": null,
+      "track_person": null,
+      "top5_items": [
+        "item_b6a98f37cb2d9a4835076299",
+        "item_af28ae691fb0328e60b6e505",
+        "item_12a3fe6e6e3afe131e0dff13",
+        "item_47b7c948a02aec3d5663c5c4",
+        "item_b96650424491b3674334c9f6"
+      ],
+      "time_available": false
+    },
+    {
+      "id": "mq_e02",
+      "split": "eval",
+      "kind": "appearance",
+      "language": "ko",
+      "full": 1,
+      "scene": 1,
+      "api_status": 200,
+      "track_time": null,
+      "track_person": null,
+      "top5_items": [
+        "item_af28ae691fb0328e60b6e505",
+        "item_b6a98f37cb2d9a4835076299",
+        "item_8bda136022422f5baf5f125e",
+        "item_8ac2e1d76076dff313394ff6",
+        "item_1e92027355716769420cbe15"
+      ],
+      "time_available": false
+    },
+    {
+      "id": "mq_e02",
+      "split": "eval",
+      "kind": "appearance",
+      "language": "en",
+      "full": 1,
+      "scene": 1,
+      "api_status": 200,
+      "track_time": null,
+      "track_person": null,
+      "top5_items": [
+        "item_af28ae691fb0328e60b6e505",
+        "item_b6a98f37cb2d9a4835076299",
+        "item_47b7c948a02aec3d5663c5c4",
+        "item_8ac2e1d76076dff313394ff6",
+        "item_b96650424491b3674334c9f6"
+      ],
+      "time_available": false
+    },
+    {
+      "id": "mq_e03",
+      "split": "eval",
+      "kind": "appearance",
+      "language": "ko",
+      "full": 15,
+      "scene": 9,
+      "api_status": 200,
+      "track_time": null,
+      "track_person": null,
+      "top5_items": [
+        "item_d8e23ee5619e34eec89399e2",
+        "item_88a84226abf2d87d9f88ba50",
+        "item_069884821af5695fbe268ee4",
+        "item_efd70f468484881b0f41b7ff",
+        "item_1bf3e80174d7e3cad085d300"
+      ],
+      "time_available": false
+    },
+    {
+      "id": "mq_e03",
+      "split": "eval",
+      "kind": "appearance",
+      "language": "en",
+      "full": 36,
+      "scene": 9,
+      "api_status": 200,
+      "track_time": null,
+      "track_person": null,
+      "top5_items": [
+        "item_d8e23ee5619e34eec89399e2",
+        "item_88a84226abf2d87d9f88ba50",
+        "item_efd70f468484881b0f41b7ff",
+        "item_b6a98f37cb2d9a4835076299",
+        "item_1e92027355716769420cbe15"
+      ],
+      "time_available": false
+    },
+    {
+      "id": "mq_e04",
+      "split": "eval",
+      "kind": "event",
+      "language": "ko",
+      "full": 7,
+      "scene": 3,
+      "api_status": 200,
+      "track_time": null,
+      "track_person": null,
+      "top5_items": [
+        "item_d8e23ee5619e34eec89399e2",
+        "item_915dee88424852edfc4eafd5",
+        "item_069884821af5695fbe268ee4",
+        "item_0c1893e2660c62e31009a220",
+        "item_8ac2e1d76076dff313394ff6"
+      ],
+      "time_available": false
+    },
+    {
+      "id": "mq_e04",
+      "split": "eval",
+      "kind": "event",
+      "language": "en",
+      "full": 6,
+      "scene": 6,
+      "api_status": 200,
+      "track_time": null,
+      "track_person": null,
+      "top5_items": [
+        "item_d8e23ee5619e34eec89399e2",
+        "item_069884821af5695fbe268ee4",
+        "item_88a84226abf2d87d9f88ba50",
+        "item_af28ae691fb0328e60b6e505",
+        "item_1bf3e80174d7e3cad085d300"
+      ],
+      "time_available": false
+    },
+    {
+      "id": "mq_e05",
+      "split": "eval",
+      "kind": "appearance",
+      "language": "ko",
+      "full": 3,
+      "scene": 5,
+      "api_status": 200,
+      "track_time": 1,
+      "track_person": 2,
+      "top5_items": [
+        "item_069884821af5695fbe268ee4",
+        "item_d8e23ee5619e34eec89399e2",
+        "item_88a84226abf2d87d9f88ba50",
+        "item_b6a98f37cb2d9a4835076299",
+        "item_8a0b419fefebb3e60ffd535f"
+      ],
+      "time_available": true
+    },
+    {
+      "id": "mq_e05",
+      "split": "eval",
+      "kind": "appearance",
+      "language": "en",
+      "full": 3,
+      "scene": 2,
+      "api_status": 200,
+      "track_time": 1,
+      "track_person": 2,
+      "top5_items": [
+        "item_069884821af5695fbe268ee4",
+        "item_d8e23ee5619e34eec89399e2",
+        "item_88a84226abf2d87d9f88ba50",
+        "item_b6a98f37cb2d9a4835076299",
+        "item_47b7c948a02aec3d5663c5c4"
+      ],
+      "time_available": true
+    },
+    {
+      "id": "mq_e06",
+      "split": "eval",
+      "kind": "event",
+      "language": "ko",
+      "full": 43,
+      "scene": 44,
+      "api_status": 200,
+      "track_time": null,
+      "track_person": null,
+      "top5_items": [
+        "item_0c1893e2660c62e31009a220",
+        "item_af28ae691fb0328e60b6e505",
+        "item_1bf3e80174d7e3cad085d300",
+        "item_f9d1aa9ef862fb265aca6a09",
+        "item_b6a98f37cb2d9a4835076299"
+      ],
+      "time_available": false
+    },
+    {
+      "id": "mq_e06",
+      "split": "eval",
+      "kind": "event",
+      "language": "en",
+      "full": 51,
+      "scene": 39,
+      "api_status": 200,
+      "track_time": null,
+      "track_person": null,
+      "top5_items": [
+        "item_af28ae691fb0328e60b6e505",
+        "item_0c1893e2660c62e31009a220",
+        "item_f9d1aa9ef862fb265aca6a09",
+        "item_47b7c948a02aec3d5663c5c4",
+        "item_116b84681e00b7debdadd8ba"
+      ],
+      "time_available": false
+    },
+    {
+      "id": "mq_e07",
+      "split": "eval",
+      "kind": "event",
+      "language": "ko",
+      "full": 4,
+      "scene": 2,
+      "api_status": 200,
+      "track_time": null,
+      "track_person": null,
+      "top5_items": [
+        "item_b6a98f37cb2d9a4835076299",
+        "item_0c1893e2660c62e31009a220",
+        "item_47b7c948a02aec3d5663c5c4",
+        "item_dfc741bb2dffd94d7d609932",
+        "item_915dee88424852edfc4eafd5"
+      ],
+      "time_available": false
+    },
+    {
+      "id": "mq_e07",
+      "split": "eval",
+      "kind": "event",
+      "language": "en",
+      "full": 3,
+      "scene": 1,
+      "api_status": 200,
+      "track_time": null,
+      "track_person": null,
+      "top5_items": [
+        "item_0c1893e2660c62e31009a220",
+        "item_47b7c948a02aec3d5663c5c4",
+        "item_b6a98f37cb2d9a4835076299",
+        "item_8a0b419fefebb3e60ffd535f",
+        "item_bb39465e2747efb2f6eb11fd"
+      ],
+      "time_available": false
+    },
+    {
+      "id": "mq_e08",
+      "split": "eval",
+      "kind": "event",
+      "language": "ko",
+      "full": 53,
+      "scene": 24,
+      "api_status": 200,
+      "track_time": 3,
+      "track_person": null,
+      "top5_items": [
+        "item_0c1893e2660c62e31009a220",
+        "item_af28ae691fb0328e60b6e505",
+        "item_dfc741bb2dffd94d7d609932",
+        "item_47b7c948a02aec3d5663c5c4",
+        "item_bb39465e2747efb2f6eb11fd"
+      ],
+      "time_available": true
+    },
+    {
+      "id": "mq_e08",
+      "split": "eval",
+      "kind": "event",
+      "language": "en",
+      "full": 60,
+      "scene": 12,
+      "api_status": 200,
+      "track_time": 1,
+      "track_person": null,
+      "top5_items": [
+        "item_bb39465e2747efb2f6eb11fd",
+        "item_0c1893e2660c62e31009a220",
+        "item_116b84681e00b7debdadd8ba",
+        "item_90913b56f632ff674907981c",
+        "item_8bda136022422f5baf5f125e"
+      ],
+      "time_available": true
+    },
+    {
+      "id": "mq_e09",
+      "split": "eval",
+      "kind": "event",
+      "language": "ko",
+      "full": 2,
+      "scene": 1,
+      "api_status": 200,
+      "track_time": null,
+      "track_person": null,
+      "top5_items": [
+        "item_0c1893e2660c62e31009a220",
+        "item_116b84681e00b7debdadd8ba",
+        "item_b3b29536a3ba50a82eb704a8",
+        "item_984de2f7d749a3252b23b187",
+        "item_b6a98f37cb2d9a4835076299"
+      ],
+      "time_available": false
+    },
+    {
+      "id": "mq_e09",
+      "split": "eval",
+      "kind": "event",
+      "language": "en",
+      "full": 31,
+      "scene": 25,
+      "api_status": 200,
+      "track_time": null,
+      "track_person": null,
+      "top5_items": [
+        "item_b3b29536a3ba50a82eb704a8",
+        "item_116b84681e00b7debdadd8ba",
+        "item_f9d1aa9ef862fb265aca6a09",
+        "item_0c1893e2660c62e31009a220",
+        "item_47b7c948a02aec3d5663c5c4"
+      ],
+      "time_available": false
+    },
+    {
+      "id": "mq_e10",
+      "split": "eval",
+      "kind": "event",
+      "language": "ko",
+      "full": 31,
+      "scene": 9,
+      "api_status": 200,
+      "track_time": null,
+      "track_person": null,
+      "top5_items": [
+        "item_0c1893e2660c62e31009a220",
+        "item_116b84681e00b7debdadd8ba",
+        "item_af28ae691fb0328e60b6e505",
+        "item_1bf3e80174d7e3cad085d300",
+        "item_f9d1aa9ef862fb265aca6a09"
+      ],
+      "time_available": false
+    },
+    {
+      "id": "mq_e10",
+      "split": "eval",
+      "kind": "event",
+      "language": "en",
+      "full": 8,
+      "scene": 2,
+      "api_status": 200,
+      "track_time": null,
+      "track_person": null,
+      "top5_items": [
+        "item_90913b56f632ff674907981c",
+        "item_0c1893e2660c62e31009a220",
+        "item_1bf3e80174d7e3cad085d300",
+        "item_116b84681e00b7debdadd8ba",
+        "item_af28ae691fb0328e60b6e505"
+      ],
+      "time_available": false
+    },
+    {
+      "id": "mq_e11",
+      "split": "eval",
+      "kind": "event",
+      "language": "ko",
+      "full": 13,
+      "scene": 27,
+      "api_status": 200,
+      "track_time": 1,
+      "track_person": 1,
+      "top5_items": [
+        "item_8a0b419fefebb3e60ffd535f",
+        "item_b6a98f37cb2d9a4835076299",
+        "item_0c1893e2660c62e31009a220",
+        "item_47b7c948a02aec3d5663c5c4",
+        "item_dfc741bb2dffd94d7d609932"
+      ],
+      "time_available": true
+    },
+    {
+      "id": "mq_e11",
+      "split": "eval",
+      "kind": "event",
+      "language": "en",
+      "full": 1,
+      "scene": 4,
+      "api_status": 200,
+      "track_time": 1,
+      "track_person": 3,
+      "top5_items": [
+        "item_0c1893e2660c62e31009a220",
+        "item_47b7c948a02aec3d5663c5c4",
+        "item_8a0b419fefebb3e60ffd535f",
+        "item_b6a98f37cb2d9a4835076299",
+        "item_dfc741bb2dffd94d7d609932"
+      ],
+      "time_available": true
+    },
+    {
+      "id": "mq_e13",
+      "split": "eval",
+      "kind": "event",
+      "language": "ko",
+      "full": 25,
+      "scene": 9,
+      "api_status": 200,
+      "track_time": 1,
+      "track_person": 1,
+      "top5_items": [
+        "item_069884821af5695fbe268ee4",
+        "item_47b7c948a02aec3d5663c5c4",
+        "item_d8e23ee5619e34eec89399e2",
+        "item_b6a98f37cb2d9a4835076299",
+        "item_efd70f468484881b0f41b7ff"
+      ],
+      "time_available": true
+    },
+    {
+      "id": "mq_e13",
+      "split": "eval",
+      "kind": "event",
+      "language": "en",
+      "full": 36,
+      "scene": 17,
+      "api_status": 200,
+      "track_time": 1,
+      "track_person": 1,
+      "top5_items": [
+        "item_069884821af5695fbe268ee4",
+        "item_47b7c948a02aec3d5663c5c4",
+        "item_d8e23ee5619e34eec89399e2",
+        "item_b6a98f37cb2d9a4835076299",
+        "item_8a0b419fefebb3e60ffd535f"
+      ],
+      "time_available": true
+    },
+    {
+      "id": "mq_di01",
+      "split": "dev",
+      "kind": "image",
+      "language": "image",
+      "full": 233,
+      "scene": 233
+    },
+    {
+      "id": "mq_di02",
+      "split": "dev",
+      "kind": "image",
+      "language": "image",
+      "full": 9,
+      "scene": 9
+    },
+    {
+      "id": "mq_di03",
+      "split": "dev",
+      "kind": "image",
+      "language": "image",
+      "full": null,
+      "scene": null
+    },
+    {
+      "id": "mq_di04",
+      "split": "dev",
+      "kind": "image",
+      "language": "image",
+      "full": 3,
+      "scene": 3
+    },
+    {
+      "id": "mq_di05",
+      "split": "dev",
+      "kind": "image",
+      "language": "image",
+      "full": 226,
+      "scene": 226
+    },
+    {
+      "id": "mq_ei01",
+      "split": "eval",
+      "kind": "image",
+      "language": "image",
+      "full": 3,
+      "scene": 3,
+      "api_status": 200,
+      "track_time": null,
+      "track_person": null,
+      "top5_items": [
+        "item_069884821af5695fbe268ee4",
+        "item_d8e23ee5619e34eec89399e2",
+        "item_efd70f468484881b0f41b7ff",
+        "item_88a84226abf2d87d9f88ba50",
+        "item_8bda136022422f5baf5f125e"
+      ],
+      "time_available": false
+    },
+    {
+      "id": "mq_ei02",
+      "split": "eval",
+      "kind": "image",
+      "language": "image",
+      "full": 1,
+      "scene": 1,
+      "api_status": 200,
+      "track_time": null,
+      "track_person": null,
+      "top5_items": [
+        "item_069884821af5695fbe268ee4",
+        "item_d8e23ee5619e34eec89399e2",
+        "item_efd70f468484881b0f41b7ff",
+        "item_88a84226abf2d87d9f88ba50",
+        "item_8bda136022422f5baf5f125e"
+      ],
+      "time_available": false
+    },
+    {
+      "id": "mq_ei03",
+      "split": "eval",
+      "kind": "image",
+      "language": "image",
+      "full": 23,
+      "scene": 23,
+      "api_status": 200,
+      "track_time": null,
+      "track_person": null,
+      "top5_items": [
+        "item_069884821af5695fbe268ee4",
+        "item_d8e23ee5619e34eec89399e2",
+        "item_efd70f468484881b0f41b7ff",
+        "item_88a84226abf2d87d9f88ba50",
+        "item_8bda136022422f5baf5f125e"
+      ],
+      "time_available": false
+    },
+    {
+      "id": "mq_ei04",
+      "split": "eval",
+      "kind": "image",
+      "language": "image",
+      "full": 1,
+      "scene": 1,
+      "api_status": 200,
+      "track_time": 1,
+      "track_person": 2,
+      "top5_items": [
+        "item_069884821af5695fbe268ee4",
+        "item_d8e23ee5619e34eec89399e2",
+        "item_efd70f468484881b0f41b7ff",
+        "item_88a84226abf2d87d9f88ba50",
+        "item_1e92027355716769420cbe15"
+      ],
+      "time_available": true
+    },
+    {
+      "id": "mq_ei05",
+      "split": "eval",
+      "kind": "image",
+      "language": "image",
+      "full": 2,
+      "scene": 2,
+      "api_status": 200,
+      "track_time": null,
+      "track_person": null,
+      "top5_items": [
+        "item_b6a98f37cb2d9a4835076299",
+        "item_dfc741bb2dffd94d7d609932",
+        "item_0c1893e2660c62e31009a220",
+        "item_47b7c948a02aec3d5663c5c4",
+        "item_984de2f7d749a3252b23b187"
+      ],
+      "time_available": false
+    }
+  ],
+  "pairs": [
+    {
+      "kind": "scene",
+      "positive": "G299_0",
+      "negative": "G421_8",
+      "ko": "농구 골대가 있는 실내 체육관",
+      "en": "an indoor gym with a basketball hoop",
+      "ko_margin": 0.06867538392543793,
+      "en_margin": 0.09165936708450317
+    },
+    {
+      "kind": "scene",
+      "positive": "G421_44",
+      "negative": "G299_44",
+      "ko": "간식 판매대가 있는 카페",
+      "en": "a cafe with a snack counter",
+      "ko_margin": 0.07583928760141134,
+      "en_margin": 0.061917148530483246
+    },
+    {
+      "kind": "scene",
+      "positive": "G638_160",
+      "negative": "G340_120",
+      "ko": "벽돌 건물 앞의 보행자 광장",
+      "en": "a pedestrian plaza in front of a brick building",
+      "ko_margin": 0.06582824885845184,
+      "en_margin": 0.06510004773736
+    },
+    {
+      "kind": "scene",
+      "positive": "G340_176",
+      "negative": "G638_176",
+      "ko": "여러 대의 차가 주차된 주차장",
+      "en": "a parking lot filled with parked cars",
+      "ko_margin": 0.04908791929483414,
+      "en_margin": 0.09804921597242355
+    },
+    {
+      "kind": "object",
+      "positive": "G638_0",
+      "negative": "G638_160",
+      "ko": "광장에 세워 둔 자전거",
+      "en": "a parked bicycle in the plaza",
+      "ko_margin": 0.015131054446101189,
+      "en_margin": 0.010208889842033386
+    },
+    {
+      "kind": "object",
+      "positive": "G341_64",
+      "negative": "G341_8",
+      "ko": "버스 정류장 앞 주차장의 은색 승용차",
+      "en": "a silver car in the parking lot in front of the bus station",
+      "ko_margin": -0.00209026038646698,
+      "en_margin": 0.013491906225681305
+    },
+    {
+      "kind": "object",
+      "positive": "G340_92",
+      "negative": "G340_24",
+      "ko": "도로 위의 빨간 승용차",
+      "en": "a red car on the road",
+      "ko_margin": 0.002333022654056549,
+      "en_margin": 0.004376128315925598
+    },
+    {
+      "kind": "object",
+      "positive": "G506_132",
+      "negative": "G506_176",
+      "ko": "입구 앞에서 손에 든 검은 가방",
+      "en": "a black handbag carried by hand at the entrance",
+      "ko_margin": 0.043384991586208344,
+      "en_margin": 0.05136408656835556
+    },
+    {
+      "kind": "object",
+      "positive": "G638_44",
+      "negative": "G638_160",
+      "ko": "광장 바닥에 있는 공",
+      "en": "a ball on the ground in the plaza",
+      "ko_margin": 0.005102992057800293,
+      "en_margin": 0.010453760623931885
+    },
+    {
+      "kind": "coexist",
+      "positive": "G638_232",
+      "negative": "G638_216",
+      "ko": "자전거와 사람이 함께 보이는 광장",
+      "en": "a plaza scene with a bicycle and a person",
+      "ko_margin": 0.023388206958770752,
+      "en_margin": 0.017007194459438324
+    },
+    {
+      "kind": "coexist",
+      "positive": "G340_64",
+      "negative": "G340_24",
+      "ko": "사람과 SUV가 함께 보이는 주차장",
+      "en": "a parking lot with a person and an SUV in view",
+      "ko_margin": 0.012610465288162231,
+      "en_margin": 0.007278516888618469
+    },
+    {
+      "kind": "coexist",
+      "positive": "G341_64",
+      "negative": "G341_8",
+      "ko": "은색 승용차와 사람이 함께 보이는 장면",
+      "en": "a scene showing both a silver car and a person",
+      "ko_margin": 0.02915472537279129,
+      "en_margin": 0.02863500267267227
+    },
+    {
+      "kind": "coexist",
+      "positive": "G506_132",
+      "negative": "G506_176",
+      "ko": "현관문과 현관 앞의 사람이 함께 보이는 장면",
+      "en": "an entrance door and a person in the entrance area",
+      "ko_margin": 0.011731088161468506,
+      "en_margin": 0.02058187872171402
+    },
+    {
+      "kind": "clothing",
+      "positive": "G638_12",
+      "negative": "G638_232",
+      "ko": "적갈색 셔츠를 입은 자전거 이용자",
+      "en": "a cyclist wearing a maroon shirt",
+      "ko_margin": 0.0158541202545166,
+      "en_margin": 0.028253987431526184
+    },
+    {
+      "kind": "clothing",
+      "positive": "G638_232",
+      "negative": "G638_12",
+      "ko": "회색 티셔츠를 입은 자전거 이용자",
+      "en": "a cyclist wearing a gray T-shirt",
+      "ko_margin": -0.019858095794916153,
+      "en_margin": -0.026569735258817673
+    },
+    {
+      "kind": "clothing",
+      "positive": "G421_44",
+      "negative": "G421_260",
+      "ko": "간식 판매대 앞에 연한 파란색 상의를 입은 사람",
+      "en": "a person in a light blue top at the snack counter",
+      "ko_margin": -0.004701346158981323,
+      "en_margin": 0.0069526806473731995
+    },
+    {
+      "kind": "clothing",
+      "positive": "G421_260",
+      "negative": "G421_44",
+      "ko": "간식 판매대 앞에 검정 셔츠를 입은 사람",
+      "en": "a person in a black shirt at the snack counter",
+      "ko_margin": 0.024678722023963928,
+      "en_margin": 0.0153428316116333
+    },
+    {
+      "kind": "clothing",
+      "positive": "G299_8",
+      "negative": "G299_64",
+      "ko": "농구 코트 바닥에 있는 적갈색 상의의 사람",
+      "en": "a person wearing a burgundy top on the basketball court",
+      "ko_margin": -0.005719989538192749,
+      "en_margin": 0.005279630422592163
+    },
+    {
+      "kind": "clothing",
+      "positive": "G299_64",
+      "negative": "G299_8",
+      "ko": "농구 코트 바닥에 있는 줄무늬 셔츠의 사람",
+      "en": "a person wearing a striped shirt on the basketball court",
+      "ko_margin": 0.011213041841983795,
+      "en_margin": 0.0048347413539886475
+    },
+    {
+      "kind": "clothing",
+      "positive": "G340_64",
+      "negative": "G340_8",
+      "ko": "주차장 앞쪽에 파란색 후드티를 입은 사람",
+      "en": "a person wearing a blue hoodie in the foreground of the parking lot",
+      "ko_margin": 0.02649940550327301,
+      "en_margin": 0.0219556987285614
+    },
+    {
+      "kind": "combo",
+      "positive": "G638_12",
+      "negative": "G638_232",
+      "ko": "흰 모자와 적갈색 셔츠를 착용한 자전거 이용자",
+      "en": "a cyclist wearing a white cap and a maroon shirt",
+      "ko_margin": 0.023610733449459076,
+      "en_margin": 0.03635776415467262
+    },
+    {
+      "kind": "combo",
+      "positive": "G638_232",
+      "negative": "G638_12",
+      "ko": "검은 모자와 회색 티셔츠를 착용한 자전거 이용자",
+      "en": "a cyclist wearing a black cap and a gray T-shirt",
+      "ko_margin": -0.02301420271396637,
+      "en_margin": -0.03082222305238247
+    },
+    {
+      "kind": "combo",
+      "positive": "G421_176",
+      "negative": "G421_64",
+      "ko": "간식 판매대 앞에 어두운 코트와 분홍색 목도리를 착용한 사람",
+      "en": "a person in a dark coat and a pink scarf at the snack counter",
+      "ko_margin": 0.0009350329637527466,
+      "en_margin": 0.00791218876838684
+    },
+    {
+      "kind": "combo",
+      "positive": "G421_64",
+      "negative": "G421_176",
+      "ko": "간식 판매대 앞에 어두운 코트와 체크무늬 모자를 착용한 사람",
+      "en": "a person in a dark coat and a checked cap at the snack counter",
+      "ko_margin": 0.020679660141468048,
+      "en_margin": 0.020663030445575714
+    },
+    {
+      "kind": "near",
+      "positive": "G299_12",
+      "negative": "G299_24",
+      "ko": "카메라에 가장 가까운 검은 옷의 사람이 체육관 테이블 바로 옆에 있다",
+      "en": "the nearest person in black is right beside the gym table",
+      "ko_margin": -0.018063627183437347,
+      "en_margin": -0.015342295169830322
+    },
+    {
+      "kind": "near",
+      "positive": "G299_24",
+      "negative": "G299_12",
+      "ko": "카메라에 가장 가까운 검은 옷의 사람이 체육관 테이블에서 떨어져 있다",
+      "en": "the nearest person in black is away from the gym table",
+      "ko_margin": 0.019808247685432434,
+      "en_margin": 0.014362186193466187
+    },
+    {
+      "kind": "near",
+      "positive": "G341_52",
+      "negative": "G341_24",
+      "ko": "파란 옷을 입은 사람이 은색 승용차 바로 옆에 있다",
+      "en": "a person in blue is right next to the silver car",
+      "ko_margin": 0.009508509188890457,
+      "en_margin": -0.010496936738491058
+    },
+    {
+      "kind": "near",
+      "positive": "G341_24",
+      "negative": "G341_52",
+      "ko": "파란 옷을 입은 사람이 은색 승용차에서 멀리 떨어져 있다",
+      "en": "a person in blue is far from the silver car",
+      "ko_margin": -0.01172640174627304,
+      "en_margin": 0.007068514823913574
+    },
+    {
+      "kind": "near",
+      "positive": "G421_64",
+      "negative": "G421_120",
+      "ko": "체크무늬 모자를 쓴 사람이 간식 판매대 바로 옆에 있다",
+      "en": "the person in a checked cap is right next to the snack counter",
+      "ko_margin": -5.8069825172424316e-05,
+      "en_margin": 0.0032105594873428345
+    },
+    {
+      "kind": "near",
+      "positive": "G421_120",
+      "negative": "G421_64",
+      "ko": "체크무늬 모자를 쓴 사람이 간식 판매대에서 멀리 떨어져 있다",
+      "en": "the person in a checked cap is far from the snack counter",
+      "ko_margin": -0.0012728795409202576,
+      "en_margin": 0.00020237267017364502
+    },
+    {
+      "kind": "near",
+      "positive": "G506_64",
+      "negative": "G506_216",
+      "ko": "사람이 햇빛이 드는 벤치 바로 옆에 있다",
+      "en": "a person is right next to the sunlit bench",
+      "ko_margin": 0.01472589373588562,
+      "en_margin": 0.012448333203792572
+    },
+    {
+      "kind": "direction",
+      "positive": "G421_64",
+      "negative": "G421_120",
+      "ko": "체크무늬 모자를 쓴 사람이 나무 테이블들의 왼쪽에 있다",
+      "en": "the person in a checked cap is to the left of the wooden tables",
+      "ko_margin": -0.00988885760307312,
+      "en_margin": 0.002079807221889496
+    },
+    {
+      "kind": "direction",
+      "positive": "G421_120",
+      "negative": "G421_64",
+      "ko": "체크무늬 모자를 쓴 사람이 나무 테이블들의 오른쪽에 있다",
+      "en": "the person in a checked cap is to the right of the wooden tables",
+      "ko_margin": 0.010332413017749786,
+      "en_margin": -0.0017683058977127075
+    },
+    {
+      "kind": "direction",
+      "positive": "G341_184",
+      "negative": "G341_176",
+      "ko": "빨간 차가 건물 현관의 왼쪽에 있다",
+      "en": "the red car is to the left of the building entrance",
+      "ko_margin": 0.003075346350669861,
+      "en_margin": 0.007769837975502014
+    },
+    {
+      "kind": "direction",
+      "positive": "G341_176",
+      "negative": "G341_184",
+      "ko": "빨간 차가 건물 현관의 오른쪽에 있다",
+      "en": "the red car is to the right of the building entrance",
+      "ko_margin": -0.0038234665989875793,
+      "en_margin": -0.007729291915893555
+    },
+    {
+      "kind": "direction",
+      "positive": "G299_8",
+      "negative": "G299_12",
+      "ko": "적갈색 상의의 사람이 관중석 앞 회색 구조물의 왼쪽에 있다",
+      "en": "the person in a burgundy top is to the left of the gray structure in front of the bleachers",
+      "ko_margin": 0.008342035114765167,
+      "en_margin": 0.01642671227455139
+    },
+    {
+      "kind": "direction",
+      "positive": "G299_12",
+      "negative": "G299_8",
+      "ko": "적갈색 상의의 사람이 관중석 앞 회색 구조물의 오른쪽에 있다",
+      "en": "the person in a burgundy top is to the right of the gray structure in front of the bleachers",
+      "ko_margin": -0.010106287896633148,
+      "en_margin": -0.01610572636127472
+    },
+    {
+      "kind": "direction",
+      "positive": "G638_132",
+      "negative": "G638_140",
+      "ko": "흰 모자와 적갈색 셔츠를 착용한 사람이 광장 가운데 벽돌 기둥의 왼쪽에 있다",
+      "en": "the person in a white cap and maroon shirt is to the left of the central brick pillar in the plaza",
+      "ko_margin": 0.004901297390460968,
+      "en_margin": -0.004720926284790039
+    },
+    {
+      "kind": "direction",
+      "positive": "G638_140",
+      "negative": "G638_132",
+      "ko": "흰 모자와 적갈색 셔츠를 착용한 사람이 광장 가운데 벽돌 기둥의 오른쪽에 있다",
+      "en": "the person in a white cap and maroon shirt is to the right of the central brick pillar in the plaza",
+      "ko_margin": -0.004658803343772888,
+      "en_margin": 0.004171237349510193
+    },
+    {
+      "kind": "support",
+      "positive": "G506_92",
+      "negative": "G506_64",
+      "ko": "사람이 햇빛이 드는 벤치 위에 앉아 있다",
+      "en": "a person is sitting on the sunlit bench",
+      "ko_margin": 0.027828477323055267,
+      "en_margin": 0.027253374457359314
+    },
+    {
+      "kind": "support",
+      "positive": "G506_64",
+      "negative": "G506_92",
+      "ko": "사람이 햇빛이 드는 벤치 옆에 서 있다",
+      "en": "a person is standing next to the sunlit bench",
+      "ko_margin": -0.013259679079055786,
+      "en_margin": -0.008590400218963623
+    },
+    {
+      "kind": "support",
+      "positive": "G421_176",
+      "negative": "G421_260",
+      "ko": "유리문 근처의 의자에 사람이 앉아 있다",
+      "en": "a person is sitting on the chair near the glass doors",
+      "ko_margin": 0.01801779866218567,
+      "en_margin": 0.004045404493808746
+    },
+    {
+      "kind": "support",
+      "positive": "G421_260",
+      "negative": "G421_176",
+      "ko": "유리문 근처의 의자 옆에 사람이 서 있다",
+      "en": "a person is standing next to the chair near the glass doors",
+      "ko_margin": -0.014954417943954468,
+      "en_margin": -0.001786351203918457
+    },
+    {
+      "kind": "state",
+      "positive": "G421_24",
+      "negative": "G421_8",
+      "ko": "카페 출입구의 유리문이 열려 있다",
+      "en": "the glass door at the cafe entrance is open",
+      "ko_margin": 0.0018329694867134094,
+      "en_margin": 0.006711497902870178
+    },
+    {
+      "kind": "state",
+      "positive": "G421_8",
+      "negative": "G421_24",
+      "ko": "카페 출입구의 유리문이 닫혀 있다",
+      "en": "the glass door at the cafe entrance is closed",
+      "ko_margin": -0.0032130181789398193,
+      "en_margin": -0.007422491908073425
+    },
+    {
+      "kind": "state",
+      "positive": "G506_120",
+      "negative": "G506_104",
+      "ko": "기둥 뒤 건물의 현관문이 열려 있다",
+      "en": "the building entrance door behind the pillars is open",
+      "ko_margin": -0.0017594248056411743,
+      "en_margin": -0.0035807043313980103
+    },
+    {
+      "kind": "state",
+      "positive": "G506_104",
+      "negative": "G506_120",
+      "ko": "기둥 뒤 건물의 현관문이 닫혀 있다",
+      "en": "the building entrance door behind the pillars is closed",
+      "ko_margin": -0.0003530159592628479,
+      "en_margin": 0.002859964966773987
+    },
+    {
+      "kind": "action",
+      "positive": "G638_12",
+      "negative": "G638_120",
+      "ko": "흰 모자와 적갈색 셔츠를 입은 사람이 자전거를 타고 있다",
+      "en": "a person in a white cap and maroon shirt is riding a bicycle",
+      "ko_margin": 0.029171399772167206,
+      "en_margin": 0.050433311611413956
+    },
+    {
+      "kind": "action",
+      "positive": "G638_120",
+      "negative": "G638_12",
+      "ko": "흰 모자와 적갈색 셔츠를 입은 사람이 광장 바닥에 서 있다",
+      "en": "a person in a white cap and maroon shirt is standing on the plaza ground",
+      "ko_margin": 0.02278120443224907,
+      "en_margin": 0.004729531705379486
+    },
+    {
+      "kind": "action",
+      "positive": "G638_20",
+      "negative": "G638_128",
+      "ko": "흰 모자와 적갈색 셔츠를 입은 사람이 자전거를 타고 있다",
+      "en": "a person in a white cap and maroon shirt is riding a bicycle",
+      "ko_margin": -0.012186862528324127,
+      "en_margin": -0.012892037630081177
+    },
+    {
+      "kind": "action",
+      "positive": "G638_128",
+      "negative": "G638_20",
+      "ko": "흰 모자와 적갈색 셔츠를 입은 사람이 광장 바닥에 서 있다",
+      "en": "a person in a white cap and maroon shirt is standing on the plaza ground",
+      "ko_margin": -0.005235001444816589,
+      "en_margin": -0.0036286860704421997
+    },
+    {
+      "kind": "action",
+      "positive": "G299_52",
+      "negative": "G299_44",
+      "ko": "체육관 바닥에서 두 사람이 팔짱을 끼고 걷는 장면",
+      "en": "two people walking arm in arm on the gym floor",
+      "ko_margin": 0.006931900978088379,
+      "en_margin": 0.003926560282707214
+    },
+    {
+      "kind": "action",
+      "positive": "G299_120",
+      "negative": "G299_176",
+      "ko": "체육관에서 두 사람이 포옹하는 장면",
+      "en": "two people hugging in the gym",
+      "ko_margin": -0.0008553862571716309,
+      "en_margin": -0.015302017331123352
+    }
+  ]
+}
