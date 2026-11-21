@@ -2,15 +2,24 @@
 
 **11월 21일 통합 평가**에서 MEVA 평가 영상 2개의 전체 시간대를 4초 간격으로 검색했을 때 한국어·영어 모두 상위 5개에 정답 장면이 든 질의는 6/12였습니다. D의 인물 추적 API는 같은 영상의 첫 10초에서 정답 사람 박스까지 3/12를 찾았습니다. [질의 유형별 결과와 재현 방법](evaluation/reports/2026-11-21-meva/README.md)
 
-## 실시간 웹 채팅
+## 전체 영상 검색
 
-Windows에서 `run-live.cmd`를 실행한 뒤 [로컬 웹 화면](http://127.0.0.1:8780/ui/)을 엽니다. **MEVA 사람 영상 등록**을 누르고 **검색 가능**이 뜨면 “회색 후드티를 입은 사람이 테이블을 떠나는 장면을 찾아줘”라고 보내세요. Qwen3.5-4B가 검색된 프레임 번호와 시각을 받아 답변합니다. 후보를 누르면 E의 플레이어가 해당 시각으로 이동합니다. 대화의 최근 네 메시지가 다음 질문에 전달됩니다. 프레임 검색 자체는 현재 질문을 사용합니다.
+기본 검색은 F 목록의 MEVA 6개와 VIRAT 11개를 읽습니다. 영상마다 B의 200ms 사람 관측에 A의 `configs/person/hybrid.yaml`을 실행한 뒤, C가 A의 `samples.jsonl`에 있는 장면과 사람 crop만 임베딩합니다. 질문은 dev·eval 양쪽의 완성된 인덱스에서 검색하며 영상 전체를 통틀어 상위 K개를 반환합니다. 평가 점수 산출에는 기존 분할별 평가 명령을 사용합니다.
 
-예제는 팀의 MEVA dev 평가 질의 mq_d02가 가리키는 G421 카페 원본의 258.4초부터 262.4초 직전까지를 재생합니다. 화면의 박스는 공개 정답 주석의 사람 트랙 m0222입니다. 첫 등록 시 원본 AVI 142,880,030바이트를 받아 팀 목록의 SHA-256과 대조합니다. 직접 MP4 구간을 올리면 A의 motion 정책이 첫 프레임과 밝기 변화 기준을 넘은 장면을 선별합니다. B 추적 결과가 있는 인계 묶음은 A의 사람 전용 hybrid 정책으로 사람 이벤트와 주기 장면을 함께 선별합니다. 원본 영상만 올리는 경로에서 Lite-DETR를 실행하지 않습니다. 모델이 답변을 생성하지 못하면 화면에 오류가 표시됩니다.
+Python 3.11 환경에서 PyTorch와 torchvision을 설치하고 `python -m pip install -r requirements-full.txt`를 실행하세요. CUDA용 PyTorch를 설치하면 GPU를 사용할 수 있습니다. Windows 기본 실행은 다음과 같습니다.
 
-영상 및 주석 출처는 Kitware Inc.와 IARPA의 MEVA KF1입니다. 예제는 30fps 원본에서 4초를 발췌해 절반 해상도로 변환했고 200ms 간격의 정답 박스를 사용합니다. [원본 목록](data/meva/data_inventory.csv) · [G421 주석](https://gitlab.kitware.com/meva/meva-data-repo/-/tree/f844579a/annotation/DIVA-phase-2/MEVA/kitware/2018-03-15/14) · [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+```powershell
+.\run-search.cmd
+.\run-live.cmd
+```
 
-새 PC에서는 아래 CLI 설치 절차에 따라 Python 3.11과 PyTorch를 준비하고 `python -m pip install -r requirements-live.txt`를 실행하세요. 첫 실행 시 SigLIP2와 Qwen 가중치, Windows CPU용 llama.cpp를 내려받아 해시를 검사합니다. 이 PC에서는 인접한 C 저장소의 환경과 모델을 재사용합니다.
+첫 명령은 터미널 검색입니다. 웹 검색은 두 번째 명령을 별도로 실행하고 준비가 끝나면 [웹 화면](http://127.0.0.1:8780/ui/)을 엽니다. 기본 범위는 **전체 영상 · A 선별**입니다. 카메라 하나로 좁히려면 영상 ID를 입력하세요. `gallery_dev`는 사용자가 직접 등록한 이벤트 저장소입니다.
+
+최초 실행은 [원본 목록과 사용 조건](data/README.md)에 기재된 원본을 내려받아 SHA-256을 확인합니다. B 인계가 없는 영상은 Lite-DETR와 ByteTrack T3부터 처리하므로 CPU에서는 여러 시간이 걸릴 수 있습니다. 터미널에 영상별 진행률이 표시됩니다. B 관측과 완성된 인덱스는 다음 실행에서 재사용합니다. 원본·모델·생성된 인덱스는 로컬에 저장합니다.
+
+기본 경로는 원본 `runs/source-data`, 기존 B 출력 `runs/b-inputs`, 생성 캐시 `runs/a-full`입니다. 원본이 다른 곳에 있다면 두 실행기 모두 환경 변수 `CCTV_DATA_ROOT`를 사용합니다. 기존 B 결과는 `CCTV_B_INPUTS` 아래 영상별 폴더에 `frames.jsonl`, `tracks.jsonl`, B의 `validation_report.json`을 두세요. manifest와 완료 상태 파일을 갖춘 인계도 지원합니다. 첫 10초만 있는 부분 인계는 건너뛰고 해당 원본의 전체 B 관측을 생성합니다.
+
+영상과 주석의 출처는 MEVA KF1(Kitware·IARPA, CC BY 4.0) 및 VIRAT Ground 2.0입니다. VIRAT 영상에는 VIRAT Video Data Set Protection Agreement가 적용됩니다. [MEVA 출처](data/meva/data_inventory.csv) · [VIRAT 출처](data/virat/data_inventory.csv)
 
 ### 상위 파이프라인에서 이벤트 보내기
 
@@ -38,26 +47,13 @@ B 담당 출력의 경우 `runs/live/inbox/<batch>/` 안에 dev manifest.jsonl, 
 
 2026-11-21 기준 제출 내역입니다. C의 원래 모듈 안내는 [C 모듈 문서](docs/C_MODULE.md)에 있습니다.
 
-## 바로 질의하기
-
-이 PC에서 [run-search.cmd](run-search.cmd)를 열거나 이 폴더의 PowerShell에서 실행하세요.
+## 한 번만 질의하기
 
 ```powershell
-.\run-search.cmd
+.\run-search.cmd full --question "병원 복도에서 걸어가는 사람" --top-k 5
 ```
 
-`질문 >`에 `회색 후드티를 입은 사람`를 입력하세요. 결과는 영상 ID, 프레임 번호, 재생 시각, 코사인 유사도와 프레임 이미지 경로를 보여 줍니다. `종료` 또는 `/exit`로 끝냅니다. 첫 실행에서 MEVA G421 카페 영상 구간과 인덱스를 만들고, 이후에는 `runs/team-demo-meva-g421`를 재사용합니다. 실제 Lite-DETR 추론은 B의 [실행 안내](modules/b_detection_tracking/README.md)를 따릅니다.
-
-실행기는 현재 폴더의 `.venv`, 옆 `cctv-search` 폴더의 `.venv311`, 시스템 Python 3.11 순으로 사용합니다. 같은 모델이 옆 폴더에 있으면 기존 가중치를 재사용합니다. 새 PC에서는 Python 3.11로 환경을 한 번 설치하세요.
-
-```powershell
-py -3.11 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install torch==2.7.1 torchvision==0.22.1 --index-url https://download.pytorch.org/whl/cpu
-.\.venv\Scripts\python.exe -m pip install -r requirements-siglip2.txt -r requirements-track-input.txt
-.\run-search.cmd
-```
-
-모델이 없는 환경에서는 첫 실행에 SigLIP2 가중치 약 1.5GB를 내려받아 해시를 검사합니다. 실행기에 `demo --question "회색 후드티를 입은 사람"`를 넘기면 한 번 질의하고 끝납니다.
+결과에는 영상 ID, 프레임 번호, 시각, 유사도와 이미지 경로가 표시됩니다. 4초 카페 예제를 따로 확인할 때만 `run-search.cmd demo`를 사용하세요.
 
 ## 팀 산출물로 질의하기
 
