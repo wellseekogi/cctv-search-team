@@ -35,6 +35,10 @@ Both paths are explicit. No existing local runs/reviews folder is required by th
 
 ## Provisional manifests included in this branch
 
+In the integrated checkout, pass `--b-manifests metadata/baseline_T3` to
+`tools/prepare_bf_v10.py` to read the submitted manifests directly alongside
+the external B observations. The original B input folders stay intact.
+
 The files under `metadata/baseline_T3/` are byte-for-byte copies from
 `A_handoff_v10_BF_GitHub/runs/meva_baseline_T3_v8/inputs/` for G299, G340,
 G341, G421, G506 and G638. Copy each file into the corresponding B camera

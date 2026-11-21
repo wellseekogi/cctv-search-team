@@ -1,0 +1,54 @@
+# Type | correct frame | comparison frame | Korean query | English query
+scene|G299_0|G421_8|농구 골대가 있는 실내 체육관|an indoor gym with a basketball hoop
+scene|G421_44|G299_44|간식 판매대가 있는 카페|a cafe with a snack counter
+scene|G638_160|G340_120|벽돌 건물 앞의 보행자 광장|a pedestrian plaza in front of a brick building
+scene|G340_176|G638_176|여러 대의 차가 주차된 주차장|a parking lot filled with parked cars
+object|G638_0|G638_160|광장에 세워 둔 자전거|a parked bicycle in the plaza
+object|G341_64|G341_8|버스 정류장 앞 주차장의 은색 승용차|a silver car in the parking lot in front of the bus station
+object|G340_92|G340_24|도로 위의 빨간 승용차|a red car on the road
+object|G506_132|G506_176|입구 앞에서 손에 든 검은 가방|a black handbag carried by hand at the entrance
+object|G638_44|G638_160|광장 바닥에 있는 공|a ball on the ground in the plaza
+coexist|G638_232|G638_216|자전거와 사람이 함께 보이는 광장|a plaza scene with a bicycle and a person
+coexist|G340_64|G340_24|사람과 SUV가 함께 보이는 주차장|a parking lot with a person and an SUV in view
+coexist|G341_64|G341_8|은색 승용차와 사람이 함께 보이는 장면|a scene showing both a silver car and a person
+coexist|G506_132|G506_176|현관문과 현관 앞의 사람이 함께 보이는 장면|an entrance door and a person in the entrance area
+clothing|G638_12|G638_232|적갈색 셔츠를 입은 자전거 이용자|a cyclist wearing a maroon shirt
+clothing|G638_232|G638_12|회색 티셔츠를 입은 자전거 이용자|a cyclist wearing a gray T-shirt
+clothing|G421_44|G421_260|간식 판매대 앞에 연한 파란색 상의를 입은 사람|a person in a light blue top at the snack counter
+clothing|G421_260|G421_44|간식 판매대 앞에 검정 셔츠를 입은 사람|a person in a black shirt at the snack counter
+clothing|G299_8|G299_64|농구 코트 바닥에 있는 적갈색 상의의 사람|a person wearing a burgundy top on the basketball court
+clothing|G299_64|G299_8|농구 코트 바닥에 있는 줄무늬 셔츠의 사람|a person wearing a striped shirt on the basketball court
+clothing|G340_64|G340_8|주차장 앞쪽에 파란색 후드티를 입은 사람|a person wearing a blue hoodie in the foreground of the parking lot
+combo|G638_12|G638_232|흰 모자와 적갈색 셔츠를 착용한 자전거 이용자|a cyclist wearing a white cap and a maroon shirt
+combo|G638_232|G638_12|검은 모자와 회색 티셔츠를 착용한 자전거 이용자|a cyclist wearing a black cap and a gray T-shirt
+combo|G421_176|G421_64|간식 판매대 앞에 어두운 코트와 분홍색 목도리를 착용한 사람|a person in a dark coat and a pink scarf at the snack counter
+combo|G421_64|G421_176|간식 판매대 앞에 어두운 코트와 체크무늬 모자를 착용한 사람|a person in a dark coat and a checked cap at the snack counter
+near|G299_12|G299_24|카메라에 가장 가까운 검은 옷의 사람이 체육관 테이블 바로 옆에 있다|the nearest person in black is right beside the gym table
+near|G299_24|G299_12|카메라에 가장 가까운 검은 옷의 사람이 체육관 테이블에서 떨어져 있다|the nearest person in black is away from the gym table
+near|G341_52|G341_24|파란 옷을 입은 사람이 은색 승용차 바로 옆에 있다|a person in blue is right next to the silver car
+near|G341_24|G341_52|파란 옷을 입은 사람이 은색 승용차에서 멀리 떨어져 있다|a person in blue is far from the silver car
+near|G421_64|G421_120|체크무늬 모자를 쓴 사람이 간식 판매대 바로 옆에 있다|the person in a checked cap is right next to the snack counter
+near|G421_120|G421_64|체크무늬 모자를 쓴 사람이 간식 판매대에서 멀리 떨어져 있다|the person in a checked cap is far from the snack counter
+near|G506_64|G506_216|사람이 햇빛이 드는 벤치 바로 옆에 있다|a person is right next to the sunlit bench
+direction|G421_64|G421_120|체크무늬 모자를 쓴 사람이 나무 테이블들의 왼쪽에 있다|the person in a checked cap is to the left of the wooden tables
+direction|G421_120|G421_64|체크무늬 모자를 쓴 사람이 나무 테이블들의 오른쪽에 있다|the person in a checked cap is to the right of the wooden tables
+direction|G341_184|G341_176|빨간 차가 건물 현관의 왼쪽에 있다|the red car is to the left of the building entrance
+direction|G341_176|G341_184|빨간 차가 건물 현관의 오른쪽에 있다|the red car is to the right of the building entrance
+direction|G299_8|G299_12|적갈색 상의의 사람이 관중석 앞 회색 구조물의 왼쪽에 있다|the person in a burgundy top is to the left of the gray structure in front of the bleachers
+direction|G299_12|G299_8|적갈색 상의의 사람이 관중석 앞 회색 구조물의 오른쪽에 있다|the person in a burgundy top is to the right of the gray structure in front of the bleachers
+direction|G638_132|G638_140|흰 모자와 적갈색 셔츠를 착용한 사람이 광장 가운데 벽돌 기둥의 왼쪽에 있다|the person in a white cap and maroon shirt is to the left of the central brick pillar in the plaza
+direction|G638_140|G638_132|흰 모자와 적갈색 셔츠를 착용한 사람이 광장 가운데 벽돌 기둥의 오른쪽에 있다|the person in a white cap and maroon shirt is to the right of the central brick pillar in the plaza
+support|G506_92|G506_64|사람이 햇빛이 드는 벤치 위에 앉아 있다|a person is sitting on the sunlit bench
+support|G506_64|G506_92|사람이 햇빛이 드는 벤치 옆에 서 있다|a person is standing next to the sunlit bench
+support|G421_176|G421_260|유리문 근처의 의자에 사람이 앉아 있다|a person is sitting on the chair near the glass doors
+support|G421_260|G421_176|유리문 근처의 의자 옆에 사람이 서 있다|a person is standing next to the chair near the glass doors
+state|G421_24|G421_8|카페 출입구의 유리문이 열려 있다|the glass door at the cafe entrance is open
+state|G421_8|G421_24|카페 출입구의 유리문이 닫혀 있다|the glass door at the cafe entrance is closed
+state|G506_120|G506_104|기둥 뒤 건물의 현관문이 열려 있다|the building entrance door behind the pillars is open
+state|G506_104|G506_120|기둥 뒤 건물의 현관문이 닫혀 있다|the building entrance door behind the pillars is closed
+action|G638_12|G638_120|흰 모자와 적갈색 셔츠를 입은 사람이 자전거를 타고 있다|a person in a white cap and maroon shirt is riding a bicycle
+action|G638_120|G638_12|흰 모자와 적갈색 셔츠를 입은 사람이 광장 바닥에 서 있다|a person in a white cap and maroon shirt is standing on the plaza ground
+action|G638_20|G638_128|흰 모자와 적갈색 셔츠를 입은 사람이 자전거를 타고 있다|a person in a white cap and maroon shirt is riding a bicycle
+action|G638_128|G638_20|흰 모자와 적갈색 셔츠를 입은 사람이 광장 바닥에 서 있다|a person in a white cap and maroon shirt is standing on the plaza ground
+action|G299_52|G299_44|체육관 바닥에서 두 사람이 팔짱을 끼고 걷는 장면|two people walking arm in arm on the gym floor
+action|G299_120|G299_176|체육관에서 두 사람이 포옹하는 장면|two people hugging in the gym

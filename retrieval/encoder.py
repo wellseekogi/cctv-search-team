@@ -75,6 +75,34 @@ class FixtureEncoder:
         return _l2(out)
 
 
+class TeamSiglip2Encoder:
+    """Use the same pinned encoder and preprocessing as the team search CLI."""
+
+    def __init__(self, root: str | Path, model_root: str | None = None, device: str = "cpu"):
+        from types import SimpleNamespace
+        from embedding import create_encoder
+        from team_search.__main__ import get_config
+
+        base = Path(root)
+        cfg = get_config(SimpleNamespace(embedding_config=base / "configs/embedding.siglip2.yaml",
+                                         model_root=base / model_root if model_root else None, device=device))
+        self.encoder = create_encoder(cfg)
+        self.embedding_dim = self.encoder.dim
+        self.max_tokens = self.encoder.text_max_length
+        self.model_id = self.encoder.metadata["model_id"]
+        self.model_revision = self.encoder.metadata["model_revision"]
+        self.preprocess_hash = self.encoder.metadata["preprocess_hash"]
+
+    def count_tokens(self, text: str) -> int:
+        return self.encoder.text_token_lengths([text])[0]
+
+    def encode_text(self, texts):
+        return self.encoder.encode_text(texts)
+
+    def encode_image(self, images_rgb):
+        return self.encoder.encode_image(images_rgb)
+
+
 class FunctionEncoder:
     """C의 모듈 함수(encode_text·encode_image)를 감싸는 연결부.
 

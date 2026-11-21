@@ -77,6 +77,24 @@ def test_encoder_model_mismatch_marks_not_ready(fixture_copy):
     assert any("model_id" in p for p in state.galleries["gallery_dev"].problems)
 
 
+def test_native_hashes_and_encoder_identity(fixture_copy):
+    path = fixture_copy / "fixtures/d_small/run/index_manifest.json"
+    manifest = json.loads(path.read_bytes())
+    manifest["file_hashes"] = {name: f["sha256"] for name, f in manifest.pop("files").items()}
+    manifest["encoder"] = {k: manifest.pop(k) for k in ("model_id", "model_revision", "preprocess_hash")}
+    manifest["row_count"] = 10
+    path.write_text(json.dumps(manifest), encoding="utf-8")
+    cfg = load_config(fixture_copy / "configs/retrieval.yaml")
+    assert build_state(cfg).index_ready
+    manifest["encoder"]["preprocess_hash"] = "wrong"
+    path.write_text(json.dumps(manifest), encoding="utf-8")
+    assert not build_state(cfg).index_ready
+    manifest["row_count"] = 11
+    path.write_text(json.dumps(manifest), encoding="utf-8")
+    with pytest.raises(IndexNotReady, match="row_count"):
+        load_gallery(_gallery_cfg(fixture_copy))
+
+
 def test_empty_index_is_valid(fixture_copy):
     """빈 결과(items 0행, vectors [0,d])는 오류가 아니라 정상 상태입니다."""
     run = fixture_copy / "fixtures/d_small/run"

@@ -50,7 +50,10 @@ def ask(args, index, encoder):
             time = f"재생 {row['playback_time_ms'] / 1000:.3f}초"
             if row["source_offset_ms"]:
                 time += f" (원본 {row['seconds']:.3f}초)"
-            print(f"{row['rank']}. {row['video_id']} | 프레임 {row['frame_index']} | {time} | 유사도 {row['score']:.4f}")
+            score = f"유사도 {row['score']:.4f}"
+            if row["ranking_score"] != row["score"]:
+                score += f" | 순위 점수 {row['ranking_score']:.4f}"
+            print(f"{row['rank']}. {row['video_id']} | 프레임 {row['frame_index']} | {time} | {score}")
             print(f"   {previews[row['item_id']]}")
 
     if args.question is not None:

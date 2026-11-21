@@ -8,7 +8,7 @@ from PIL import Image
 
 from embedding.contracts import file_sha256
 from team_search.live_store import LiveStore
-from test_embedding import TestEncoder
+from tests.test_embedding import TestEncoder
 
 
 class LiveSegmentTests(unittest.TestCase):

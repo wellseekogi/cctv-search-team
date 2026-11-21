@@ -49,7 +49,7 @@
 python evaluation/repeat_web_search.py --rounds 5 --output runs/check/web.jsonl
 python evaluation/repeat_web_search.py --follow-up-from runs/check/web.jsonl --rounds 3 --output runs/check/follow-up.jsonl
 python evaluation/summarize_web_search.py --trials runs/check/web.jsonl --follow-ups runs/check/follow-up.jsonl --output runs/check/web-summary.json
-python -m evaluation.benchmark_meva_search --media runs/meva-public/media --hybrid-index runs/meva-public/first-50/eval-index --geometry runs/search-audit --output runs/check/heldout.json
+python -m evaluation.benchmark_meva_search --baseline --media runs/meva-public/media --hybrid-index runs/meva-public/first-50/eval-index --geometry runs/search-audit --output runs/check/heldout.json
 ```
 
 `--media`는 팀 manifest의 `relative_path` 기준 폴더다. 전체 장면 시험만 실행할 때는 `--hybrid-index`와 `--geometry`를 생략할 수 있다. 사람 위치 채점에는 KPF 리비전 `f844579a`의 원본 `<video_id>.geom.yml`을 각각 `G299.geom.yml`, `G638.geom.yml`로 둔다. [원본 영상 목록](../../../data/meva/data_inventory.csv) · [G299 주석](https://gitlab.kitware.com/meva/meva-data-repo/-/tree/f844579a/annotation/DIVA-phase-2/MEVA/kitware/2018-03-09/10) · [G638 주석](https://gitlab.kitware.com/meva/meva-data-repo/-/tree/f844579a/annotation/DIVA-phase-2/MEVA/kitware/2018-03-15/15)

@@ -103,13 +103,16 @@ def load_gallery(cfg: GalleryConfig) -> Gallery:
     files = index_manifest.get("files") or {}
     for name, path in (("items.jsonl", items_path), ("vectors.npy", vectors_path)):
         meta = files.get(name) or {}
-        expected = meta.get("sha256")
+        expected = meta.get("sha256") or index_manifest.get("file_hashes", {}).get(name)
         if not expected:
             problems.append(f"index_manifest 에 {name} 해시가 없습니다")
         elif sha256_file(path) != expected:
             problems.append(f"{name} 해시가 index_manifest 와 다릅니다")
         if meta.get("rows") is not None and int(meta["rows"]) != len(items):
             problems.append(f"{name} 행 수가 index_manifest({meta['rows']})와 다릅니다({len(items)})")
+
+    if "row_count" in index_manifest and index_manifest["row_count"] != len(items):
+        problems.append("C 인덱스의 row_count와 항목 수가 다릅니다")
 
     # 2) 벡터 형태·dtype·값
     if vectors.ndim != 2:
@@ -198,11 +201,20 @@ def check_encoder_matches(gallery: Gallery, encoder: Any) -> list[str]:
     """질의 인코더와 인덱스의 모델·전처리·차원이 같은지 확인합니다(C 1의 5번)."""
     problems: list[str] = []
     m = gallery.manifest
+    if m.get("stage") == "embedding" and getattr(encoder, "encoder", None) is not None:
+        from embedding.pipeline import validate_index
+        try:
+            validate_index(gallery.config.run_dir, encoder.encoder.metadata)
+        except (ValueError, OSError, KeyError) as exc:
+            problems.append(str(exc))
     if int(getattr(encoder, "embedding_dim", gallery.dim)) != gallery.dim:
         problems.append(f"인코더 차원 {encoder.embedding_dim} ≠ 인덱스 차원 {gallery.dim}")
     for key in ("model_id", "model_revision", "preprocess_hash"):
-        enc_v, idx_v = getattr(encoder, key, None), m.get(key)
-        if enc_v is not None and idx_v is not None and str(enc_v) != str(idx_v):
+        enc_v = getattr(encoder, key, None)
+        idx_v = m.get("encoder", m).get(key)
+        if "encoder" in m and (idx_v is None or enc_v is None):
+            problems.append(f"C 인덱스 또는 질의 인코더에 {key} 값이 없습니다")
+        elif enc_v is not None and idx_v is not None and str(enc_v) != str(idx_v):
             problems.append(f"인코더 {key}={enc_v} ≠ 인덱스 {key}={idx_v}")
     return problems
 

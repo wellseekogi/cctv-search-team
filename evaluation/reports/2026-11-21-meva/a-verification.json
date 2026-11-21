@@ -1,0 +1,128 @@
+{
+  "a_commit": "2880474ca96d44298b0f4b1e12a4198c635aa4af",
+  "cameras": [
+    {
+      "camera": "G299",
+      "split": "eval",
+      "source_sha256": "9f25ee3c5a4f582fe3287e7b1727450f33f3ef9c557eba2cd7dc5a9519ee6ab7",
+      "provisional_sha256": "d0f61e57a1d6955a5e5699dbef4845d8e2e3d83b3db6bd92eeb40f45908712ef",
+      "duration_ms": 300333,
+      "frames": 50,
+      "last_observed_ms": 9800,
+      "hybrid": {
+        "object": 37,
+        "scene": 25
+      },
+      "sample_sha256": {
+        "hybrid": "1c34841cf1349a714e5519b9cb03a08a9ae26fa5ac9590e7270e64a085527d9d",
+        "object_event": "0412f2713178114a03a0d747416550dbf94478b608f26b2afce5cb0f850bf012",
+        "uniform_1000": "d1b64716bad46a90a1dbaa5da44e422001ae75454680d4fc60e148036386b325",
+        "uniform_2000": "97d4349efa0d818b5f800d70accb053a1467125016199e590f77a04e3719d1da",
+        "uniform_5000": "9922807884944bc8baf2970f65de8fcea443a348bfbb86144f50a9816ce2b0a8"
+      }
+    },
+    {
+      "camera": "G340",
+      "split": "dev",
+      "source_sha256": "408691db783e035b8777a4687ec94c3fac87b006cab783315c2eea598df6332f",
+      "provisional_sha256": "8831f4b3e826029267c78dc1e7da167ebba7ff523d3d18740000787b60a40811",
+      "duration_ms": 300000,
+      "frames": 50,
+      "last_observed_ms": 9767,
+      "hybrid": {
+        "object": 11,
+        "scene": 10
+      },
+      "sample_sha256": {
+        "hybrid": "081bb7e4d315a41ddde78400ddde5c1a216596e157e60ee80d1197ff71de7e5a",
+        "object_event": "07fc7446f84a54e9b63b8c703b6ab0e53ee1cc5efff1720da5d257ba80c4ee4c",
+        "uniform_1000": "5de2002f2ae7fecbd811dae387286245fe03f527572f7d0e269fc84141d0d54b",
+        "uniform_2000": "eef16d00ddbc21a9cd952af71e88cb8ea45a898c528c063f516f52532146b54c",
+        "uniform_5000": "2acb9c7b2722c3d7f751cac32c36bb95f1b6346391c81c412620caa2818e80b6"
+      }
+    },
+    {
+      "camera": "G341",
+      "split": "dev",
+      "source_sha256": "521041e05734d16d8ae9d6c496f24ab21ba3136f8f8281e2cf55563eb4e70808",
+      "provisional_sha256": "a669370ec33123a9a708be0878dde5541221f2649e34e850e18547f1c961c428",
+      "duration_ms": 300000,
+      "frames": 50,
+      "last_observed_ms": 9767,
+      "hybrid": {
+        "object": 14,
+        "scene": 11
+      },
+      "sample_sha256": {
+        "hybrid": "620b63bd5a5164a414f598add4c93fab1495162b42ed5e19bf430e6c7a232b1a",
+        "object_event": "ec3e98b05d8e11b30b72857978fe751291c3a79245c96272f74b6394a091de0f",
+        "uniform_1000": "47de92035b6f7ed7a2333fb23825fc944d6f300237c390ece660feaee193fd93",
+        "uniform_2000": "41b1b510eadec0d0bfc3f408193f36ec782b5f40f0d7d9fc585d3e4b50cc8760",
+        "uniform_5000": "2945453d42a05cd0fe7128a08d3d3b3bd275a873cdb3eb9ee8b1d9ea848fc779"
+      }
+    },
+    {
+      "camera": "G421",
+      "split": "dev",
+      "source_sha256": "05bd976c402f035662baa20bc0409a3e6bd01ed8229a74b6be260317ef89a9c2",
+      "provisional_sha256": "adb52c3783ffcf3a77a109e330d438b02c620235e989e3f961e10798a91bbdea",
+      "duration_ms": 300066,
+      "frames": 50,
+      "last_observed_ms": 9833,
+      "hybrid": {
+        "object": 23,
+        "scene": 15
+      },
+      "sample_sha256": {
+        "hybrid": "a514a977a37f0b6e3ce59559039d929448511ef3e36820f5d5161753f8e0bb04",
+        "object_event": "d6046bf270330b39748dda59582d7332053e17c254f6723c6de32e0627715025",
+        "uniform_1000": "63651d78130cdff24545eea0d293af10cd5ac97cd190a1e0cd86c3453786a4c0",
+        "uniform_2000": "1b102ba9fb87339154aa276dea2a8c4d08fea4224fc67980823a199644faa741",
+        "uniform_5000": "92630a6a84820c8bd52b913b4f4b77cc92b9d65c6b8d7ef3a4445bf6606dca6d"
+      }
+    },
+    {
+      "camera": "G506",
+      "split": "dev",
+      "source_sha256": "f8ce36b2173e6eaf22a9f00249fcd0f1be445d210908397c4ed361d222c04c31",
+      "provisional_sha256": "1b34a8ed36d244a6eca28cb5cd48d3aefcb1090a6d60b0084a594f5b06b90652",
+      "duration_ms": 300000,
+      "frames": 50,
+      "last_observed_ms": 9800,
+      "hybrid": {
+        "scene": 14,
+        "object": 12
+      },
+      "sample_sha256": {
+        "hybrid": "a14574a606a0420248b8f9252eb7c9aa7c666da39cd7d5507213dbd5ed25a54f",
+        "object_event": "6b83cdfc7e270732ed4c7e3730bf8e0855fcddc76929b49f660efbd4a00903f2",
+        "uniform_1000": "5e8ff56f3639878caf7ff9a4e4098fa708ea61d101cfcba7604d089a15bcc168",
+        "uniform_2000": "f4c187c2c48f30d5ce1f56ed1a1d8e530479533d02be88f8ae7658d4c39cd2b9",
+        "uniform_5000": "33e0a399ada21554ac2da11aa157ebab69ab852a42766d6a960ee5dae6dda7d1"
+      }
+    },
+    {
+      "camera": "G638",
+      "split": "eval",
+      "source_sha256": "840ba29cb425fb578bee6e40808292d96071cf51f9ab05f6d09a2d847be6da15",
+      "provisional_sha256": "b931deca6334936295bbfd8d67f432116ea7e513fabe53856f2b4a1350cfb166",
+      "duration_ms": 300033,
+      "frames": 50,
+      "last_observed_ms": 9800,
+      "hybrid": {
+        "object": 4,
+        "scene": 5
+      },
+      "sample_sha256": {
+        "hybrid": "fc626e6e47e3e9fea95bb55391c084ffb2097e39611f1631774f6c1736d7a696",
+        "object_event": "2abc3c05a629c228c8b05f29fcf4de66902343d03464dd2fb3de8e3e483fd656",
+        "uniform_1000": "df6b8f25c414abfb8e90abd669c2829bd69addc1b27acb2e77cd85a935fe18b9",
+        "uniform_2000": "b2075fe396819b4d66867a6e7e673ca15b91d46567e10b67336cd35d3a9b1d07",
+        "uniform_5000": "73e871f21bc498e746844dacc1c229f9a28082b1bb4d31e04e8a438132758d7a"
+      }
+    }
+  ],
+  "matching_sample_files": 30,
+  "exclusions": 10,
+  "eval_hybrid_samples_matched_to_c": 71
+}
