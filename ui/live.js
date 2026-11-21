@@ -2,6 +2,11 @@ if (!window.UI_CONFIG.mock) {
   const byId = (id) => document.getElementById(id);
   const stages = {queued: "접수", processing: "이벤트 선별 · 임베딩 중", ready: "검색 가능", failed: "처리 실패"};
   byId("ingest").hidden = false;
+  if (window.UI_CONFIG.default_gallery === "gallery_all") {
+    const gallery = byId("gallery");
+    gallery.add(new Option("전체 영상 · A 선별", "gallery_all"), 0);
+    gallery.value = "gallery_all";
+  }
 
   async function refresh() {
     try {
@@ -38,11 +43,6 @@ if (!window.UI_CONFIG.mock) {
       message.textContent = err.message;
     }
   }
-  byId("demo").onclick = () => {
-    byId("representation").value = "object";
-    if (!byId("text").value.trim()) byId("text").value = byId("text").placeholder;
-    return sendEvent("/api/events/demo");
-  };
   byId("clip").onchange = async (event) => {
     const file = event.target.files[0];
     if (file) await sendEvent("/api/events/clip?name=" + encodeURIComponent(file.name), file);

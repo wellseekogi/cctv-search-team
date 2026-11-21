@@ -37,24 +37,35 @@ def build(args, config, **inputs):
         raise ValueError(f"인덱스 생성 실패 ({codes}). 출력 경로 {Path(inputs['output']).resolve()}")
 
 
-def ask(args, index, encoder):
-    engine = FrameRecommender(index, encoder)
-    previews = {row["item_id"]: engine.root / row["full_frame_path"] for row in engine.items}
+def ask(args, engines, encoder):
+    previews = {(row["video_id"], row["item_id"]): engine.root / row["full_frame_path"]
+                for engine in engines for row in engine.items}
 
     def show(question):
-        result = engine.recommend(question, top_k=args.top_k, representation=args.representation, use_llm=False)
-        rows = result["recommendations"]
+        if len(engines) == 1:
+            rows = engines[0].recommend(question, top_k=args.top_k, representation=args.representation,
+                                        use_llm=False)["recommendations"]
+        else:
+            if not 1 <= len(question.strip()) <= 1000:
+                raise RagError("INVALID_QUESTION", "질문은 1~1000자로 입력하세요.")
+            vector = encoder.encode_text([question])
+            rows = []
+            for engine in engines:
+                candidates = [r for r in engine.items if args.representation in ("combined", r["representation"])]
+                rows.extend(engine.ranked_frames(vector, candidates, args.top_k))
+            rows.sort(key=lambda r: (-r["ranking_score"], r["video_id"], r["frame_index"], r["item_id"]))
+            rows = rows[:args.top_k]
         if not rows:
-            print(result["summary"])
-        for row in rows:
+            print("검색 가능한 프레임 후보가 없습니다.")
+        for rank, row in enumerate(rows, 1):
             time = f"재생 {row['playback_time_ms'] / 1000:.3f}초"
             if row["source_offset_ms"]:
                 time += f" (원본 {row['seconds']:.3f}초)"
             score = f"유사도 {row['score']:.4f}"
             if row["ranking_score"] != row["score"]:
                 score += f" | 순위 점수 {row['ranking_score']:.4f}"
-            print(f"{row['rank']}. {row['video_id']} | 프레임 {row['frame_index']} | {time} | {score}")
-            print(f"   {previews[row['item_id']]}")
+            print(f"{rank}. {row['video_id']} | 프레임 {row['frame_index']} | {time} | {score}")
+            print(f"   {previews[row['video_id'], row['item_id']]}")
 
     if args.question is not None:
         show(args.question)
@@ -72,7 +83,7 @@ def ask(args, index, encoder):
         if question:
             try:
                 show(question)
-            except RagError as exc:
+            except (RagError, ValueError) as exc:
                 print(f"질문 오류 {exc}", file=sys.stderr)
 
 
@@ -91,7 +102,11 @@ def main():
     ask_options.add_argument("--top-k", type=int, choices=range(1, 21), default=3, metavar="1–20")
     ask_options.add_argument("--representation", choices=("scene", "object", "combined"), default="combined")
 
+    from .full import add_full_options, full_catalog
+
     commands = parser.add_subparsers(dest="command", required=True)
+    full = commands.add_parser("full", parents=[model, ask_options], help="전체 영상의 A hybrid 선별 결과 검색")
+    add_full_options(full)
     prepare = commands.add_parser("build", parents=[model, build_options], help="A 또는 B 산출물에서 인덱스 생성")
     for option in ("manifest", "data-root", "output"):
         prepare.add_argument(f"--{option}", required=True, type=Path)
@@ -101,7 +116,10 @@ def main():
     query.add_argument("--index", required=True, type=Path)
     demo = commands.add_parser("demo", parents=[model, build_options, ask_options], help="MEVA 카페 사람 영상으로 질의")
     demo.add_argument("--output", type=Path, default=ROOT / "runs/team-demo-meva-g421")
-    args = parser.parse_args()
+    arguments = sys.argv[1:]
+    if not arguments or (arguments[0].startswith("-") and arguments[0] not in ("--help", "-h")):
+        arguments = ["full", *arguments]
+    args = parser.parse_args(arguments)
 
     try:
         config = get_config(args)
@@ -113,8 +131,12 @@ def main():
 
         print("검색 모델을 준비하고 있습니다…", flush=True)
         encoder = create_encoder(config)
+        if args.command == "full":
+            catalog = full_catalog(args, config, encoder)
+            ask(args, [engine for engine, _ in catalog.values()], encoder)
+            return 0
         if args.command == "ask":
-            ask(args, args.index, encoder)
+            ask(args, [FrameRecommender(args.index, encoder)], encoder)
             return 0
 
         from .demo import DEMO_KEY, DEMO_NAME
@@ -129,7 +151,7 @@ def main():
                                 cache=args.cache, vision_config=args.vision_config)
                 workspace.rename(args.output)
         print("MEVA 카페 예시 질의 '회색 후드티를 입은 사람이 테이블을 떠나는 장면을 찾아줘'.")
-        ask(args, args.output / "index", encoder)
+        ask(args, [FrameRecommender(args.output / "index", encoder)], encoder)
         return 0
     except (KeyError, OSError, ValueError, RuntimeError, RagError) as exc:
         print(f"실행 오류 {exc}", file=sys.stderr)

@@ -163,6 +163,20 @@
       if (typeof r === "string") return setStatus("error", r);
     }
 
+    if (C.default_gallery === "gallery_all" && current) {
+      current = null;
+      stopAt = null;
+      measuring = false;
+      el.video.pause();
+      el.video.onloadedmetadata = el.video.onerror = null;
+      el.video.removeAttribute("src");
+      el.video.load();
+      el.playSegment.disabled = true;
+      el.info.replaceChildren();
+      el.results.replaceChildren();
+      drawBox();
+      showStageMsg("선택된 검색 결과가 없습니다.");
+    }
     el.submit.disabled = true;
     setStatus("loading", "검색 중…");
     let res;
@@ -224,6 +238,7 @@
       li.onclick = pick;
       li.onkeydown = (ev) => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); pick(); } };
       el.results.appendChild(li);
+      if (r.rank === 1 && C.default_gallery === "gallery_all") pick();
     });
   }
 
