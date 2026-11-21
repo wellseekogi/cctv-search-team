@@ -21,6 +21,7 @@ from typing import Any, Awaitable, Callable
 
 from fastapi import FastAPI, Request, Response
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from retrieval.config import REPRESENTATIONS, SCHEMA_VERSION, AppConfig, load_config
@@ -373,4 +374,5 @@ def create_app(config: AppConfig | str | Path = "configs/retrieval.yaml",
     async def media(request: Request) -> Response:
         return await run(request, _media)
 
+    app.mount("/ui", StaticFiles(directory=Path(__file__).resolve().parents[1] / "ui", html=True), name="ui")
     return app
