@@ -62,3 +62,4 @@ media/
 
 *.pyc
 source_hashes.json
+logs/

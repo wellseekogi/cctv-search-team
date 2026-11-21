@@ -216,7 +216,9 @@
       const a = document.createElement("div"); a.className = "t1";
       a.textContent = `#${r.rank}  ${r.display_name || r.video_id}  ${fmt(r.representative_ms - r.source_offset_ms)}`;
       const s = document.createElement("div"); s.className = "t2";
-      s.textContent = `유사도 ${Number(r.score).toFixed(3)} · ${r.track_uid || "전체 장면"}`;
+      const rankScore = Number.isFinite(r.ranking_score) && r.ranking_score !== r.score
+        ? `순위 점수 ${r.ranking_score.toFixed(3)} · ` : "";
+      s.textContent = `${rankScore}유사도 ${Number(r.score).toFixed(3)} · ${r.track_uid || "전체 장면"}`;
       d.append(a, s); li.appendChild(d);
       const pick = () => { [...el.results.children].forEach((x) => x.setAttribute("aria-selected", "false")); li.setAttribute("aria-selected", "true"); select(r, b); };
       li.onclick = pick;

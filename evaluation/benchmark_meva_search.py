@@ -14,7 +14,7 @@ from embedding import create_encoder
 from embedding.contracts import file_sha256, read_jsonl
 from evaluation.common import iou
 from integrations.f_metadata import image_exclusions
-from rag.engine import FrameRecommender
+from rag.engine import FrameRecommender, scene_context, text_ranking_scores
 from team_search.__main__ import ROOT, get_config
 
 
@@ -94,6 +94,11 @@ def benchmark(args):
     ko = json.loads((ROOT / "evaluation/meva_ko.json").read_text(encoding="utf-8"))
     encoder = create_encoder(get_config(args))
     frames, vectors = scene_gallery(manifests, qs, args.media, encoder)
+    by_video = defaultdict(list)
+    for i, frame in enumerate(frames):
+        by_video[frame["video_id"]].append(i)
+    stamps = np.asarray([f["timestamp_ms"] for f in frames])
+    context = {} if args.baseline else scene_context(vectors, by_video, stamps)
     hybrid = FrameRecommender(args.hybrid_index, encoder) if args.hybrid_index else None
     boxes = load_boxes(args.geometry, manifests, hybrid.items) if args.geometry else {}
     rows = []
@@ -103,7 +108,8 @@ def benchmark(args):
             raise ValueError("Missing qrels for " + q["query_id"])
         for lang, prompt in (("en", q["text"]), ("ko", ko[q["query_id"]])):
             query = encoder.encode_text([prompt])
-            ordered = np.argsort(-(vectors @ query[0]), kind="stable")
+            scores = text_ranking_scores(vectors @ query[0], query[0], context)
+            ordered = np.argsort(-scores, kind="stable")
             flags = [bool(relevant_frame(frames[i], truths)) for i in ordered]
             row = {
                 "query": q["query_id"],
@@ -112,7 +118,7 @@ def benchmark(args):
                 "first_scene": frames[ordered[0]],
             }
             if hybrid:
-                ranked = hybrid.ranked_frames(query, hybrid.items, len(hybrid.items))
+                ranked = hybrid.ranked_frames(query, hybrid.items, len(hybrid.items), text_search=not args.baseline)
                 row["hybrid_frame"] = rank_stats([bool(relevant_frame(h, truths)) for h in ranked])
                 if args.geometry:
                     row["hybrid_person"] = rank_stats([localized_person(h, truths, boxes) for h in ranked])
@@ -128,6 +134,7 @@ def benchmark(args):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument("--baseline", action="store_true", help="Use the archived unadjusted cosine ranking")
     p.add_argument("--media", required=True, type=Path)
     p.add_argument("--hybrid-index", type=Path)
     p.add_argument("--geometry", type=Path, help="Pinned <camera>.geom.yml files for returned-box IoU")

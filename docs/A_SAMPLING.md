@@ -15,7 +15,7 @@ Synthetic fixture: expected 9 events, 5 object candidates, 8 scene candidates. T
 
 ## Reproduce the B/F integration
 
-B and F are separate PR dependencies; this A branch does not duplicate their files. Obtain the approved B baseline_T3 per-camera input folders and F checkout separately. Existing v8/v10 handoff inputs have the required format:
+B observations and F metadata are separate dependencies. This A branch includes only the six provisional B manifests from the v10 handoff under `metadata/baseline_T3/<camera>/manifest.PROVISIONAL.jsonl`. Obtain the approved B baseline_T3 per-camera input folders and F checkout separately. Existing v8/v10 handoff inputs have the required format:
 
 ```text
 B-inputs/<camera>/frames.jsonl
@@ -31,7 +31,34 @@ The B manifest must report original SHA256, width, height, source_offset_ms and 
 .\.venv\Scripts\python.exe tools/prepare_bf_v10.py --b-inputs "../A_handoff_v10_BF_GitHub/runs/meva_baseline_T3_v8/inputs" --f-data "../F-checkout/data/meva" --out runs/bf_reproduced
 ```
 
-Both paths are explicit. No existing local runs/reviews folder is required by the checkout. Input JSONLs remain external; do not commit them. New output paths are required to prevent overwrites. F input hashes and B frame/track hashes are recorded in generated configurations.
+Both paths are explicit. No existing local runs/reviews folder is required by the checkout. B frames/tracks and F input JSONLs remain external. The six provisional manifests are versioned separately as described below. New output paths are required to prevent overwrites. F input hashes and B frame/track hashes are recorded in generated configurations.
+
+## Provisional manifests included in this branch
+
+In the integrated checkout, pass `--b-manifests metadata/baseline_T3` to
+`tools/prepare_bf_v10.py` to read the submitted manifests directly alongside
+the external B observations. The original B input folders stay intact.
+
+The files under `metadata/baseline_T3/` are byte-for-byte copies from
+`A_handoff_v10_BF_GitHub/runs/meva_baseline_T3_v8/inputs/` for G299, G340,
+G341, G421, G506 and G638. Copy each file into the corresponding B camera
+folder alongside `frames.jsonl` and `tracks.jsonl` before running the command
+above. For example, from this checkout:
+
+```powershell
+$bInputs = "C:/path/to/B-inputs"
+Get-ChildItem metadata/baseline_T3 -Directory | ForEach-Object {
+    Copy-Item -LiteralPath (Join-Path $_.FullName "manifest.PROVISIONAL.jsonl") -Destination (Join-Path $bInputs $_.Name)
+}
+```
+
+These are provisional observation envelopes, not authoritative media metadata:
+`relative_path` is null, `split` is unassigned, and duration is a synthetic
+bound for the supplied observations. Keep the provisional flags intact.
+`prepare_bf_v10.py` obtains actual media metadata and split from F's
+`data/meva/manifest.jsonl` by matching the reported SHA256. These manifests
+alone do not include the B frames/tracks or original videos. G330 is not part
+of this six-video v10 integration.
 
 ## ID and exclusion contracts
 

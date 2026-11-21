@@ -9,7 +9,8 @@ from PIL import Image
 
 from embedding.contracts import SCHEMA, file_sha256, read_jsonl, write_json, write_jsonl
 from embedding.pipeline import build_index
-from rag.engine import FrameRecommender
+from rag.engine import FrameRecommender, scene_context, text_ranking_scores
+from tools.encode_scene_views import save_scene_views
 
 
 class _TinyEncoder:
@@ -130,6 +131,38 @@ class FrameRecommenderTests(unittest.TestCase):
         for row, expected in zip(rows, [1, 0.8, 0.8, -1]):
             self.assertAlmostEqual(row["score"], expected, places=6)
         self.assertEqual(len({(row["video_id"], row["frame_index"]) for row in rows}), 4)
+
+    def test_scene_background_adjustment_preserves_cosines_and_skips_mixed_videos(self):
+        vectors = np.array([[0.8, 0.6]] * 30 + [[0, 1]] * 29 + [[0.6, 0.8]], dtype=np.float32)
+        groups = {"static": list(range(30)), "changing": list(range(30, 60))}
+        stamps = np.tile(np.arange(30) * 1000, 2)
+        context = scene_context(vectors, groups, stamps)
+        query = np.array([1, 0], dtype=np.float32)
+        raw = vectors @ query
+        ranking = text_ranking_scores(raw, query, context)
+        self.assertEqual(np.argmax(ranking), 59)
+        self.assertAlmostEqual(raw[59], 0.6)
+        np.testing.assert_array_equal(ranking[:30], raw[:30])
+        np.testing.assert_array_equal(text_ranking_scores(raw, query, context, {"changing"}), raw)
+        self.assertFalse(scene_context(vectors, {"short": list(range(29))}, stamps))
+        self.assertFalse(scene_context(vectors, groups, stamps * 4))
+
+    def test_region_vectors_follow_scene_rows_and_only_change_text_ranking(self):
+        rows = [s for s in self.samples if s["representation"] == "scene"]
+        bundle = self.build_bundle("region-index", rows)
+        views = np.zeros((len(rows), 4, 2), dtype=np.float32)
+        views[:, :, 1] = 1
+        views[-1, 0] = [1, 0]
+        sha = file_sha256(bundle / "index_manifest.json")
+        save_scene_views(bundle, sha, views)
+        engine = FrameRecommender(bundle, self.encoder)
+        self.close_mapping_on_cleanup(engine)
+        text_hits = engine.recommend("person", top_k=1, use_llm=False)["recommendations"]
+        self.assertEqual(text_hits[0]["item_id"], engine.items[-1]["item_id"])
+        image_hits = engine.ranked_frames(self.encoder.query, engine.items, 1, text_search=False)
+        self.assertEqual(image_hits[0]["item_id"], engine.items[0]["item_id"])
+        with self.assertRaisesRegex(ValueError, "Index changed"):
+            save_scene_views(bundle, "stale-hash", views)
 
     def test_top_k_is_applied_after_combining_scene_and_object(self):
         rows = self.recommender().recommend("자동차", top_k=3, use_llm=False)["recommendations"]
