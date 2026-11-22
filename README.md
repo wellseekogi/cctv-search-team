@@ -4,6 +4,8 @@
 
 ## 전체 영상 검색
 
+프레임 상태 가설을 시험하려면 `run-search.cmd events --dataset meva --split eval --question "체육관에서 두 사람이 포옹하는 장면"`을 실행하세요. 원본에서 활동 영역과 2~4초 구간을 선정하고, 검색 결과에 시작·종료 시각을 표시합니다. [기존 B→A와의 정확도 비교 및 재현 방법](evaluation/reports/2026-11-22-frame-state/README.md)
+
 기본 검색은 F 목록의 MEVA 6개와 VIRAT 11개를 읽습니다. 영상마다 B의 200ms 사람 관측에 A의 `configs/person/hybrid.yaml`을 실행한 뒤, C가 A의 `samples.jsonl`에 있는 장면과 사람 crop만 임베딩합니다. 질문은 dev·eval 양쪽의 완성된 인덱스에서 검색하며 영상 전체를 통틀어 상위 K개를 반환합니다. 평가 점수 산출에는 기존 분할별 평가 명령을 사용합니다.
 
 Python 3.11 환경에서 PyTorch와 torchvision을 설치하고 `python -m pip install -r requirements-full.txt`를 실행하세요. CUDA용 PyTorch를 설치하면 GPU를 사용할 수 있습니다. Windows 기본 실행은 다음과 같습니다.

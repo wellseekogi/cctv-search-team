@@ -1,4 +1,5 @@
 import argparse
+import os
 import sys
 import tempfile
 from pathlib import Path
@@ -107,6 +108,17 @@ def main():
     commands = parser.add_subparsers(dest="command", required=True)
     full = commands.add_parser("full", parents=[model, ask_options], help="전체 영상의 A hybrid 선별 결과 검색")
     add_full_options(full)
+    events = commands.add_parser("events", parents=[model], help="트랙 없이 영상 상태 변화 구간 검색")
+    events.add_argument("--question", required=True)
+    events.add_argument("--video-model", type=Path,
+                        help="영어 질의용 8프레임 X-CLIP 가중치 폴더. 모든 후보 구간을 영상·텍스트 로짓으로 정렬")
+    events.add_argument("--top-k", type=int, choices=range(1, 21), default=5)
+    events.add_argument("--dataset", choices=("meva", "virat", "all"), default="meva")
+    events.add_argument("--split", choices=("all", "dev", "eval"), default="all")
+    events.add_argument("--metadata-root", type=Path, default=ROOT / "data")
+    events.add_argument("--data-root", type=Path, default=Path(os.getenv("CCTV_DATA_ROOT", ROOT / "runs/source-data")))
+    events.add_argument("--state-cache", type=Path, default=ROOT / "runs/frame-state/cache")
+    events.add_argument("--windows-per-minute", type=int, default=8)
     prepare = commands.add_parser("build", parents=[model, build_options], help="A 또는 B 산출물에서 인덱스 생성")
     for option in ("manifest", "data-root", "output"):
         prepare.add_argument(f"--{option}", required=True, type=Path)
@@ -122,6 +134,11 @@ def main():
     args = parser.parse_args(arguments)
 
     try:
+        if args.command == "events" and args.video_model:
+            from .state_verifier import search_video
+
+            search_video(args)
+            return 0
         config = get_config(args)
         if args.command == "build":
             build(args, config, manifest=args.manifest, data_root=args.data_root, output=args.output,
@@ -131,6 +148,11 @@ def main():
 
         print("검색 모델을 준비하고 있습니다…", flush=True)
         encoder = create_encoder(config)
+        if args.command == "events":
+            from .frame_state import search
+
+            search(args, config, encoder)
+            return 0
         if args.command == "full":
             catalog = full_catalog(args, config, encoder)
             ask(args, [engine for engine, _ in catalog.values()], encoder)
