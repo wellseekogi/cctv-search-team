@@ -98,14 +98,65 @@ def _scan(path, start, end, time_source):
     return times, observations, end
 
 
+def _pixel_windows(times, observations, start, end, budget, excluded):
+    start_ms, end_ms = round(start * 1000), round(end * 1000)
+    by_tick = {math.floor(stamp - start): (score, source, roi) for stamp, score, source, roi in observations}
+    windows, centers = [], []
+    for tick, center in enumerate(range(start_ms + 2000, end_ms - 1999, 1000), start=2):
+        left, right = (center - 2000) / 1000, (center + 2000) / 1000
+        if tick not in by_tick or any(a < right and left < b for a, b in excluded):
+            continue
+        indices = tuple(bisect_left(times, (center + offset) / 1000) for offset in (-1000, 0, 1000))
+        if len(set(indices)) < 3 or indices[-1] == len(times) or times[indices[-1]] >= right:
+            continue
+        score, source, (x1, y1, x2, y2) = by_tick[tick]
+        cx, cy = (x1 + x2) / 2, (y1 + y2) / 2
+        # A 1.5x zoom keeps the selected area's center and crops its middle two thirds.
+        dx, dy = (x2 - x1) / 3, (y2 - y1) / 3
+        roi = (float(cx - dx), float(cy - dy), float(cx + dx), float(cy + dy))
+        windows.append(StateWindow(left, right, indices, tuple(times[i] for i in indices), roi, score, source))
+        centers.append(center)
+
+    if not windows:
+        return []
+    centers = np.asarray(centers)
+    distances = np.full(len(windows), np.inf)
+    chosen = {}
+
+    def choose(index, source):
+        chosen[index] = replace(windows[index], source=source)
+        np.minimum(distances, np.abs(centers - centers[index]), out=distances)
+
+    duration = end_ms - start_ms
+    reserved = min(budget // 3, math.ceil(duration / 20000))
+    for slot in range(reserved):
+        eligible = np.flatnonzero(distances >= 4000)
+        if not len(eligible):
+            break
+        target = start_ms + (slot + 0.5) * duration / reserved
+        choose(eligible[np.argmin(np.abs(centers[eligible] - target))], "keepalive")
+
+    for index in sorted(range(len(windows)), key=lambda i: -windows[i].score):
+        if len(chosen) == budget or windows[index].score < 1 / 255:
+            break
+        if distances[index] >= 4000:
+            choose(index, windows[index].source)
+
+    while len(chosen) < budget and np.any(distances >= 4000):
+        choose(int(np.argmax(distances)), "keepalive")
+    return [chosen[i] for i in sorted(chosen)]
+
+
 def propose_windows(video_path: str | Path, *, budget: int, start_sec: float = 0.0,
                     end_sec: float | None = None, uniform: bool = False,
-                    excluded: tuple[tuple[float, float], ...] = (), time_source: str = "pts") -> list[StateWindow]:
+                    excluded: tuple[tuple[float, float], ...] = (), time_source: str = "pts",
+                    pixel_attention: bool = False) -> list[StateWindow]:
     """Return up to budget chronological 2–4 s windows (shorter for short inputs).
 
     Seconds and indices are local to the decoded file. All three evidence frames
     fall inside the half-open interval. Any overlap with an excluded interval
     disqualifies the window. Uniform selection stratifies the same eligible windows.
+    Pixel attention selects non-overlapping 4 s windows and samples center ±1 s.
     """
     if type(budget) is not int or budget < 0:
         raise ValueError("budget must be a nonnegative integer")
@@ -117,9 +168,13 @@ def propose_windows(video_path: str | Path, *, budget: int, start_sec: float = 0
         raise ValueError("invalid video interval")
     if any(not math.isfinite(a) or not math.isfinite(b) or b <= a for a, b in excluded):
         raise ValueError("invalid excluded interval")
+    if uniform and pixel_attention:
+        raise ValueError("uniform selection and pixel attention are mutually exclusive")
     if budget == 0:
         return []
     times, observations, end = _scan(video_path, start_sec, math.inf if end_sec is None else end_sec, time_source)
+    if pixel_attention:
+        return _pixel_windows(times, observations, start_sec, end, min(budget, 30), excluded)
     windows = {}
     centers = {}
     for stamp, score, source, roi in observations:

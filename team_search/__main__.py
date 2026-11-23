@@ -110,8 +110,10 @@ def main():
     add_full_options(full)
     events = commands.add_parser("events", parents=[model], help="트랙 없이 영상 상태 변화 구간 검색")
     events.add_argument("--question", required=True)
-    events.add_argument("--video-model", type=Path,
-                        help="영어 질의용 8프레임 X-CLIP 가중치 폴더. 모든 후보 구간을 영상·텍스트 로짓으로 정렬")
+    event_method = events.add_mutually_exclusive_group()
+    event_method.add_argument("--video-model", type=Path,
+                              help="영어 질의용 8프레임 X-CLIP 가중치 폴더. 모든 후보 구간을 영상·텍스트 로짓으로 정렬")
+    event_method.add_argument("--pixel-attention", action="store_true", help="4초 비중첩 구간 최대 30개와 1.5배 변화 영역 사용")
     events.add_argument("--top-k", type=int, choices=range(1, 21), default=5)
     events.add_argument("--dataset", choices=("meva", "virat", "all"), default="meva")
     events.add_argument("--split", choices=("all", "dev", "eval"), default="all")

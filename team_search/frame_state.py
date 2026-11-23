@@ -15,10 +15,11 @@ from sampling.frame_state import propose_windows
 from team_search.baseline import source_video
 
 
-def interval_rows(path, video, exclusions, budget, uniform):
+def interval_rows(path, video, exclusions, budget, uniform, *, pixel_attention=False):
     offset = video["source_offset_ms"]
     windows = propose_windows(
-        path, budget=budget, uniform=uniform, time_source=video.get("time_source", "pts"),
+        path, budget=budget, uniform=uniform, pixel_attention=pixel_attention,
+        time_source=video.get("time_source", "pts"),
         start_sec=(video["available_start_ms"] - offset) / 1000,
         end_sec=(video["available_end_ms"] - offset) / 1000,
         excluded=tuple(((row["start_ms"] - offset) / 1000, (row["end_ms"] - offset) / 1000)
@@ -34,7 +35,7 @@ def interval_rows(path, video, exclusions, budget, uniform):
     return rows
 
 
-def encode_windows(path, rows, encoder, batch_size):
+def encode_windows(path, rows, encoder, batch_size, *, pixel_attention=False):
     """Decode each requested frame once, keeping the three times and both views separate."""
     needed = defaultdict(list)
     for i, row in enumerate(rows):
@@ -59,7 +60,11 @@ def encode_windows(path, rows, encoder, batch_size):
             width, height = image.size
             for i, t in needed.pop(index):
                 x, y, right, bottom = rows[i]["roi_xyxy"]
-                box = (int(x * width), int(y * height), int(np.ceil(right * width)), int(np.ceil(bottom * height)))
+                if pixel_attention:
+                    left, top = min(width - 1, round(x * width)), min(height - 1, round(y * height))
+                    box = (left, top, max(left + 1, round(right * width)), max(top + 1, round(bottom * height)))
+                else:
+                    box = (int(x * width), int(y * height), int(np.ceil(right * width)), int(np.ceil(bottom * height)))
                 for view, rgb in enumerate((image, image.crop(box))):
                     images.append(rgb)
                     slots.append((i, t, view))
@@ -74,8 +79,9 @@ def encode_windows(path, rows, encoder, batch_size):
     return vectors
 
 
-def cached_windows(path, video, exclusions, budget, uniform, cache, encoder, batch_size):
-    key = digest([video, exclusions, budget, uniform, encoder.metadata, file_sha256(Path(__file__)),
+def cached_windows(path, video, exclusions, budget, uniform, cache, encoder, batch_size, *, pixel_attention=False):
+    policy = "pixel" if pixel_attention else "uniform" if uniform else "state"
+    key = digest([video, exclusions, budget, policy, encoder.metadata, file_sha256(Path(__file__)),
                   file_sha256(Path(__file__).resolve().parents[1] / "sampling/frame_state.py")])
     cache.mkdir(parents=True, exist_ok=True)
     folder = cache / key
@@ -85,14 +91,14 @@ def cached_windows(path, video, exclusions, budget, uniform, cache, encoder, bat
                 stage = Path(temp) / "index"
                 stage.mkdir()
                 started = time.perf_counter()
-                rows = interval_rows(path, video, exclusions, budget, uniform)
+                rows = interval_rows(path, video, exclusions, budget, uniform, pixel_attention=pixel_attention)
                 proposal_seconds = time.perf_counter() - started
-                vectors = encode_windows(path, rows, encoder, batch_size)
+                vectors = encode_windows(path, rows, encoder, batch_size, pixel_attention=pixel_attention)
                 write_jsonl(stage / "windows.jsonl", rows)
                 np.save(stage / "vectors.npy", vectors, allow_pickle=False)
                 write_json(stage / "cost.json", dict(proposal_seconds=proposal_seconds,
                            embedding_seconds=time.perf_counter() - started - proposal_seconds,
-                           image_encodes=len(rows) * 6, budget=budget, policy="uniform" if uniform else "state",
+                           image_encodes=len(rows) * 6, budget=budget, policy=policy,
                            camera=video["camera_id"], sha256=video["file_sha256"]))
                 stage.rename(folder)
     rows = read_jsonl(folder / "windows.jsonl")
@@ -103,8 +109,8 @@ def cached_windows(path, video, exclusions, budget, uniform, cache, encoder, bat
     return rows, vectors, folder
 
 
-def gallery(metadata, data_root, cache, datasets, split, rate, encoder, batch_size, uniform=False):
-    if rate <= 0:
+def gallery(metadata, data_root, cache, datasets, split, rate, encoder, batch_size, uniform=False, *, pixel_attention=False):
+    if not pixel_attention and rate <= 0:
         raise ValueError("windows-per-minute must be positive")
     rows, vectors, folders = [], [], []
     for dataset in datasets:
@@ -115,9 +121,9 @@ def gallery(metadata, data_root, cache, datasets, split, rate, encoder, batch_si
             path = source_video(metadata, data_root, video)
             exclusions = image_exclusions(queries, dict(video, f_video_id=video["video_id"]))
             duration = video["available_end_ms"] - video["available_start_ms"]
-            budget = max(1, round(duration * rate / 60000))
+            budget = 30 if pixel_attention else max(1, round(duration * rate / 60000))
             part, embedding, folder = cached_windows(path, video, exclusions, budget, uniform, cache,
-                                                   encoder, batch_size)
+                                                   encoder, batch_size, pixel_attention=pixel_attention)
             rows.extend(part)
             vectors.append(embedding)
             folders.append(folder)
@@ -126,7 +132,19 @@ def gallery(metadata, data_root, cache, datasets, split, rate, encoder, batch_si
     return rows, np.concatenate(vectors), folders
 
 
-def rank_windows(rows, vectors, query, *, center_only=False):
+def rank_windows(rows, vectors, query, *, center_only=False, pixel_attention=False):
+    if pixel_attention:
+        views = (vectors[:, 1] if center_only else vectors.mean(axis=1)) @ query
+        full, local = views.T
+        times = np.asarray([row["start_ms"] for row in rows])
+        videos = np.asarray([row["video_id"] for row in rows])
+        order = np.lexsort((times, videos, -full))
+        pool = order[:60]
+        scores = full.copy()
+        scores[pool] = 0.5 * full[pool] + 0.5 * local[pool]
+        front = pool[np.lexsort((times[pool], videos[pool], -scores[pool]))]
+        order = np.concatenate((front, order[60:]))
+        return [dict(rows[i], similarity=float(scores[i])) for i in order]
     # Equal weight for the full scene and class-free local view. Activity never labels an action.
     scores = vectors @ query
     scores = (scores[:, 1] if center_only else scores.mean(axis=1)).mean(axis=1)
@@ -137,9 +155,10 @@ def rank_windows(rows, vectors, query, *, center_only=False):
 def search(args, config, encoder):
     datasets = ("meva", "virat") if args.dataset == "all" else (args.dataset,)
     batch = config["batch_size_gpu" if encoder.device.startswith("cuda") else "batch_size_cpu"]
+    pixel_attention = getattr(args, "pixel_attention", False)
     rows, vectors, _ = gallery(args.metadata_root, args.data_root, args.state_cache, datasets,
-                               args.split, args.windows_per_minute, encoder, batch)
-    ranked = rank_windows(rows, vectors, encoder.encode_text([args.question])[0])
+                               args.split, args.windows_per_minute, encoder, batch, pixel_attention=pixel_attention)
+    ranked = rank_windows(rows, vectors, encoder.encode_text([args.question])[0], pixel_attention=pixel_attention)
     for i, row in enumerate(ranked[:args.top_k], 1):
         print(f"{i}. {row['video_id']} | {row['start_ms']/1000:.2f}–{row['end_ms']/1000:.2f}초"
               f" | 유사도 {row['similarity']:.4f} | {row['source']}")

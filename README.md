@@ -6,6 +6,16 @@
 
 프레임 상태 가설을 시험하려면 `run-search.cmd events --dataset meva --split eval --question "체육관에서 두 사람이 포옹하는 장면"`을 실행하세요. 원본에서 활동 영역과 2~4초 구간을 선정하고, 검색 결과에 시작·종료 시각을 표시합니다. [기존 B→A와의 정확도 비교 및 재현 방법](evaluation/reports/2026-11-22-frame-state/README.md)
 
+`pixel-attention` 브랜치의 비교 실험은 다음 옵션으로 실행합니다. 별도 작업 폴더에서는 `--data-root`에 기존 원본 폴더를 지정하세요.
+
+```powershell
+.\run-search.cmd events --pixel-attention --dataset meva --split eval --data-root ..\cctv-search-full\runs\source-data --top-k 15 --question "빨간 옷을 입은 사람"
+```
+
+1초마다 128×96 밝기 변화를 8×6칸으로 요약해, 영상당 겹치지 않는 4초 구간을 최대 30개 남깁니다. 구간마다 중심과 앞뒤 1초의 원본 컬러 세 장을 사용합니다. 중심 시각에 잡힌 변화 영역의 가로·세로를 ⅔로 줄여 1.5배 확대하고, 전체 화면으로 고른 상위 60개를 전체 화면과 확대 점수의 평균으로 다시 정렬합니다.
+
+이 설정을 사용한 MEVA·VIRAT 490개 영상·행동 조합에서 정답 시간대 보존은 443/490이었습니다. 보존된 질의의 Top 15 적중은 한국어 193/443, 영어 231/443이었습니다. 이 수치는 해당 행동의 주석 시간과 겹치는 구간을 반환했는지 평가한 결과입니다.
+
 기본 검색은 F 목록의 MEVA 6개와 VIRAT 11개를 읽습니다. 영상마다 B의 200ms 사람 관측에 A의 `configs/person/hybrid.yaml`을 실행한 뒤, C가 A의 `samples.jsonl`에 있는 장면과 사람 crop만 임베딩합니다. 질문은 dev·eval 양쪽의 완성된 인덱스에서 검색하며 영상 전체를 통틀어 상위 K개를 반환합니다. 평가 점수 산출에는 기존 분할별 평가 명령을 사용합니다.
 
 Python 3.11 환경에서 PyTorch와 torchvision을 설치하고 `python -m pip install -r requirements-full.txt`를 실행하세요. CUDA용 PyTorch를 설치하면 GPU를 사용할 수 있습니다. Windows 기본 실행은 다음과 같습니다.

@@ -80,6 +80,34 @@ class FrameStateTests(unittest.TestCase):
                 self.assertTrue(all(4.5 <= w.start_sec < w.end_sec <= 17 for w in windows))
             self.assertEqual(propose_windows(path, budget=10, excluded=((0, 20),)), [])
 
+    def test_pixel_attention_uses_non_overlapping_windows_and_centered_crop(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self.make_video(tmp, patch=True)
+            windows = propose_windows(path, budget=2, excluded=((0, 4.5),), pixel_attention=True)
+            self.assertEqual(len(windows), 2)
+            self.assertLessEqual(windows[0].end_sec, windows[1].start_sec)
+            self.assertGreaterEqual(windows[0].start_sec, 4.5)
+            self.assertTrue(all(w.end_sec - w.start_sec == 4 for w in windows))
+            strongest = max(windows, key=lambda w: w.score)
+            self.assertEqual(strongest.frame_times_sec, (11., 12., 13.))
+            x1, y1, x2, y2 = strongest.roi_xyxy
+            self.assertAlmostEqual(x2 - x1, 1 / 4)
+            self.assertAlmostEqual(y2 - y1, 1 / 3)
+            self.assertAlmostEqual((x1 + x2) / 2, 104 / 128)
+            self.assertAlmostEqual((y1 + y2) / 2, 40 / 96)
+
+    def test_pixel_ranking_uses_only_the_full_frame_top_sixty_for_fusion(self):
+        from team_search.frame_state import rank_windows
+
+        rows = [dict(video_id="camera", start_ms=i * 4000) for i in range(61)]
+        vectors = np.zeros((61, 3, 2, 1), dtype=np.float32)
+        vectors[:, :, 0, 0] = np.linspace(1, 0, 61)[:, None]
+        vectors[59:, :, 1, 0] = 1
+        query = np.ones(1, dtype=np.float32)
+        ranked = rank_windows(rows, vectors, query, pixel_attention=True)
+        self.assertEqual(ranked[0]["start_ms"], rows[59]["start_ms"])
+        self.assertEqual(ranked[-1]["start_ms"], rows[60]["start_ms"])
+
     def test_avi_uses_pts_unless_manifest_declares_fixed_cadence(self):
         from team_search.frame_state import interval_rows
 
