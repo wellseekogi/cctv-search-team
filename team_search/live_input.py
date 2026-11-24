@@ -6,10 +6,15 @@ from pathlib import Path
 import av
 
 from embedding.contracts import SCHEMA, file_sha256, read_jsonl, within, write_jsonl
+from embedding.pipeline import build_index
+from embedding.track_input import SequentialVideoReader
 from sampling.core import run_sampling
 from .__main__ import ROOT
 from .demo import make_demo
 from .inputs import build_index_from_team
+
+
+T8_SOURCE = "b_litedetr_nom30_800_t8"
 
 
 def decoded(path):
@@ -74,13 +79,17 @@ def process_segment(kind, key, name, source, stage, config, encoder, *,
         root = source
         manifests, frames, tracks = [read_jsonl(within(root, name + ".jsonl"))
                                      for name in ("manifest", "frames", "tracks")]
+        if kind == "b_t8" and {(row["track_source_id"], row["source"], row["class_name"]) for row in tracks} != {
+            (T8_SOURCE, "pred", "person")
+        }:
+            raise ValueError("B 객체 개선 검색에는 T8 사람 추적 인계가 필요합니다.")
         exclusion_file = within(root, "query_exclusions.jsonl")
         if exclusion_file.exists():
             exclusions = read_jsonl(exclusion_file)
         policy = "hybrid"
     if not manifests or any(row["split"] != "dev" for row in manifests):
         raise ValueError("라이브 검색에는 dev 분할 영상만 등록할 수 있습니다.")
-    statuses = (read_jsonl(within(root, "video_status.jsonl")) if kind == "handoff" else
+    statuses = (read_jsonl(within(root, "video_status.jsonl")) if kind in ("handoff", "b_t8") else
                 [dict(video_id=m["video_id"], available_end_ms=m["available_end_ms"],
                       video_status="completed") for m in manifests])
     settings = json.loads((ROOT / "configs/person" / (policy + ".yaml")).read_text(encoding="utf-8"))
@@ -103,11 +112,27 @@ def process_segment(kind, key, name, source, stage, config, encoder, *,
     (stage / "selection.json").write_text(json.dumps(summary, ensure_ascii=False), encoding="utf-8")
     if not samples:
         raise ValueError("이 구간에서 검색에 사용할 장면이 선택되지 않았습니다.")
-    status = build_index_from_team(manifest=stage / "manifest.jsonl", data_root=root,
-                                   output=stage / "index", cache=cache,
-                                   embedding_config=config, encoder=encoder,
-                                   vision_config=vision_config,
-                                   samples=stage / "samples.jsonl")
+    if kind == "b_t8":
+        if len(manifests) != 1:
+            raise ValueError("T8 인계는 한 영상씩 등록하세요.")
+        video = manifests[0]
+        path = within(root, video["relative_path"])
+        ordered = sorted(frames, key=lambda f: f["timestamp_ms"])
+        with SequentialVideoReader(path, video, ordered) as reader:
+            def read_selected(vid, stamp):
+                frame = reader.read_frame(vid, stamp)
+                return dict(frame, image_rgb=frame["rgb"])
+
+            batch = config["batch_size_gpu" if encoder.device.startswith("cuda") else "batch_size_cpu"]
+            status = build_index(stage / "samples.jsonl", stage / "manifest.jsonl", root, stage / "index",
+                                 cache, read_selected, encoder, "b-cctv-frame-reader-pyav-v1",
+                                 config["crop_margin_ratio"], batch)
+    else:
+        status = build_index_from_team(manifest=stage / "manifest.jsonl", data_root=root,
+                                       output=stage / "index", cache=cache,
+                                       embedding_config=config, encoder=encoder,
+                                       vision_config=vision_config,
+                                       samples=stage / "samples.jsonl")
     if status["status"] != "success":
         raise ValueError("임베딩 실패 " + str(read_jsonl(stage / "index/errors.jsonl")[:1]))
     count = len(events) if policy != "motion" else summary["motion_candidate_count"]

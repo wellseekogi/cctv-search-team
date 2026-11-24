@@ -27,6 +27,15 @@
     <h2>장면에 질문하기</h2>
     <div id="chat" role="log" aria-label="채팅 기록" aria-live="polite"></div>
     <form id="form" novalidate>
+      <div id="searchVersions" class="row" hidden>
+        <label>검색 버전
+          <select id="searchVersion">
+            <option value="original">기존</option>
+            <option value="b_t8">B 객체 개선</option>
+            <option value="pixel">픽셀</option>
+          </select>
+        </label>
+      </div>
       <details><summary>검색 범위</summary>
       <div class="row">
         <label>데이터셋(gallery)

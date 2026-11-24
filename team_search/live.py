@@ -31,6 +31,10 @@ from .__main__ import ROOT, get_config
 from .live_store import LiveStore
 from .full import add_full_options, full_catalog, playback_file
 from .demo import DEMO_KEY, DEMO_NAME
+from . import live_pixel
+
+
+SearchVersion = Literal["original", "b_t8", "pixel"]
 
 
 class Turn(BaseModel):
@@ -44,6 +48,7 @@ class Search(BaseModel):
     gallery_id: str | None = None
     video_ids: list[str] | None = None
     representation: Literal["combined", "scene", "object"] = "combined"
+    search_version: SearchVersion = "original"
     top_k: int = Field(default=3, ge=1, le=50)
 
 
@@ -89,8 +94,11 @@ def create_app(args):
     def status():
         store = app.state.store
         full = app.state.full
+        jobs = store.status()
         return {"llm_ready": app.state.llm.ready, "model": "Qwen3.5-4B",
-                "embedding": store.encoder.metadata["model_id"], "jobs": store.status(),
+                "embedding": store.encoder.metadata["model_id"],
+                "jobs": [job for job in jobs if job["kind"] != "b_t8"],
+                "b_t8_jobs": [job for job in jobs if job["kind"] == "b_t8"],
                 "default_gallery": "gallery_all" if full else "gallery_dev",
                 "videos": len(full), "vectors": sum(len(engine.items) for engine, _ in (full or store.catalog).values())}
 
@@ -106,12 +114,14 @@ def create_app(args):
         return enqueue("demo", DEMO_KEY, DEMO_NAME)
 
     @app.post("/api/events/handoff/{batch}", status_code=202)
-    def handoff(batch: str):
+    def handoff(batch: str, version: Literal["original", "b_t8"] = "original"):
         if not re.fullmatch(r"[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}", batch):
             raise HTTPException(422, "배치 이름이 올바르지 않습니다.")
         root = within(app.state.store.root / "inbox", batch)
         if not root.is_dir():
             raise HTTPException(404, "인계 폴더가 없습니다.")
+        if version == "b_t8":
+            return enqueue("b_t8", "t8-" + batch, batch)
         return enqueue("handoff", "b-" + batch, batch)
 
     @app.post("/api/events/clip", status_code=202)
@@ -156,16 +166,41 @@ def create_app(args):
         text = query.text.strip()
         if not text:
             raise HTTPException(422, "질문을 입력하세요.")
+        if query.search_version == "b_t8":
+            requested = {(vid, sha) for engine, _ in catalog.values() for vid, sha in engine.index["sources"].items()
+                         if not allowed or vid in allowed}
+            improved = store.b_t8
+            ready = {(vid, sha) for engine, _ in improved.values() for vid, sha in engine.index["sources"].items()}
+            if not requested or not requested <= ready:
+                raise HTTPException(409, "선택한 영상에 맞는 B 객체 개선(T8) 인계가 준비되지 않았습니다.")
+            allowed = {vid for vid, _ in requested}
+            catalog = {key: (engine, media) for key, (engine, media) in improved.items()
+                       if requested.intersection(engine.index["sources"].items())}
+        if query.search_version == "pixel" and query.representation == "object":
+            raise HTTPException(422, "픽셀 버전은 전체 장면으로 검색하세요.")
+
+        def reply(results, total):
+            version = hashlib.sha256((query.search_version + ":" + "".join(sorted(catalog))).encode()).hexdigest()[:10]
+            elapsed = round((time.perf_counter() - started) * 1000)
+            return dict(request_id=uuid4().hex[:10], index_version=version, total_candidates=total,
+                        score_type="cosine", results=results, latency_ms=elapsed, retrieval_ms=elapsed)
+
         with store.encoder_lock:
             try:
                 vector = (store.encoder.encode_text([text]) if image is None
                           else store.encoder.encode_image([image]))
             except ValueError as exc:
                 raise HTTPException(422, str(exc)) from exc
+            if query.search_version == "pixel":
+                results, total = live_pixel.search(catalog, allowed, vector, args, store,
+                                                   full=gallery == "gallery_all", limit=query.top_k)
+                return reply(results, total)
         results, total = [], 0
         for key, (engine, media) in catalog.items():
             candidates = [r for r in engine.items if (not allowed or r["video_id"] in allowed)
-                          and query.representation in ("combined", r["representation"])]
+                          and query.representation in ("combined", r["representation"])
+                          and (query.search_version != "b_t8"
+                               or (r["video_id"], engine.index["sources"][r["video_id"]]) in requested)]
             total += len(candidates)
             lookup = {r["item_id"]: r for r in candidates}
             for hit in engine.ranked_frames(vector, candidates, query.top_k, text_search=image is None):
@@ -189,9 +224,7 @@ def create_app(args):
         results = list(unique.values())
         for rank, row in enumerate(results, 1):
             row["rank"] = rank
-        version = hashlib.sha256("".join(sorted(catalog)).encode()).hexdigest()[:10]
-        return dict(request_id=uuid4().hex[:10], index_version=version, total_candidates=total,
-                    score_type="cosine", results=results, latency_ms=round((time.perf_counter()-started)*1000))
+        return reply(results, total)
 
     @app.post("/search")
     def search(query: Search):
@@ -213,13 +246,14 @@ def create_app(args):
     @app.post("/search/image")
     def search_image(image: UploadFile = File(), gallery_id: str | None = Form(None),
                      top_k: int = Form(3, ge=1, le=50), representation: str = Form("combined"),
-                     video_ids: str = Form("[]")):
+                     video_ids: str = Form("[]"), search_version: SearchVersion = Form("original")):
         raw = image.file.read(5000001)
         if len(raw) > 5000000:
             raise HTTPException(413, "이미지는 최대 5 MB입니다.")
         try:
             query = Search(text="이미지", top_k=top_k, gallery_id=gallery_id,
-                           video_ids=json.loads(video_ids), representation=representation)
+                           video_ids=json.loads(video_ids), representation=representation,
+                           search_version=search_version)
             with Image.open(io.BytesIO(raw)) as im:
                 if im.format not in ("JPEG", "PNG") or min(im.size) < 32 or im.width * im.height > 16000000:
                     raise ValueError("이미지 규격을 확인하세요.")
@@ -229,7 +263,7 @@ def create_app(args):
 
     @app.get("/media/{key}/{index}/{kind}")
     def media(key: str, index: int, kind: Literal["frame", "video"]):
-        shard = app.state.full.get(key) or app.state.store.catalog.get(key)
+        shard = app.state.full.get(key) or app.state.store.catalog.get(key) or app.state.store.b_t8.get(key)
         if not shard or not 0 <= index < len(shard[0].items):
             raise HTTPException(404)
         engine, videos = shard
@@ -241,9 +275,18 @@ def create_app(args):
             path = playback_file(path, engine.root.parent)
         return FileResponse(path, media_type=mimetypes.guess_type(path.name)[0] or "video/mp4")
 
+    @app.get("/media/pixel/{key}/{slot}/{frame_index}")
+    def pixel_thumbnail(key: str, slot: int, frame_index: int):
+        shard = app.state.full.get(key) or app.state.store.catalog.get(key)
+        image = live_pixel.thumbnail(shard, slot, frame_index) if shard else None
+        if image is None:
+            raise HTTPException(404)
+        return Response(image, media_type="image/png")
+
     @app.get("/ui/config.js")
     def ui_config():
         script = (ROOT / "ui/config.js").read_text(encoding="utf-8")
+        script += '\nwindow.UI_CONFIG.search_versions = true;'
         if app.state.full:
             script += '\nwindow.UI_CONFIG.default_gallery = "gallery_all";'
         return Response(script, media_type="application/javascript", headers={"Cache-Control": "no-cache"})

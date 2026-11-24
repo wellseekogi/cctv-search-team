@@ -21,6 +21,7 @@ class LiveStore:
         self.config, self.encoder = config, encoder
         self.encoder_lock = threading.Lock()
         self.catalog = {}
+        self.b_t8 = {}
         self.wake, self.stop = threading.Event(), threading.Event()
         with closing(self.connect()) as db, db:
             db.execute("""CREATE TABLE IF NOT EXISTS jobs (
@@ -30,7 +31,7 @@ class LiveStore:
             db.execute("UPDATE jobs SET state='queued' WHERE state='processing'")
             db.execute("UPDATE jobs SET state='archived' WHERE kind='demo' AND id='demo-v1'")
             for job in db.execute("SELECT * FROM jobs WHERE state='ready'"):
-                self.load(job["id"])
+                self.load(job["id"], job["kind"])
         self.worker = threading.Thread(target=self.run, daemon=True)
         self.worker.start()
 
@@ -39,13 +40,16 @@ class LiveStore:
         db.row_factory = sqlite3.Row
         return db
 
-    def load(self, key):
+    def load(self, key, kind):
         folder = self.root / "indexes" / key
         engine = FrameRecommender(folder / "index", self.encoder)
         media = {m["video_id"]: (within(folder / "input", m["relative_path"]), m["available_end_ms"],
                                  m.get("display_name", m["video_id"]))
                  for m in read_jsonl(folder / "manifest.jsonl")}
-        self.catalog = {**self.catalog, key: (engine, media)}
+        if kind == "b_t8":
+            self.b_t8 = {**self.b_t8, key: (engine, media)}
+        else:
+            self.catalog = {**self.catalog, key: (engine, media)}
 
     def submit(self, kind, key, name):
         with closing(self.connect()) as db, db:
@@ -83,7 +87,7 @@ class LiveStore:
                         target.hardlink_to(source)
                     except OSError:
                         shutil.copyfile(source, target)
-                elif kind == "handoff":
+                elif kind in ("handoff", "b_t8"):
                     for row in read_jsonl(stage / "manifest.jsonl"):
                         relative = row["relative_path"]
                         target = within(stage / "input", relative)
@@ -94,7 +98,7 @@ class LiveStore:
                 (stage / "counts.json").write_text(json.dumps(counts), encoding="utf-8")
                 stage.rename(final)
         counts = json.loads((final / "counts.json").read_text(encoding="utf-8"))
-        self.load(key)
+        self.load(key, kind)
         return counts
 
     def run(self):
@@ -124,3 +128,4 @@ class LiveStore:
         self.wake.set()
         self.worker.join()
         self.catalog = {}
+        self.b_t8 = {}

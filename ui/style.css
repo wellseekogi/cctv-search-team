@@ -21,6 +21,7 @@ button{cursor:pointer}
 button[type=submit]{background:var(--accent);color:#fff;border-color:var(--accent);align-self:flex-end;min-height:34px}
 button:disabled{opacity:.5;cursor:not-allowed}
 .row{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+#searchVersions[hidden]{display:none}
 .tabs{display:flex;gap:4px;margin:8px 0}
 .tabs button[aria-selected=true]{background:var(--accent);color:#fff;border-color:var(--accent)}
 #imagePreview{max-width:120px;max-height:90px;margin-top:6px;border:1px solid var(--line)}

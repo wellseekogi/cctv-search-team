@@ -4,6 +4,7 @@
   const $ = (id) => document.getElementById(id);
   const el = {
     form: $("form"), gallery: $("gallery"), videoIds: $("videoIds"),
+    searchVersion: $("searchVersion"),
     tabText: $("tabText"), tabImage: $("tabImage"),
     textBox: $("textBox"), text: $("text"),
     imageBox: $("imageBox"), image: $("image"), imagePreview: $("imagePreview"),
@@ -20,6 +21,7 @@
   let stopAt = null;          // 구간 재생 종료 시각(초)
   let mockVideoUrl = C.mock_video_url;
   let lastSeekErrorMs = null;
+  let priorRepresentation = "combined";
   const turns = [];
 
   function addTurn(role, content) {
@@ -129,12 +131,49 @@
       fd.append("gallery_id", payload.gallery_id);
       fd.append("top_k", String(payload.top_k));
       fd.append("representation", payload.representation);
+      if (payload.search_version) fd.append("search_version", payload.search_version);
       if (payload.video_ids) fd.append("video_ids", JSON.stringify(payload.video_ids));
       r = await fetch(C.apiBase + "/search/image", { method: "POST", body: fd });
     }
     let body = null;
     try { body = await r.json(); } catch { /* 본문이 JSON이 아님 */ }
     return { status: r.status, body };
+  }
+
+  function clearPlayback() {
+    current = null;
+    stopAt = null;
+    measuring = false;
+    el.video.pause();
+    el.video.onloadedmetadata = el.video.onerror = null;
+    el.video.removeAttribute("src");
+    el.video.load();
+    el.playSegment.disabled = true;
+    el.info.replaceChildren();
+    drawBox();
+    showStageMsg("선택된 검색 결과가 없습니다.");
+  }
+
+  if (C.search_versions) {
+    $("searchVersions").hidden = false;
+    el.searchVersion.onchange = () => {
+      reqCounter += 1;
+      el.submit.disabled = false;
+      const pixel = el.searchVersion.value === "pixel";
+      if (pixel) {
+        priorRepresentation = el.representation.value;
+        el.representation.value = "scene";
+      } else if (el.representation.disabled) {
+        el.representation.value = priorRepresentation;
+      }
+      el.representation.disabled = pixel;
+      turns.length = 0;
+      $("chat").replaceChildren();
+      el.results.replaceChildren();
+      el.meta.textContent = "";
+      setStatus("", "");
+      if (current) clearPlayback();
+    };
   }
 
   el.form.addEventListener("submit", async (e) => {
@@ -148,6 +187,7 @@
       modality: mode, gallery_id: el.gallery.value, top_k: topK,
       representation: el.representation.value,
     };
+    if (C.search_versions) payload.search_version = el.searchVersion.value;
     const vids = parseVideoIds();
     if (vids) payload.video_ids = vids;
     let file = null, text = "";
@@ -164,21 +204,11 @@
     }
 
     if (C.default_gallery === "gallery_all" && current) {
-      current = null;
-      stopAt = null;
-      measuring = false;
-      el.video.pause();
-      el.video.onloadedmetadata = el.video.onerror = null;
-      el.video.removeAttribute("src");
-      el.video.load();
-      el.playSegment.disabled = true;
-      el.info.replaceChildren();
+      clearPlayback();
       el.results.replaceChildren();
-      drawBox();
-      showStageMsg("선택된 검색 결과가 없습니다.");
     }
     el.submit.disabled = true;
-    setStatus("loading", "검색 중…");
+    setStatus("loading", payload.search_version === "pixel" ? "픽셀 구간 준비 · 검색 중…" : "검색 중…");
     let res;
     try {
       res = C.mock ? await mockFetch(text) : await realFetch(payload, file);
@@ -200,7 +230,7 @@
     if (res.body.answer) {
       addTurn("user", text);
       if (res.body.llm_status === "generated") addTurn("assistant", res.body.answer);
-      el.text.value = "";
+      if (!C.search_versions) el.text.value = "";
     }
     render(res.body);
   });
@@ -209,7 +239,9 @@
   const fmt = (ms) => (ms / 1000).toFixed(2) + "s";
   function render(b) {
     el.results.innerHTML = "";
-    el.meta.textContent = `request ${b.request_id} · index ${b.index_version} · 후보 ${b.total_candidates} · ${b.latency_ms}ms`;
+    const searchVersion = C.search_versions ? `${el.searchVersion.selectedOptions[0].text} · ` : "";
+    const elapsed = b.retrieval_ms === undefined ? `${b.latency_ms}ms` : `검색 ${b.retrieval_ms}ms`;
+    el.meta.textContent = `${searchVersion}request ${b.request_id} · index ${b.index_version} · 후보 ${b.total_candidates} · ${elapsed}`;
     if (!b.results.length) { setStatus("empty", "검색 결과가 없습니다."); return; }
     setStatus("ok", `${b.results.length}건`);
     b.results.forEach((r) => {
