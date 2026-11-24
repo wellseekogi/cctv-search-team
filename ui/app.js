@@ -192,6 +192,13 @@
     };
   }
 
+  function describeIndex(stats) {
+    if (stats.windows !== undefined) return `4초 구간 ${stats.windows} · 임베딩 ${stats.embeddings}`;
+    const tracks = stats.track_events === undefined ? "" : `트랙 이벤트 ${stats.track_events} · `;
+    const objects = stats.object_embeddings ? ` · 객체 ${stats.object_embeddings}` : "";
+    return `${tracks}임베딩 ${stats.embeddings} (장면 ${stats.scene_embeddings}${objects})`;
+  }
+
   async function compareVersions(payload, file, request) {
     const rows = [];
     for (const button of versionButtons) {
@@ -206,12 +213,18 @@
     body.replaceChildren();
     for (const {version, label, status, body: result} of rows) {
       const row = body.insertRow();
-      row.insertCell().textContent = label;
+      const versionCell = row.insertCell();
+      versionCell.textContent = label;
       if (status !== 200 || !result) {
         const message = row.insertCell();
         message.colSpan = 3;
         message.textContent = typeof result?.detail === "string" ? result.detail : `검색 실패 (HTTP ${status})`;
         continue;
+      }
+      if (result.index_stats) {
+        const summary = document.createElement("small");
+        summary.textContent = describeIndex(result.index_stats);
+        versionCell.append(summary);
       }
       row.insertCell().textContent = result.total_candidates;
       row.insertCell().textContent = `${result.retrieval_ms} ms`;
@@ -302,7 +315,8 @@
     el.results.innerHTML = "";
     const label = C.search_versions ? `${versionButtons.find(button => button.dataset.version === searchVersion).textContent} · ` : "";
     const elapsed = b.retrieval_ms === undefined ? `${b.latency_ms}ms` : `검색 ${b.retrieval_ms}ms`;
-    el.meta.textContent = `${label}request ${b.request_id} · index ${b.index_version} · 후보 ${b.total_candidates} · ${elapsed}`;
+    const stats = b.index_stats ? ` · ${describeIndex(b.index_stats)}` : "";
+    el.meta.textContent = `${label}request ${b.request_id} · index ${b.index_version} · 후보 ${b.total_candidates} · ${elapsed}${stats}`;
     if (!b.results.length) { setStatus("empty", "검색 결과가 없습니다."); return; }
     setStatus("ok", `${b.results.length}건`);
     b.results.forEach((r) => {
@@ -325,7 +339,8 @@
       const s = document.createElement("div"); s.className = "t2";
       const rankScore = Number.isFinite(r.ranking_score) && r.ranking_score !== r.score
         ? `순위 점수 ${r.ranking_score.toFixed(3)} · ` : "";
-      s.textContent = `${rankScore}유사도 ${Number(r.score).toFixed(3)} · ${r.track_uid || "전체 장면"}`;
+      const scoreLabel = b.index_stats?.windows !== undefined ? "픽셀 결합 점수" : "유사도";
+      s.textContent = `${rankScore}${scoreLabel} ${Number(r.score).toFixed(3)} · ${r.track_uid || "전체 장면"}`;
       d.append(a, s); li.appendChild(d);
       const pick = () => { [...el.results.children].forEach((x) => x.setAttribute("aria-selected", "false")); li.setAttribute("aria-selected", "true"); select(r, b); };
       li.onclick = pick;

@@ -115,6 +115,17 @@ def test_live_versions_use_separate_indexes_for_the_same_video(monkeypatch, shor
         assert len(chat_calls) == 3
         for version in ("original", "b_t8", "pixel"):
             response = client.post("/search?retrieval_only=true", json=dict(query, search_version=version))
-            assert response.status_code == 200 and response.json()["results"]
-            assert "answer" not in response.json()
+            result = response.json()
+            assert response.status_code == 200 and result["results"]
+            assert "answer" not in result
+            stats = result["index_stats"]
+            if version == "pixel":
+                assert stats == {"windows": result["total_candidates"], "embeddings": result["total_candidates"] * 6}
+            else:
+                assert stats["embeddings"] == result["total_candidates"]
+                assert stats["embeddings"] == stats["scene_embeddings"] + stats["object_embeddings"]
+                if version == "b_t8":
+                    assert stats["track_events"] == client.get("/api/status").json()["b_t8_jobs"][0]["events"] > 0
+                else:
+                    assert stats["object_embeddings"] == 0 and "track_events" not in stats
         assert len(chat_calls) == 3

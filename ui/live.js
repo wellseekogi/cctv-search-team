@@ -13,13 +13,15 @@ if (!window.UI_CONFIG.mock) {
       const response = await fetch("/api/status", {cache: "no-store"});
       if (!response.ok) throw new Error();
       const status = await response.json();
-      byId("modeBadge").textContent = (status.llm_ready ? "Qwen3.5-4B 연결됨" : "Qwen 연결 끊김") + " · 벡터 " + status.vectors + "개";
+      byId("modeBadge").textContent = status.llm_ready ? "Qwen3.5-4B 연결됨" : "Qwen 연결 끊김";
       const rows = status.jobs.map((job) => {
         const row = document.createElement("li");
         const name = document.createElement("strong");
         name.textContent = job.name;
         const state = document.createElement("span");
-        state.textContent = stages[job.state] + (job.state === "ready" ? ` · 이벤트 ${job.events} · 벡터 ${job.vectors}` : "");
+        const countLabel = job.kind === "clip" ? "선택 장면" : "트랙 이벤트";
+        state.textContent = stages[job.state] + (job.state === "ready"
+          ? ` · 기존 경로 ${countLabel} ${job.events} · 임베딩 ${job.vectors}` : "");
         row.append(name, state);
         if (job.error) row.append(document.createTextNode(job.error));
         return row;

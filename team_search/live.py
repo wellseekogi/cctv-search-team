@@ -179,11 +179,12 @@ def create_app(args):
         if query.search_version == "pixel" and query.representation == "object":
             raise HTTPException(422, "픽셀 버전은 전체 장면으로 검색하세요.")
 
-        def reply(results, total):
+        def reply(results, total, index_stats):
             version = hashlib.sha256((query.search_version + ":" + "".join(sorted(catalog))).encode()).hexdigest()[:10]
             elapsed = round((time.perf_counter() - started) * 1000)
             return dict(request_id=uuid4().hex[:10], index_version=version, total_candidates=total,
-                        score_type="cosine", results=results, latency_ms=elapsed, retrieval_ms=elapsed)
+                        score_type="cosine", results=results, latency_ms=elapsed, retrieval_ms=elapsed,
+                        index_stats=index_stats)
 
         with store.encoder_lock:
             try:
@@ -192,15 +193,21 @@ def create_app(args):
             except ValueError as exc:
                 raise HTTPException(422, str(exc)) from exc
             if query.search_version == "pixel":
-                results, total = live_pixel.search(catalog, allowed, vector, args, store,
-                                                   full=gallery == "gallery_all", limit=query.top_k)
-                return reply(results, total)
+                results, total, image_count = live_pixel.search(catalog, allowed, vector, args, store,
+                                                                full=gallery == "gallery_all", limit=query.top_k)
+                return reply(results, total, {"windows": total, "embeddings": image_count})
         results, total = [], 0
+        scene_count, object_count, track_events = 0, 0, 0
         for key, (engine, media) in catalog.items():
-            candidates = [r for r in engine.items if (not allowed or r["video_id"] in allowed)
-                          and query.representation in ("combined", r["representation"])
-                          and (query.search_version != "b_t8"
-                               or (r["video_id"], engine.index["sources"][r["video_id"]]) in requested)]
+            indexed = [r for r in engine.items if (not allowed or r["video_id"] in allowed)
+                       and (query.search_version != "b_t8"
+                            or (r["video_id"], engine.index["sources"][r["video_id"]]) in requested)]
+            scenes = sum(r["representation"] == "scene" for r in indexed)
+            scene_count += scenes
+            object_count += len(indexed) - scenes
+            if query.search_version == "b_t8":
+                track_events += json.loads((engine.root.parent / "counts.json").read_text(encoding="utf-8"))[0]
+            candidates = [r for r in indexed if query.representation in ("combined", r["representation"])]
             total += len(candidates)
             lookup = {r["item_id"]: r for r in candidates}
             for hit in engine.ranked_frames(vector, candidates, query.top_k, text_search=image is None):
@@ -224,7 +231,11 @@ def create_app(args):
         results = list(unique.values())
         for rank, row in enumerate(results, 1):
             row["rank"] = rank
-        return reply(results, total)
+        stats = {"scene_embeddings": scene_count, "object_embeddings": object_count,
+                 "embeddings": scene_count + object_count}
+        if query.search_version == "b_t8":
+            stats["track_events"] = track_events
+        return reply(results, total, stats)
 
     @app.post("/search")
     def search(query: Search, retrieval_only: bool = False):

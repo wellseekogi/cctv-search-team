@@ -37,9 +37,10 @@ def search(catalog, allowed, vector, args, store, *, full, limit):
             windows.extend(rows)
             embeddings.append(vectors)
     if not windows:
-        return [], 0
+        return [], 0, 0
 
-    ranked = rank_windows(windows, np.concatenate(embeddings), vector[0], pixel_attention=True)[:limit]
+    vectors = np.concatenate(embeddings)
+    ranked = rank_windows(windows, vectors, vector[0], pixel_attention=True)[:limit]
     results = []
     for rank, row in enumerate(ranked, 1):
         result = {k: row[k] for k in ("video_id", "start_ms", "end_ms", "source_offset_ms", "source_sha256",
@@ -49,7 +50,7 @@ def search(catalog, allowed, vector, args, store, *, full, limit):
                             score=row["similarity"], ranking_score=row["similarity"],
                             representation="scene", track_uid=None, bbox=None,
                             event_ids=[], reasons=[row["source"]]))
-    return results, len(windows)
+    return results, len(windows), vectors.size // encoder.dim
 
 
 def thumbnail(shard, slot, frame_index):
