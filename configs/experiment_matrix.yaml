@@ -1,0 +1,18 @@
+prefix: x1
+common:
+  input: runs/live/inbox/g421
+  device: cuda
+  dataset: meva
+  split: dev
+  mode: pred
+  # start_ms: 215000
+  # end_ms: 285000
+experiments:
+  - {id: E01, policy: uniform_2000, representation: combined}
+  - {id: E02, policy: motion, representation: combined}
+  - {id: E03, policy: object_event, representation: combined}
+  - {id: E04, policy: hybrid, representation: combined}
+  - {id: E05, reuse: E04, representation: scene}
+  - {id: E06, reuse: E04, representation: object}
+  - {id: E07, policy: uniform_5000, representation: combined}
+  - {id: E08, policy: uniform_1000, representation: combined}

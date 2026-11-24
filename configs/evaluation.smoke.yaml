@@ -1,0 +1,21 @@
+evaluation_version: eval_v1_smoke
+evaluation:
+  iou_threshold: 0.5
+  min_match_frames: 3
+  min_match_ratio: 0.5
+  min_visible_fraction: 0.5
+  min_input_side_px: 8
+  image_query_exclusion_ms: 1000
+  time_tolerance_ms: 100
+  recall_k: [5, 10]
+  model_input_size: 224
+  crop_margin_ratio: 0.1
+datasets:
+  virat:
+    gallery_ids: {dev: virat_dev_v1, eval: virat_eval_v1}
+    manifest: fixtures/smoke/manifest.jsonl
+    gt_tracks: fixtures/smoke/tracks_gt.jsonl
+    queries: fixtures/smoke/queries.jsonl
+    qrels: fixtures/smoke/qrels.jsonl
+    targets: fixtures/smoke/targets.jsonl
+    activity_labels: fixtures/smoke/activity_labels.jsonl

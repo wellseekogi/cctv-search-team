@@ -1,0 +1,13 @@
+kind: fixture
+input: fixtures/event_trace
+policy: generic_object_event
+dataset: virat
+split: dev
+mode: gt
+representations: [object, scene]
+eval_config: configs/evaluation.smoke.yaml
+filter_inputs: false
+predictions_fixture: fixtures/smoke/predictions.jsonl
+expect:
+  counts: {events: 9, object: 5, scene: 8}
+  metrics: {"recall@5": 0.3333, "recall@10": 0.8333, mrr: 0.5625}
