@@ -1,0 +1,25 @@
+{
+  "stages_ms": {
+    "validate": 171,
+    "sampling": 23,
+    "media": 5,
+    "model_load": 30102,
+    "embedding": 45687,
+    "register": 15,
+    "predict": 849
+  },
+  "cache": "cold 또는 .cache/embedding 재사용(구분 기록 없음)",
+  "events": 89,
+  "samples": 104,
+  "vectors": 104,
+  "index_bytes": 72076629,
+  "gpu_peak_allocated_bytes": 792429056,
+  "search": {
+    "n_queries": 6,
+    "warmup": true,
+    "meets_20_query_rule": false,
+    "p50_ms": 9.242150001227856,
+    "p95_ms": 11.208074996829964,
+    "candidates": 104
+  }
+}

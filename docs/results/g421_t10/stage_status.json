@@ -1,0 +1,30 @@
+{
+  "validate": {
+    "status": "success",
+    "wall_ms": 171
+  },
+  "sampling": {
+    "status": "success",
+    "wall_ms": 23
+  },
+  "media": {
+    "status": "success",
+    "wall_ms": 5
+  },
+  "model_load": {
+    "status": "success",
+    "wall_ms": 30102
+  },
+  "embedding": {
+    "status": "success",
+    "wall_ms": 45687
+  },
+  "register": {
+    "status": "success",
+    "wall_ms": 15
+  },
+  "predict": {
+    "status": "success",
+    "wall_ms": 849
+  }
+}
