@@ -21,6 +21,8 @@ def short_path():
 
 
 def test_live_versions_use_separate_indexes_for_the_same_video(monkeypatch, short_path):
+    chat_calls = []
+
     class Encoder(FixtureEncoder):
         def encode_text(self, texts):
             return normalized([[1] * self.dim for _ in texts], self.dim)
@@ -38,6 +40,7 @@ def test_live_versions_use_separate_indexes_for_the_same_video(monkeypatch, shor
             pass
 
         def chat(self, *_):
+            chat_calls.append(True)
             return "검색 후보를 확인하세요."
 
     monkeypatch.setattr(live, "get_config", lambda _: {"crop_margin_ratio": 0.1, "batch_size_cpu": 2})
@@ -109,3 +112,9 @@ def test_live_versions_use_separate_indexes_for_the_same_video(monkeypatch, shor
             if version == "pixel":
                 assert first["end_ms"] - first["start_ms"] == 4000
         assert len(versions) == 3
+        assert len(chat_calls) == 3
+        for version in ("original", "b_t8", "pixel"):
+            response = client.post("/search?retrieval_only=true", json=dict(query, search_version=version))
+            assert response.status_code == 200 and response.json()["results"]
+            assert "answer" not in response.json()
+        assert len(chat_calls) == 3

@@ -4,7 +4,7 @@
   const $ = (id) => document.getElementById(id);
   const el = {
     form: $("form"), gallery: $("gallery"), videoIds: $("videoIds"),
-    searchVersion: $("searchVersion"),
+    versionGroup: $("searchVersions"), compare: $("compare"), comparison: $("comparison"),
     tabText: $("tabText"), tabImage: $("tabImage"),
     textBox: $("textBox"), text: $("text"),
     imageBox: $("imageBox"), image: $("image"), imagePreview: $("imagePreview"),
@@ -21,8 +21,10 @@
   let stopAt = null;          // 구간 재생 종료 시각(초)
   let mockVideoUrl = C.mock_video_url;
   let lastSeekErrorMs = null;
+  let searchVersion = "original";
   let priorRepresentation = "combined";
   const turns = [];
+  const versionButtons = [...el.versionGroup.querySelectorAll("button[data-version]")];
 
   function addTurn(role, content) {
     const bubble = document.createElement("p");
@@ -118,10 +120,10 @@
     return { status: 200, body: await r.json() };
   }
 
-  async function realFetch(payload, file) {
+  async function realFetch(payload, file, retrievalOnly = false) {
     let r;
-    if (mode === "text") {
-      r = await fetch(C.apiBase + "/search", {
+    if (payload.modality === "text") {
+      r = await fetch(C.apiBase + "/search" + (retrievalOnly ? "?retrieval_only=true" : ""), {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
@@ -154,31 +156,83 @@
     showStageMsg("선택된 검색 결과가 없습니다.");
   }
 
+  function setBusy(busy) {
+    el.submit.disabled = el.compare.disabled = busy;
+  }
+
+  function chooseVersion(version) {
+    const pixel = version === "pixel";
+    if (pixel && !el.representation.disabled) {
+      priorRepresentation = el.representation.value;
+      el.representation.value = "scene";
+    } else if (!pixel && el.representation.disabled) {
+      el.representation.value = priorRepresentation;
+    }
+    searchVersion = version;
+    el.representation.disabled = pixel;
+    for (const button of versionButtons) {
+      button.setAttribute("aria-pressed", String(button.dataset.version === version));
+    }
+    turns.length = 0;
+    $("chat").replaceChildren();
+    if (current) clearPlayback();
+  }
+
   if (C.search_versions) {
-    $("searchVersions").hidden = false;
-    el.searchVersion.onchange = () => {
+    el.versionGroup.hidden = el.compare.hidden = false;
+    for (const button of versionButtons) button.onclick = () => {
+      if (searchVersion === button.dataset.version) return;
       reqCounter += 1;
-      el.submit.disabled = false;
-      const pixel = el.searchVersion.value === "pixel";
-      if (pixel) {
-        priorRepresentation = el.representation.value;
-        el.representation.value = "scene";
-      } else if (el.representation.disabled) {
-        el.representation.value = priorRepresentation;
-      }
-      el.representation.disabled = pixel;
-      turns.length = 0;
-      $("chat").replaceChildren();
+      setBusy(false);
+      chooseVersion(button.dataset.version);
+      el.comparison.hidden = true;
       el.results.replaceChildren();
       el.meta.textContent = "";
       setStatus("", "");
-      if (current) clearPlayback();
     };
+  }
+
+  async function compareVersions(payload, file, request) {
+    const rows = [];
+    for (const button of versionButtons) {
+      const version = button.dataset.version;
+      const label = button.textContent;
+      setStatus("loading", `${label} 검색 중…`);
+      const result = await realFetch({...payload, search_version: version, representation: "combined"}, file, true);
+      if (request !== reqCounter) return;
+      rows.push({version, label, ...result});
+    }
+    const body = el.comparison.tBodies[0];
+    body.replaceChildren();
+    for (const {version, label, status, body: result} of rows) {
+      const row = body.insertRow();
+      row.insertCell().textContent = label;
+      if (status !== 200 || !result) {
+        const message = row.insertCell();
+        message.colSpan = 3;
+        message.textContent = typeof result?.detail === "string" ? result.detail : `검색 실패 (HTTP ${status})`;
+        continue;
+      }
+      row.insertCell().textContent = result.total_candidates;
+      row.insertCell().textContent = `${result.retrieval_ms} ms`;
+      const view = document.createElement("button");
+      view.type = "button";
+      view.textContent = `${result.results.length}건 보기`;
+      view.disabled = result.results.length === 0;
+      view.onclick = () => {
+        chooseVersion(version);
+        render(result);
+      };
+      row.insertCell().append(view);
+    }
+    el.comparison.hidden = false;
+    setStatus("ok", "버전 비교 완료");
   }
 
   el.form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const my = ++reqCounter;
+    const comparing = C.search_versions && e.submitter === el.compare;
     // 입력 검사
     const topK = Number(el.topK.value);
     if (!Number.isInteger(topK) || topK < 1 || topK > C.top_k_max)
@@ -187,7 +241,7 @@
       modality: mode, gallery_id: el.gallery.value, top_k: topK,
       representation: el.representation.value,
     };
-    if (C.search_versions) payload.search_version = el.searchVersion.value;
+    if (C.search_versions) payload.search_version = searchVersion;
     const vids = parseVideoIds();
     if (vids) payload.video_ids = vids;
     let file = null, text = "";
@@ -203,22 +257,29 @@
       if (typeof r === "string") return setStatus("error", r);
     }
 
-    if (C.default_gallery === "gallery_all" && current) {
-      clearPlayback();
+    el.comparison.hidden = true;
+    if (comparing || (C.default_gallery === "gallery_all" && current)) {
+      if (current) clearPlayback();
       el.results.replaceChildren();
+      el.meta.textContent = "";
     }
-    el.submit.disabled = true;
+    setBusy(true);
     setStatus("loading", payload.search_version === "pixel" ? "픽셀 구간 준비 · 검색 중…" : "검색 중…");
     let res;
     try {
-      res = C.mock ? await mockFetch(text) : await realFetch(payload, file);
+      if (comparing) {
+        await compareVersions(payload, file, my);
+      } else {
+        res = C.mock ? await mockFetch(text) : await realFetch(payload, file);
+      }
     } catch (err) {
       if (my !== reqCounter) return;
-      el.submit.disabled = false;
+      setBusy(false);
       return setStatus("error", "서버에 연결할 수 없습니다. 검색 서버가 켜져 있는지 확인하세요.");
     }
     if (my !== reqCounter) return;               // 오래된 응답 버림
-    el.submit.disabled = false;
+    setBusy(false);
+    if (comparing) return;
 
     if (res.status !== 200) {
       const code = res.body && res.body.error && res.body.error.code;
@@ -239,9 +300,9 @@
   const fmt = (ms) => (ms / 1000).toFixed(2) + "s";
   function render(b) {
     el.results.innerHTML = "";
-    const searchVersion = C.search_versions ? `${el.searchVersion.selectedOptions[0].text} · ` : "";
+    const label = C.search_versions ? `${versionButtons.find(button => button.dataset.version === searchVersion).textContent} · ` : "";
     const elapsed = b.retrieval_ms === undefined ? `${b.latency_ms}ms` : `검색 ${b.retrieval_ms}ms`;
-    el.meta.textContent = `${searchVersion}request ${b.request_id} · index ${b.index_version} · 후보 ${b.total_candidates} · ${elapsed}`;
+    el.meta.textContent = `${label}request ${b.request_id} · index ${b.index_version} · 후보 ${b.total_candidates} · ${elapsed}`;
     if (!b.results.length) { setStatus("empty", "검색 결과가 없습니다."); return; }
     setStatus("ok", `${b.results.length}건`);
     b.results.forEach((r) => {

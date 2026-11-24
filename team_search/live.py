@@ -227,9 +227,11 @@ def create_app(args):
         return reply(results, total)
 
     @app.post("/search")
-    def search(query: Search):
+    def search(query: Search, retrieval_only: bool = False):
         started = time.perf_counter()
         reply = retrieve(query)
+        if retrieval_only:
+            return reply
         if not reply["results"]:
             return dict(reply, answer="해당 조건에 맞는 검색 후보가 없습니다.", llm_status="skipped_empty")
         evidence = [{"순위": r["rank"], "프레임": r["frame_index"],
