@@ -339,8 +339,7 @@
       const s = document.createElement("div"); s.className = "t2";
       const rankScore = Number.isFinite(r.ranking_score) && r.ranking_score !== r.score
         ? `순위 점수 ${r.ranking_score.toFixed(3)} · ` : "";
-      const scoreLabel = b.index_stats?.windows !== undefined ? "픽셀 결합 점수" : "유사도";
-      s.textContent = `${rankScore}${scoreLabel} ${Number(r.score).toFixed(3)} · ${r.track_uid || "전체 장면"}`;
+      s.textContent = `${rankScore}유사도 ${Number(r.score).toFixed(3)} · ${r.track_uid || "전체 장면"}`;
       d.append(a, s); li.appendChild(d);
       const pick = () => { [...el.results.children].forEach((x) => x.setAttribute("aria-selected", "false")); li.setAttribute("aria-selected", "true"); select(r, b); };
       li.onclick = pick;
