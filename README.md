@@ -33,6 +33,21 @@ Python 3.11 환경에서 PyTorch와 torchvision을 설치하고 `python -m pip i
 
 영상과 주석의 출처는 MEVA KF1(Kitware·IARPA, CC BY 4.0) 및 VIRAT Ground 2.0입니다. VIRAT 영상에는 VIRAT Video Data Set Protection Agreement가 적용됩니다. [MEVA 출처](data/meva/data_inventory.csv) · [VIRAT 출처](data/virat/data_inventory.csv)
 
+### 로컬 ABCD 기준선과 픽셀 주목도 비교
+
+| 로컬 작업 폴더 | 검색 방식 |
+|---|---|
+| `cctv-search-abcd` · `abcd-baseline` (`82b4e45`) | B Lite-DETR·ByteTrack → A hybrid 샘플링 → C SigLIP2 → D 검색 (`run-search.cmd full`) |
+| `cctv-search-pixel-attention` · `pixel-attention` | 픽셀 변화로 구간과 확대 영역 선정 → C SigLIP2 → 전체 화면·확대 점수로 재정렬 (`run-search.cmd events --pixel-attention`) |
+
+픽셀 주목도 폴더에서 실행합니다. `cctv-search-full/runs`에 저장된 ABCD 순위를 읽고 같은 원본에서 픽셀 검색을 실행합니다.
+
+```powershell
+& ..\cctv-search\.venv311\Scripts\python.exe -X utf8 -m evaluation.compare_abcd_pixel
+```
+
+MEVA eval 원본 두 개와 같은 한국어·영어 12문항을 사용합니다. 반환 시각이 정답 구간에 든 첫 순위를 기준으로 Top 1·5·10·15와 정답 시각 보존을 계산합니다. ABCD 전체 후보와 픽셀 방식의 영상당 최대 30개 구간을 비교하므로 두 방식의 후보 수가 다릅니다. `--output`에 JSON 경로를 주면 질의별 순위도 저장됩니다. ABCD를 다시 평가한 순위를 사용하려면 `--baseline`에 새 결과를 지정합니다. [ABCD 기준선 재평가 명령](evaluation/reports/2026-11-22-frame-state/README.md#실행-및-근거)
+
 ### 상위 파이프라인에서 이벤트 보내기
 
 완료된 MP4 한 구간을 HTTP 본문에 담아 보냅니다. 한 구간의 상한은 120초, 128 MiB, 18,000프레임, 1,600만 화소입니다. 응답 `202`는 접수이며 `GET /api/status`의 `jobs[].state`가 `ready`가 되면 검색할 수 있습니다. 동일한 파일은 SHA-256으로 중복을 제거합니다.
