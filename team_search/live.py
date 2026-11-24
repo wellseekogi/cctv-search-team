@@ -288,13 +288,14 @@ def create_app(args):
             path = playback_file(path, engine.root.parent)
         return FileResponse(path, media_type=mimetypes.guess_type(path.name)[0] or "video/mp4")
 
-    @app.get("/media/pixel/{key}/{slot}/{frame_index}")
-    def pixel_thumbnail(key: str, slot: int, frame_index: int):
-        shard = app.state.full.get(key) or app.state.store.catalog.get(key)
-        image = live_pixel.thumbnail(shard, slot, frame_index) if shard else None
-        if image is None:
+    @app.get("/media/pixel/{key}/{frame_index}/thumbnail")
+    def pixel_thumbnail(key: str, frame_index: int):
+        if not re.fullmatch(r"[0-9a-f]{64}", key) or frame_index < 0:
             raise HTTPException(404)
-        return Response(image, media_type="image/png")
+        path = within(app.state.store.root / "pixel-cache", f"{key}/thumbnails/{frame_index}.png")
+        if not path.is_file():
+            raise HTTPException(404)
+        return FileResponse(path, media_type="image/png", headers={"Cache-Control": "private, max-age=86400"})
 
     @app.get("/ui/config.js")
     def ui_config():

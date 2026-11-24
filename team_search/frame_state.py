@@ -35,7 +35,7 @@ def interval_rows(path, video, exclusions, budget, uniform, *, pixel_attention=F
     return rows
 
 
-def encode_windows(path, rows, encoder, batch_size, *, pixel_attention=False):
+def encode_windows(path, rows, encoder, batch_size, *, pixel_attention=False, thumbnails=None):
     """Decode each requested frame once, keeping the three times and both views separate."""
     needed = defaultdict(list)
     for i, row in enumerate(rows):
@@ -57,6 +57,10 @@ def encode_windows(path, rows, encoder, batch_size, *, pixel_attention=False):
             if index not in needed:
                 continue
             image = frame.to_image()
+            if thumbnails is not None and any(t == 1 for _, t in needed[index]):
+                preview = image.copy()
+                preview.thumbnail((320, 180))
+                preview.save(thumbnails / f"{index}.png")
             width, height = image.size
             for i, t in needed.pop(index):
                 x, y, right, bottom = rows[i]["roi_xyxy"]
@@ -93,7 +97,11 @@ def cached_windows(path, video, exclusions, budget, uniform, cache, encoder, bat
                 started = time.perf_counter()
                 rows = interval_rows(path, video, exclusions, budget, uniform, pixel_attention=pixel_attention)
                 proposal_seconds = time.perf_counter() - started
-                vectors = encode_windows(path, rows, encoder, batch_size, pixel_attention=pixel_attention)
+                thumbnails = stage / "thumbnails" if pixel_attention else None
+                if thumbnails is not None:
+                    thumbnails.mkdir()
+                vectors = encode_windows(path, rows, encoder, batch_size,
+                                         pixel_attention=pixel_attention, thumbnails=thumbnails)
                 write_jsonl(stage / "windows.jsonl", rows)
                 np.save(stage / "vectors.npy", vectors, allow_pickle=False)
                 write_json(stage / "cost.json", dict(proposal_seconds=proposal_seconds,

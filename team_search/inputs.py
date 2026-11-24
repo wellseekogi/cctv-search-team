@@ -83,13 +83,14 @@ def build_index_from_team(*, manifest, data_root, output, cache, embedding_confi
         paths = {row["video_id"]: within(data_root, row["relative_path"]) for row in videos}
         reader = CCTVFrameReader(manifest, vision_config, path_overrides=paths)
 
-        def read_frame(video_id, timestamp_ms):
-            frame = reader.read_frame(video_id, timestamp_ms)
-            return {**frame, "image_rgb": frame["rgb"]}
-
         if encoder is None:
             encoder = create_encoder(embedding_config)
         batch_key = "batch_size_gpu" if encoder.device.startswith("cuda") else "batch_size_cpu"
-        return build_index(samples, manifest, data_root, output, cache, read_frame, encoder,
-                           "b-cctv-frame-reader-pyav-v1", embedding_config["crop_margin_ratio"],
-                           embedding_config[batch_key])
+        with reader.ordered() as read:
+            def read_frame(video_id, timestamp_ms):
+                frame = read(video_id, timestamp_ms)
+                return {**frame, "image_rgb": frame["rgb"]}
+
+            return build_index(samples, manifest, data_root, output, cache, read_frame, encoder,
+                               "b-cctv-frame-reader-pyav-v1", embedding_config["crop_margin_ratio"],
+                               embedding_config[batch_key])

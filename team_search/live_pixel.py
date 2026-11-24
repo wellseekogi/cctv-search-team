@@ -1,8 +1,5 @@
 """Adapt frame-state pixel search to the live web result and media contract."""
 
-from io import BytesIO
-
-import av
 import numpy as np
 
 from embedding.contracts import read_jsonl
@@ -15,7 +12,7 @@ def search(catalog, allowed, vector, args, store, *, full, limit):
     batch = store.config["batch_size_gpu" if encoder.device.startswith("cuda") else "batch_size_cpu"]
     windows, embeddings = [], []
     for key, (engine, media) in catalog.items():
-        for slot, video in enumerate(read_jsonl(engine.root.parent / "manifest.jsonl")):
+        for video in read_jsonl(engine.root.parent / "manifest.jsonl"):
             vid = video["video_id"]
             if allowed and vid not in allowed:
                 continue
@@ -27,10 +24,10 @@ def search(catalog, allowed, vector, args, store, *, full, limit):
             if full:
                 queries = read_jsonl(args.metadata_root / video["dataset"] / "queries.jsonl")
                 exclusions = image_exclusions(queries, video)
-            rows, vectors, _ = cached_windows(path, video, exclusions, 30, False,
-                                              store.root / "pixel-cache", encoder, batch, pixel_attention=True)
+            rows, vectors, folder = cached_windows(path, video, exclusions, 30, False,
+                                                   store.root / "pixel-cache", encoder, batch, pixel_attention=True)
             for row in rows:
-                row.update(thumbnail_url=f"/media/pixel/{key}/{slot}/{row['frame_indices'][1]}",
+                row.update(thumbnail_url=f"/media/pixel/{folder.name}/{row['frame_indices'][1]}/thumbnail",
                            video_url=f"/media/{key}/{first['vector_row']}/video", display_name=name,
                            width=video["width"], height=video["height"],
                            source_offset_ms=video["source_offset_ms"], source_sha256=video["file_sha256"])
@@ -51,20 +48,3 @@ def search(catalog, allowed, vector, args, store, *, full, limit):
                             representation="scene", track_uid=None, bbox=None,
                             event_ids=[], reasons=[row["source"]]))
     return results, len(windows), vectors.size // encoder.dim
-
-
-def thumbnail(shard, slot, frame_index):
-    engine, media = shard
-    videos = read_jsonl(engine.root.parent / "manifest.jsonl")
-    if not 0 <= slot < len(videos) or frame_index < 0:
-        return None
-    path = media[videos[slot]["video_id"]][0]
-    with av.open(str(path)) as video:
-        for index, frame in enumerate(video.decode(video=0)):
-            if index == frame_index:
-                image = frame.to_image()
-                image.thumbnail((320, 180))
-                output = BytesIO()
-                image.save(output, format="PNG")
-                return output.getvalue()
-    return None

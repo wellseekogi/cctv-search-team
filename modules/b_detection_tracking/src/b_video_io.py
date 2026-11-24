@@ -1,5 +1,6 @@
 
 import json
+from contextlib import ExitStack, closing, contextmanager
 from pathlib import Path
 
 import av
@@ -78,117 +79,84 @@ class CCTVFrameReader:
             f"No video path found for {video_id}"
         )
 
-    def read_frame(self, video_id, requested_timestamp_ms):
-        if video_id not in self.manifest_by_id:
-            raise FrameReadError(
-                "VIDEO_NOT_FOUND", video_id
-            )
-
-        m = self.manifest_by_id[video_id]
-        requested_timestamp_ms = int(
-            requested_timestamp_ms
-        )
-
-        start = int(m["available_start_ms"])
-        end = int(m["available_end_ms"])
-
-        if not start <= requested_timestamp_ms < end:
-            raise FrameReadError(
-                "OUT_OF_RANGE",
-                str(requested_timestamp_ms)
-            )
-
-        offset = int(m.get("source_offset_ms") or 0)
-        max_error = int(
-            self.config["vision"]["max_frame_error_ms"]
-        )
-
-        path = self.video_path_for(m)
-
-        best = None
+    def _decode(self, manifest, offset):
         first_pts = None
+        with av.open(str(self.video_path_for(manifest))) as container:
+            stream = container.streams.video[0]
+            for index, frame in enumerate(container.decode(stream)):
+                if frame.pts is not None and frame.time_base is not None:
+                    pts = float(frame.pts * frame.time_base)
+                    if first_pts is None:
+                        first_pts = pts
+                    yield offset + round((pts - first_pts) * 1000), index, "pts", frame
+                else:
+                    rate = stream.average_rate
+                    if rate is None or float(rate) <= 0:
+                        raise RuntimeError("FPS unavailable for PTS fallback")
+                    yield offset + round(index * 1000 / float(rate)), index, "estimated", frame
 
-        try:
-            with av.open(str(path)) as container:
-                stream = container.streams.video[0]
+    @contextmanager
+    def ordered(self):
+        """Reuse the decoder for successive requests in video and timestamp order."""
+        active_video = last_requested = None
+        decoded = previous = upcoming = None
 
-                for idx, frame in enumerate(
-                    container.decode(stream)
-                ):
-                    if (
-                        frame.pts is not None
-                        and frame.time_base is not None
-                    ):
-                        pts = float(
-                            frame.pts * frame.time_base
-                        )
+        with ExitStack() as resources:
+            def read(video_id, requested_timestamp_ms):
+                nonlocal active_video, last_requested, decoded, previous, upcoming
 
-                        if first_pts is None:
-                            first_pts = pts
+                if video_id not in self.manifest_by_id:
+                    raise FrameReadError("VIDEO_NOT_FOUND", video_id)
+                manifest = self.manifest_by_id[video_id]
+                requested = int(requested_timestamp_ms)
+                if not int(manifest["available_start_ms"]) <= requested < int(manifest["available_end_ms"]):
+                    raise FrameReadError("OUT_OF_RANGE", str(requested))
+                offset = int(manifest.get("source_offset_ms") or 0)
+                max_error = int(self.config["vision"]["max_frame_error_ms"])
 
-                        timestamp_ms = offset + round(
-                            (pts - first_pts) * 1000
-                        )
-                        time_source = "pts"
-                    else:
-                        rate = stream.average_rate
-                        if rate is None or float(rate) <= 0:
-                            raise RuntimeError(
-                                "FPS unavailable for PTS fallback"
-                            )
+                try:
+                    if active_video != video_id or requested < last_requested:
+                        resources.close()
+                        decoded = resources.enter_context(closing(self._decode(manifest, offset)))
+                        active_video = video_id
+                        previous, upcoming = None, next(decoded, None)
+                    last_requested = requested
+                    while upcoming is not None and upcoming[0] <= requested:
+                        # Keep the first frame when multiple frames have the same timestamp.
+                        if previous is None or upcoming[0] > previous[0]:
+                            previous = upcoming
+                        upcoming = next(decoded, None)
+                except FrameReadError:
+                    active_video = None
+                    raise
+                except Exception as exc:
+                    active_video = None
+                    raise FrameReadError("DECODE_FAILED", repr(exc)) from exc
 
-                        timestamp_ms = offset + round(
-                            idx * 1000 / float(rate)
-                        )
-                        time_source = "estimated"
+                candidates = (frame for frame in (previous, upcoming) if frame is not None)
+                best = min(candidates, key=lambda frame: (abs(frame[0] - requested), frame[0]), default=None)
+                if best is None or abs(best[0] - requested) > max_error:
+                    raise FrameReadError("FRAME_NOT_FOUND", str(requested))
+                timestamp, index, time_source, frame = best
+                try:
+                    rgb = frame.to_ndarray(format="rgb24")
+                except Exception as exc:
+                    raise FrameReadError("DECODE_FAILED", repr(exc)) from exc
+                return {
+                    "rgb": rgb,
+                    "actual_timestamp_ms": timestamp,
+                    "frame_index": index,
+                    "width": int(rgb.shape[1]),
+                    "height": int(rgb.shape[0]),
+                    "time_source": time_source,
+                    "source_offset_ms": offset,
+                }
 
-                    distance = abs(
-                        timestamp_ms - requested_timestamp_ms
-                    )
+            yield read
 
-                    if best is None or (
-                        distance, timestamp_ms
-                    ) < (
-                        best["distance"],
-                        best["timestamp_ms"]
-                    ):
-                        best = {
-                            "frame_index": idx,
-                            "timestamp_ms": timestamp_ms,
-                            "time_source": time_source,
-                            "distance": distance,
-                            "rgb": frame.to_ndarray(
-                                format="rgb24"
-                            )
-                        }
-
-                    if timestamp_ms > requested_timestamp_ms:
-                        break
-
-        except FrameReadError:
-            raise
-        except Exception as e:
-            raise FrameReadError(
-                "DECODE_FAILED", repr(e)
-            ) from e
-
-        if best is None or best["distance"] > max_error:
-            raise FrameReadError(
-                "FRAME_NOT_FOUND",
-                str(requested_timestamp_ms)
-            )
-
-        rgb = best["rgb"]
-
-        return {
-            "rgb": rgb,
-            "actual_timestamp_ms": best["timestamp_ms"],
-            "frame_index": best["frame_index"],
-            "width": int(rgb.shape[1]),
-            "height": int(rgb.shape[0]),
-            "time_source": best["time_source"],
-            "source_offset_ms": offset
-        }
+    def read_frame(self, video_id, requested_timestamp_ms):
+        with self.ordered() as read:
+            return read(video_id, requested_timestamp_ms)
 
 
 _default_reader = None

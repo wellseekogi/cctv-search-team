@@ -1,6 +1,7 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from types import SimpleNamespace
+from unittest.mock import patch
 import time
 
 import av
@@ -107,7 +108,15 @@ def test_live_versions_use_separate_indexes_for_the_same_video(monkeypatch, shor
             assert result["total_candidates"] > 0
             first = result["results"][0]
             assert first["video_id"] == key and first["representation"] == representation
-            assert client.get(first["thumbnail_url"]).status_code == 200
+            if version == "pixel":
+                with patch.object(av, "open", wraps=av.open) as open_video:
+                    thumbnail = client.get(first["thumbnail_url"])
+                    assert thumbnail.status_code == 200
+                    assert thumbnail.headers["content-type"] == "image/png"
+                    assert client.get(first["thumbnail_url"]).content == thumbnail.content
+                    assert open_video.call_count == 0
+            else:
+                assert client.get(first["thumbnail_url"]).status_code == 200
             assert client.get(first["video_url"], headers={"Range": "bytes=0-511"}).status_code == 206
             if version == "pixel":
                 assert first["end_ms"] - first["start_ms"] == 4000
