@@ -41,7 +41,7 @@
 3. 영상을 `virat/videos/<video_id>.mp4`로 받습니다.
    - `manifest.jsonl`의 11개 `video_id`가 대상입니다.
    - 주소: `https://data.kitware.com/api/v1/item/<item_id>/download`
-   - item_id 목록(`selected_ids.txt`)은 F에게 받습니다.
+   - 영상별 다운로드 URL과 해시는 `data/virat/data_inventory.csv`에 있습니다.
 4. 받은 파일의 SHA256을 `data_inventory.csv`의 `file_sha256`과 비교합니다.
 
 ### MEVA KF1 (영상 6개, 30.01분, CC BY 4.0)
