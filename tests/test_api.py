@@ -20,7 +20,7 @@ BASE = {"modality": "text", "text": "a white car", "top_k": 10,
 @pytest.fixture(scope="module")
 def client(tmp_path_factory):
     import dataclasses
-    cfg = load_config(ROOT / "configs/retrieval.yaml")
+    cfg = load_config(ROOT / "configs/retrieval/retrieval.yaml")
     log = tmp_path_factory.mktemp("logs") / "api.jsonl"
     cfg = dataclasses.replace(cfg, api=dataclasses.replace(cfg.api, log_path=str(log)))
     c = TestClient(create_app(cfg))
@@ -52,6 +52,14 @@ def test_health_ready(client):
     body = client.get("/health").json()
     assert body["status"] == "ok" and body["model_ready"] and body["index_ready"]
     assert body["galleries"][0]["items"] == 10
+
+
+def test_ui_serves_html_and_assets(client):
+    page = client.get("/ui/")
+    assert page.status_code == 200
+    for name in ("app.js", "config.js", "live.js", "style.css"):
+        assert name in page.text
+        assert client.get(f"/ui/{name}").status_code == 200
 
 
 def test_text_search_response_fields(client):
@@ -248,7 +256,7 @@ def test_media_full_and_range(client):
 
 def test_index_not_ready_503(fixture_copy):
     (fixture_copy / "fixtures/d_small/run/vectors.npy").write_bytes(b"broken")
-    c = TestClient(create_app(load_config(fixture_copy / "configs/retrieval.yaml")))
+    c = TestClient(create_app(load_config(fixture_copy / "configs/retrieval/retrieval.yaml")))
     health = c.get("/health")
     assert health.status_code == 200
     assert health.json()["status"] == "not_ready" and health.json()["index_ready"] is False
@@ -262,7 +270,7 @@ def test_index_not_ready_503(fixture_copy):
 
 
 def test_internal_error_500(fixture_copy, monkeypatch):
-    c = TestClient(create_app(load_config(fixture_copy / "configs/retrieval.yaml")), raise_server_exceptions=False)
+    c = TestClient(create_app(load_config(fixture_copy / "configs/retrieval/retrieval.yaml")), raise_server_exceptions=False)
     state = c.app.state.service
 
     def boom(texts):

@@ -10,7 +10,7 @@ ROOT=Path(__file__).resolve().parents[1]
 
 class MotionTests(unittest.TestCase):
     def setUp(self):
-        self.config=json.loads((ROOT/"configs/sampling.yaml").read_text(encoding="utf-8"))
+        self.config=json.loads((ROOT/"configs/sampling/sampling.yaml").read_text(encoding="utf-8"))
         self.config["sampling"]["policy"]="motion"
         self.inputs=[read_jsonl(ROOT/"fixtures/event_trace"/n) for n in
                     ("manifest.jsonl","frames.jsonl","tracks.jsonl","video_status.jsonl","query_exclusions.jsonl")]

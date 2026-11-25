@@ -41,20 +41,20 @@ class ModelSnapshotTests(unittest.TestCase):
 class EncoderConfigTests(unittest.TestCase):
     def test_clip_and_siglip2_selection(self):
         for name, target, dim in (("clip", "ClipEncoder", 512), ("siglip2", "Siglip2Encoder", 768)):
-            config = load_config(f"configs/embedding.{name}.yaml")
+            config = load_config(f"configs/embedding/embedding.{name}.yaml")
             with patch(f"embedding.config.{target}") as constructor:
                 constructor.return_value.dim = dim
                 self.assertIs(create_encoder(config), constructor.return_value)
 
     def test_actual_dimension_must_match_config(self):
-        config = load_config("configs/embedding.siglip2.yaml")
+        config = load_config("configs/embedding/embedding.siglip2.yaml")
         with patch("embedding.config.Siglip2Encoder") as constructor:
             constructor.return_value.dim = 512
             with self.assertRaisesRegex(ValueError, "dimension differs"):
                 create_encoder(config)
 
     def test_modified_clip_identity_rejected_before_model_load(self):
-        config = load_config("configs/embedding.clip.yaml")
+        config = load_config("configs/embedding/embedding.clip.yaml")
         config["weights_sha256"] = "bad"
         with patch("embedding.config.ClipEncoder") as constructor:
             with self.assertRaisesRegex(ValueError, "model identity"):

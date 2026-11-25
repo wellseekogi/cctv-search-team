@@ -5,7 +5,7 @@
 이 폴더에는 평가에 필요한 **작은 메타데이터만** 들어 있습니다. 영상과 GT 관측(`tracks_gt.jsonl`, VIRAT 60MB·MEVA 48MB)은 Git에 넣지 않으므로 아래 방법으로 각자 받습니다.
 
 ## 1. 사람만 탐지 기준 (2026-11-18 팀 결정)
-- `configs/class_map.yaml`의 `supported_classes`는 `[person]`입니다.
+- `configs/evaluation/class_map.yaml`의 `supported_classes`는 `[person]`입니다.
 - `targets.jsonl`에서 car·vehicle·bicycle·object 트랙은 `evaluable=false`, `na_reason=unsupported_class`입니다. GT 자체는 지우지 않았습니다.
 - `qrels.jsonl`:
   - **차량만 정답인 질의는 뺐습니다.** VIRAT에서 19개(text 14, image 5)를 뺐고, MEVA에서는 뺀 질의가 없습니다.
@@ -24,10 +24,10 @@
 | `data_inventory.csv` | 11 | 6 | 출처 URL·릴리스·주석 버전·SHA256·크기·라이선스 |
 | `split_summary.json` | – | – | 분할별 그룹·영상·길이·평가 가능 트랙·질의 수 |
 
-공통 설정은 `configs/evaluation.yaml`(평가 기준값·데이터 경로)과 `configs/class_map.yaml`(클래스 대응)입니다. 작은 예제는 `fixtures/smoke/`에 있습니다.
+공통 설정은 `configs/evaluation/evaluation.yaml`(평가 기준값·데이터 경로)과 `configs/evaluation/class_map.yaml`(클래스 대응)입니다. 작은 예제는 `fixtures/smoke/`에 있습니다.
 
 **Git에 없는 파일:** `tracks_gt.jsonl`, `activity_labels.jsonl`, `query_images/*.png`, `image_query_exclusions.jsonl`
-- `configs/evaluation.yaml`에 경로가 적혀 있지만 이 저장소에는 없습니다. 영상과 주석을 받은 뒤 F의 변환 스크립트로 만들거나 F에게 받습니다.
+- `configs/evaluation/evaluation.yaml`에 경로가 적혀 있지만 이 저장소에는 없습니다. 영상과 주석을 받은 뒤 F의 변환 스크립트로 만들거나 F에게 받습니다.
 - 질의 이미지는 영상에서 잘라 낸 것이라 넣지 않았습니다. VIRAT은 재배포 조건이 있습니다.
 
 ## 3. 원본 데이터 받는 방법

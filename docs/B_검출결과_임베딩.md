@@ -36,7 +36,7 @@ ZIP의 `quality`에는 `area_ratio`, `blur_var`, `border_touch`만 있다. 처�
 from embedding import create_encoder, load_config, iter_track_batches
 from embedding.track_input import iter_jsonl
 
-encoder = create_encoder(load_config("configs/embedding.siglip2.yaml"))
+encoder = create_encoder(load_config("configs/embedding/embedding.siglip2.yaml"))
 
 # B에서 configure_reader()로 설정한 리더를 연결한다.
 # read_frame(video_id, timestamp_ms)는 아래 프레임 계약을 충족해야 한다.
@@ -84,10 +84,10 @@ for items, vectors in iter_embedding_batches(
 각 카메라의 원본 `vdo.avi`가 있어야 전체 실행이 가능하다. manifest의 SHA256과 실제 영상 파일을 실행 전에 비교한다.
 Lite-DETR/ByteTrack 재추론과 해당 가중치는 필요 없다.
 
-기존 임베딩 환경에 PyAV만 추가한다. 새 환경이면 먼저 `requirements-siglip2.txt` 또는 `requirements-embedding.txt`를 설치한다.
+저장소 루트에서 PyAV가 포함된 공통 의존성을 설치한다.
 
 ```powershell
-.\.venv311\Scripts\python.exe -m pip install -r requirements-track-input.txt
+.\.venv311\Scripts\python.exe -m pip install -r requirements.txt
 
 # 아래 두 경로를 실제 ZIP 압축 해제 폴더와 원본 영상 위치로 지정한다.
 $bExportRoot = "C:\컴퓨터비전\B_LiteDETR_T3_Handoff"
@@ -99,7 +99,7 @@ $bOriginalVideo = "C:\데이터\c007\vdo.avi"
   --manifest "$bExportRoot\support\data\manifest.jsonl" `
   --video $bOriginalVideo `
   --video-id cityflow_S02_c007 `
-  --config configs/embedding.siglip2.yaml `
+  --config configs/embedding/embedding.siglip2.yaml `
   --output runs/c007-track-embeddings
 ```
 

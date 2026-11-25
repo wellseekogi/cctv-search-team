@@ -12,7 +12,7 @@ from retrieval.service import build_state
 
 
 def _gallery_cfg(repo):
-    return load_config(repo / "configs/retrieval.yaml").galleries["gallery_dev"]
+    return load_config(repo / "configs/retrieval/retrieval.yaml").galleries["gallery_dev"]
 
 
 def test_fixture_index_loads(config):
@@ -72,7 +72,7 @@ def test_encoder_model_mismatch_marks_not_ready(fixture_copy):
     m = json.loads((run / "index_manifest.json").read_text(encoding="utf-8"))
     m["model_id"] = "other-model"
     (run / "index_manifest.json").write_text(json.dumps(m), encoding="utf-8")
-    state = build_state(load_config(fixture_copy / "configs/retrieval.yaml"))
+    state = build_state(load_config(fixture_copy / "configs/retrieval/retrieval.yaml"))
     assert state.model_ready and not state.index_ready
     assert any("model_id" in p for p in state.galleries["gallery_dev"].problems)
 
@@ -84,7 +84,7 @@ def test_native_hashes_and_encoder_identity(fixture_copy):
     manifest["encoder"] = {k: manifest.pop(k) for k in ("model_id", "model_revision", "preprocess_hash")}
     manifest["row_count"] = 10
     path.write_text(json.dumps(manifest), encoding="utf-8")
-    cfg = load_config(fixture_copy / "configs/retrieval.yaml")
+    cfg = load_config(fixture_copy / "configs/retrieval/retrieval.yaml")
     assert build_state(cfg).index_ready
     manifest["encoder"]["preprocess_hash"] = "wrong"
     path.write_text(json.dumps(manifest), encoding="utf-8")
@@ -105,14 +105,14 @@ def test_empty_index_is_valid(fixture_copy):
         m["files"][name]["rows"] = 0
     (run / "index_manifest.json").write_text(json.dumps(m), encoding="utf-8")
     _rewrite_manifest_hashes(fixture_copy)
-    state = build_state(load_config(fixture_copy / "configs/retrieval.yaml"))
+    state = build_state(load_config(fixture_copy / "configs/retrieval/retrieval.yaml"))
     assert state.index_ready
     out = state.galleries["gallery_dev"].engine.search(np.array([1, 0, 0, 0], dtype=np.float32))
     assert out["results"] == [] and out["total_candidates"] == 0
 
 
 def test_config_rejects_multiple_workers(fixture_copy):
-    cfg = fixture_copy / "configs/retrieval.yaml"
+    cfg = fixture_copy / "configs/retrieval/retrieval.yaml"
     cfg.write_text(cfg.read_text(encoding="utf-8").replace("workers: 1", "workers: 2"), encoding="utf-8")
     with pytest.raises(ConfigError):
         load_config(cfg)

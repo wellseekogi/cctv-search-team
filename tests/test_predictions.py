@@ -7,7 +7,7 @@ from retrieval.__main__ import main
 
 from .conftest import ROOT, T007
 
-ARGS = ["predict", "--config", str(ROOT / "configs/retrieval.yaml"), "--gallery", "gallery_dev",
+ARGS = ["predict", "--config", str(ROOT / "configs/retrieval/retrieval.yaml"), "--gallery", "gallery_dev",
         "--queries", str(ROOT / "fixtures/d_small/queries.jsonl")]
 
 
@@ -51,4 +51,4 @@ def test_exit_codes(tmp_path):
     assert main([*ARGS[:-1], str(tmp_path / "missing.jsonl"), "--out", out]) == 2
     bad = [a if a != "gallery_dev" else "nope" for a in ARGS]
     assert main([*bad, "--out", out]) == 2
-    assert main(["check", "--config", str(ROOT / "configs/retrieval.yaml")]) == 0
+    assert main(["check", "--config", str(ROOT / "configs/retrieval/retrieval.yaml")]) == 0

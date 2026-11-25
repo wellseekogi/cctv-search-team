@@ -54,7 +54,7 @@ def main():
         folder.mkdir(parents=True)
         for name,data in zip(('manifest.jsonl','frames.jsonl','tracks.jsonl','video_status.jsonl','query_exclusions.jsonl'),inputs):
             write_jsonl(folder/name,data)
-        base=json.loads((ROOT/'configs/person/sampling.yaml').read_text())
+        base=json.loads((ROOT/'configs/sampling/person/sampling.yaml').read_text())
         base.update(execution_mode='observed_partial',query_exclusion_status='F_queries_embedded_exclusions',
             supported_classes=['person'],track_source_id=tracks[0]['track_source_id'],
             manifest_status='F_git_hash_matched_B_alias',

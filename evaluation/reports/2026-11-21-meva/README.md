@@ -59,18 +59,18 @@ A의 보완 커밋 2880474가 제공한 6개 manifest에서 B 영상 ID와 원�
 
 [질의별 순위와 두 프레임 점수 차이](results.json) · [A 원자료와 30개 비교 해시](a-verification.json) · [보조 실험 문항](pairs.txt) · [이전 웹 대화 시험](../2026-11-20-meva/README.md) · [원본 출처·라이선스](../../../data/meva/data_inventory.csv)
 
-Python 3.11 환경에서 프로젝트의 `requirements-live.txt`와 `requirements-d.txt`를 설치한다. 원본과 B 관측은 별도 인계 자료이며 저장소에서 사용하는 상대 경로는 아래 예시와 같다. 평가 hybrid 인덱스는 아래 A 샘플을 G299, G638 순서로 합쳐 `python -m team_search build`로 생성하거나 같은 샘플로 만든 C 인덱스를 사용한다. 장면 인덱스에는 F 제외 구간을 적용한 4초 간격 전체 프레임과 `python -m tools.encode_scene_views --index <인덱스>`의 네 영역 벡터가 필요하다. 평가 박스는 원본 목록의 KPF 리비전 f844579a에서 G299.geom.yml과 G638.geom.yml로 준비한다.
+Python 3.11 환경에서 프로젝트의 `requirements.txt`를 설치한다. 원본과 B 관측은 별도 인계 자료이며 저장소에서 사용하는 상대 경로는 아래 예시와 같다. 평가 hybrid 인덱스는 아래 A 샘플을 G299, G638 순서로 합쳐 `python -m team_search build`로 생성하거나 같은 샘플로 만든 C 인덱스를 사용한다. 장면 인덱스에는 F 제외 구간을 적용한 4초 간격 전체 프레임과 `python -m tools.encode_scene_views --index <인덱스>`의 네 영역 벡터가 필요하다. 평가 박스는 원본 목록의 KPF 리비전 f844579a에서 G299.geom.yml과 G638.geom.yml로 준비한다.
 
 ```powershell
-python tools/prepare_bf_v10.py --b-inputs runs/meva-public/first-50/b-inputs --b-manifests metadata/baseline_T3 --f-data data/meva --out runs/final-a
+python tools/prepare_bf_v10.py --b-inputs runs/meva-public/first-50/b-inputs --b-manifests data/provisional/baseline_T3 --f-data data/meva --out runs/final-a
 Get-Content runs/final-a/inputs/G299/tracks.jsonl,runs/final-a/inputs/G638/tracks.jsonl -Encoding utf8 | Set-Content runs/final-a/eval-tracks.jsonl -Encoding utf8NoBOM
-python -m retrieval check --config configs/retrieval.meva-eval.yaml
-python -m api --config configs/retrieval.meva-eval.yaml
+python -m retrieval check --config configs/retrieval/retrieval.meva-eval.yaml
+python -m api --config configs/retrieval/retrieval.meva-eval.yaml
 ```
 
 별도 터미널에서 다음 명령으로 검증한다. 평가기는 D API를 프로세스 안에서 직접 호출한다. F의 공식 PNG가 있으면 `--images <PNG 폴더>`를 추가한다. 생략하면 OpenCV로 F가 지정한 원본 프레임과 crop_box에서 PNG를 만들고 SHA-256을 검증한다. 이 방식은 `opencv-python`이 필요하다.
 
 ```powershell
-python -m evaluation.benchmark_integrated_meva --config configs/retrieval.meva-eval.yaml --dev-scenes runs/accuracy-loop/region-store/indexes/meva-regions-dev/index --eval-scenes runs/accuracy-loop/meva-regions-eval/index --geometry runs/search-audit --pairs evaluation/reports/2026-11-21-meva/pairs.txt --output runs/result-check.json
+python -m evaluation.benchmark_integrated_meva --config configs/retrieval/retrieval.meva-eval.yaml --dev-scenes runs/accuracy-loop/region-store/indexes/meva-regions-dev/index --eval-scenes runs/accuracy-loop/meva-regions-eval/index --geometry runs/search-audit --pairs evaluation/reports/2026-11-21-meva/pairs.txt --output runs/result-check.json
 python -m pytest -q tests evaluation/tests
 ```

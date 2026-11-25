@@ -36,7 +36,7 @@ def write_json(path, obj) -> None:
 
 
 def load_eval_config(path=None) -> dict:
-    with open(path or ROOT / "configs" / "evaluation.yaml", encoding="utf-8") as f:
+    with open(path or ROOT / "configs/evaluation/evaluation.yaml", encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 

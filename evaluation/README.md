@@ -2,9 +2,9 @@
 
 실제 웹 채팅 115회와 MEVA 평가 영상 검색의 질의별 결과를 확인할 수 있습니다. [검색 정확도·반복 검증 보고서](reports/2026-11-20-meva/README.md)
 
-데이터셋과 무관하게 동작합니다. CityFlow 담당은 `configs/evaluation.yaml`의 `datasets:`에 항목만 추가하면 됩니다.
+데이터셋과 무관하게 동작합니다. CityFlow 담당은 `configs/evaluation/evaluation.yaml`의 `datasets:`에 항목만 추가하면 됩니다.
 현재 등록된 데이터셋: `virat`, `meva` (예: `--dataset meva`). 모의 run은 `make_smoke_run.py --dataset meva ...`로 만듭니다.
-설정: `configs/evaluation.yaml` (`evaluation_version: eval_v1`)
+설정: `configs/evaluation/evaluation.yaml` (`evaluation_version: eval_v1`)
 
 ## 실행
 ```
@@ -59,7 +59,7 @@ G의 `pipeline evaluate`는 `evaluation.evaluate.main([...])`를 호출하면 �
 `make_smoke_run.py`는 **평가기 연결 검사용 모의 데이터**입니다. 실험 결과로 사용하지 않습니다.
 
 ## 팀 저장소에서 실행할 때 (2026-11-19)
-- 필요한 패키지: PyYAML (`common.py`가 `configs/evaluation.yaml`을 읽음)
+- 필요한 패키지: PyYAML (`common.py`가 `configs/evaluation/evaluation.yaml`을 읽음)
 - 손계산 테스트: `python evaluation/tests/test_evaluation.py` → 12개 PASS
 - smoke 예제 대조: `fixtures/smoke/predictions.jsonl` + `qrels.jsonl`
   - `metrics.evaluate_rankings`로 계산하면 recall@5 0.3333, recall@10 0.8333, mrr 0.5625입니다.

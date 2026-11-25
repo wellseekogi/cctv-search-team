@@ -147,7 +147,7 @@ def test_other_video_rows_are_skipped(tmp_path):
 # ---- 인덱스와의 연결 -----------------------------------------------------------
 
 def _state(repo):
-    return build_state(load_config(repo / "configs/retrieval.yaml"))
+    return build_state(load_config(repo / "configs/retrieval/retrieval.yaml"))
 
 
 def test_items_track_missing_from_tracks_marks_not_ready(fixture_copy):
