@@ -1,0 +1,13 @@
+# E UI playback check with a real MEVA clip and a one-result fixture index.
+encoder:
+  factory: retrieval.encoder:FixtureEncoder
+galleries:
+  gallery_dev:
+    run_dir: runs/d-avi-playback
+    data_root: runs/d-avi-playback
+    manifest: runs/d-avi-playback/manifest.jsonl
+    playback_overrides:
+      2018-03-15.14-50-00.14-55-00.school.G421:
+        path: G421-m0222.mp4
+        source_offset_ms: 258400
+        codec: h264

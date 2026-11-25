@@ -1,5 +1,24 @@
 # D 모듈: 검색 순위 · API · 영상 제공
 
+## E 화면에서 실제 AVI 변환본 재생하기
+
+저장소 루트의 Python 환경에서 다음 명령을 실행합니다.
+
+```powershell
+python -m pip install -r requirements-d.txt av
+python -m tools.prepare_d_playback
+python -m api --config configs/d-avi-playback.yaml --port 8012
+```
+
+[D 검색 화면](http://127.0.0.1:8012/ui/)에서 `a person walking`을 검색하고 결과를 선택합니다.
+이 설정은 재생 점검용으로 실제 사람 주석 한 건과 FixtureEncoder를 사용합니다.
+대표 장면은 MP4의 2초, 구간 재생은 1~3초입니다.
+
+- 최초 실행은 공개 원본 약 143 MB를 다운로드하여 팀 목록의 SHA-256을 확인합니다. 원본 위치는 `.cache/meva-demo/G421.avi`입니다.
+- 팀의 `team_search.demo.make_demo`가 원본의 258.4초부터 262.4초 직전까지를 H.264 MP4(30 fps, 960×536)로 변환합니다. 주석 좌표도 이 해상도에 맞춥니다.
+- 재생 파일은 `runs/d-avi-playback/G421-m0222.mp4`에 생성됩니다. 원본 및 변환본은 각 PC에서 준비하며, 재실행 시 생성된 폴더를 재사용합니다.
+- 출처는 Kitware Inc. 및 IARPA의 MEVA KF1이며 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)으로 제공됩니다. 원본·주석 링크와 해시는 [데이터 목록](data/meva/data_inventory.csv)에 있습니다.
+
 저장된 CCTV 인덱스에서 텍스트·이미지 질의로 트랙을 찾고, 대표 시각과 재생 구간을 붙여 API 로 제공합니다.
 안내서(버전 5.0) D 1~D 4 를 구현했습니다. 담당 폴더는 `retrieval/` 과 `api/` 입니다.
 
