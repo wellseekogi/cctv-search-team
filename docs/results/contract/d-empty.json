@@ -1,0 +1,26 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/search",
+    "json": {
+      "text": "a white car",
+      "gallery_id": "gallery_dev",
+      "top_k": 1,
+      "representation": "combined",
+      "video_ids": []
+    }
+  },
+  "status": 200,
+  "response": {
+    "schema_version": "cctv-3.0",
+    "request_id": "req_db1ad36928f54bac",
+    "index_version": "idx_d_small_v1",
+    "gallery_id": "gallery_dev",
+    "representation": "combined",
+    "score_type": "rrf",
+    "total_candidates": 0,
+    "latency_ms": 0,
+    "results": [],
+    "scene_results": []
+  }
+}
