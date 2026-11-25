@@ -3,7 +3,7 @@ import sys, os
 from starlette.applications import Starlette
 from starlette.staticfiles import StaticFiles
 import uvicorn
-root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ui")
+root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "src", "apps", "ui")
 app = Starlette()
 app.mount("/", StaticFiles(directory=root, html=True))
 if __name__ == "__main__":

@@ -27,7 +27,7 @@ class BIntegrationTests(unittest.TestCase):
             normalize_frame(frame,200,3)
 
     def test_partial_enables_gain_gap_resume_not_end(self):
-        cfg = json.loads((ROOT/"configs/sampling.yaml").read_text(encoding="utf-8"))
+        cfg = json.loads((ROOT/"configs/sampling/sampling.yaml").read_text(encoding="utf-8"))
         cfg["execution_mode"] = "observed_partial"
         inputs = [read_jsonl(ROOT/"fixtures/event_trace"/n) for n in
                   ("manifest.jsonl","frames.jsonl","tracks.jsonl","video_status.jsonl","query_exclusions.jsonl")]
@@ -45,7 +45,7 @@ class BIntegrationTests(unittest.TestCase):
             run_sampling(cfg,*inputs)
 
     def test_partial_uniform_is_marked(self):
-        cfg=json.loads((ROOT/"configs/uniform_2000.yaml").read_text(encoding="utf-8"))
+        cfg=json.loads((ROOT/"configs/sampling/uniform_2000.yaml").read_text(encoding="utf-8"))
         cfg["execution_mode"]="observed_partial"
         inputs=[read_jsonl(ROOT/"fixtures/event_trace"/n) for n in
                 ("manifest.jsonl","frames.jsonl","tracks.jsonl","video_status.jsonl","query_exclusions.jsonl")]

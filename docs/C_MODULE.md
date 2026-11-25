@@ -1,39 +1,39 @@
 # CCTV 검색 C 담당 구현
 
-B의 `tracks.jsonl` 대용량 입력을 이미지 배치로 바꾸는 새 처리기는 [B 검출 결과 임베딩 안내](docs/B_검출결과_임베딩.md)를 확인하세요. 제공된 Lite-DETR T3 ZIP의 `rgb` 반환 형식과 `quality.score` 없는 출력에 맞췄습니다.
+B의 `tracks.jsonl` 대용량 입력을 이미지 배치로 바꾸는 새 처리기는 [B 검출 결과 임베딩 안내](B_검출결과_임베딩.md)를 확인하세요. 제공된 Lite-DETR T3 ZIP의 `rgb` 반환 형식과 `quality.score` 없는 출력에 맞췄습니다.
 
 ## D에게 넘길 프레임 추천 함수
 
-`feature/qwen35-4b`에는 질문 임베딩 → 저장 벡터 유사도 검색 → 여러 프레임·초 추천 기능이 있습니다. D는 `rag/client.py` 한 파일을 복사해 `recommend_frames()`를 호출합니다. C의 PC에서 서버를 실행해야 하며, 다른 PC에서는 LAN/VPN 주소와 API key를 사용합니다. [연동·실행 안내](docs/D_프레임추천_연동.md)를 확인하세요.
+`feature/qwen35-4b`에는 질문 임베딩 → 저장 벡터 유사도 검색 → 여러 프레임·초 추천 기능이 있습니다. D는 `src/search/rag/client.py` 한 파일을 복사해 `recommend_frames()`를 호출합니다. C의 PC에서 서버를 실행해야 하며, 다른 PC에서는 LAN/VPN 주소와 API key를 사용합니다. [연동·실행 안내](D_프레임추천_연동.md)를 확인하세요.
 
-기본 생성 모델은 사용자가 지정한 **Qwen3.5-4B Q4_K_M**입니다. Unsloth GGUF 배포본(2,740,937,888바이트)을 로컬에 다운로드하고 SHA256을 검증합니다. CPU에서 “관련 장면 후보가 여러 개 있어요. 어떤 장면을 확인하시겠어요?”처럼 자연스러운 선택 질문을 생성합니다. 고정 안내문 중 고르는 방식은 아닙니다. 실제 추천 목록과 시각은 SigLIP2 검색 코드가 결정합니다. 모델·런타임·키는 로컬에 두며 Git에는 올리지 않습니다. 기존 0.6B 설정은 `configs/rag-model.qwen3-0.6b.json`에 보존했습니다.
+기본 생성 모델은 사용자가 지정한 **Qwen3.5-4B Q4_K_M**입니다. Unsloth GGUF 배포본(2,740,937,888바이트)을 로컬에 다운로드하고 SHA256을 검증합니다. CPU에서 “관련 장면 후보가 여러 개 있어요. 어떤 장면을 확인하시겠어요?”처럼 자연스러운 선택 질문을 생성합니다. 고정 안내문 중 고르는 방식은 아닙니다. 실제 추천 목록과 시각은 SigLIP2 검색 코드가 결정합니다. 모델·런타임·키는 로컬에 두며 Git에는 올리지 않습니다. 기존 0.6B 설정은 `configs/rag/rag-model.qwen3-0.6b.json`에 보존했습니다.
 
 최종 7인 실행명세서 v5.0(2026-11-02)의 C 범위를 구현하고 모델 실험용 Git 브랜치를 구성했습니다. `work/clip-baseline`은 기존 CLIP 구현, 현재 `feature/siglip2`는 CLIP과 SigLIP2를 설정으로 선택하는 버전입니다. 기본 설정은 SigLIP2 Base Patch16 224입니다. A의 선택 정책과 B의 영상 디코더는 각 담당자의 모듈을 연결합니다.
 
 ## 팀원용 시작
 
-공개 저장소는 [wellseekogi/cctv-search](https://github.com/wellseekogi/cctv-search)입니다. `main`은 CLIP 기준선, `feature/siglip2`는 임베딩 실험, `feature/local-rag`는 기존 0.6B 연동, `feature/qwen35-4b`는 Qwen3.5-4B 연동입니다. 아래 명령은 Python 3.11이 설치된 새 환경의 CPU 재현 절차입니다.
+C의 이전 실험은 [wellseekogi/cctv-search](https://github.com/wellseekogi/cctv-search)에 있습니다. `main`은 CLIP 기준선, `feature/siglip2`는 임베딩 실험, `feature/local-rag`는 기존 0.6B 연동, `feature/qwen35-4b`는 Qwen3.5-4B 연동입니다. 아래 명령은 Python 3.11이 설치된 새 환경의 CPU 재현 절차입니다.
 
 ```powershell
-git clone --branch feature/qwen35-4b https://github.com/wellseekogi/cctv-search.git
-cd cctv-search
+git clone https://github.com/wellseekogi/cctv-search-team.git
+cd cctv-search-team
 py -3.11 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install torch==2.7.1 torchvision==0.22.1 --index-url https://download.pytorch.org/whl/cpu
-.\.venv\Scripts\python.exe -m pip install -r requirements-siglip2.txt
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
-.\.venv\Scripts\python.exe -m tools.verify_embedding --config configs/embedding.siglip2.yaml --output runs/team-smoke-01
+.\.venv\Scripts\python.exe -m tools.verify_embedding --config configs/embedding/embedding.siglip2.yaml --output runs/team-smoke-01
 ```
 
 가중치는 저장소에 없으며 첫 모델 실행 시 해당 PC에 내려받고 SHA256을 검사합니다. 실행 결과 경로는 새 이름으로 지정합니다. CUDA 환경은 G가 확정한 GPU용 PyTorch를 설치한 뒤 같은 requirements를 사용합니다. 아래의 `.venv311`과 `.venv-siglip2` 경로는 작성자 PC의 기존 환경 이름입니다.
 
 ## 현재 PC에서 실행
 
-프로젝트 폴더 `C:\컴퓨터비전\cctv-search`에서 PowerShell을 엽니다. 준비된 Python 3.11 CPU 환경은 `.venv311`, Python 3.13 CUDA 환경은 `.venv-siglip2`입니다. 두 환경에 `requirements-siglip2.txt`를 설치했습니다.
+팀 저장소 루트에서 PowerShell을 엽니다. 아래는 기존 환경 이름을 사용한 예시입니다. 사용할 환경에 `requirements.txt`를 설치합니다.
 
 ```powershell
 .\.venv311\Scripts\python.exe -m unittest discover -s tests -v
-.\.venv-siglip2\Scripts\python.exe -m tools.verify_embedding --config configs/embedding.siglip2.yaml --output runs/my-siglip2-check
-.\.venv-siglip2\Scripts\python.exe -m tools.verify_embedding --config configs/embedding.clip.yaml --output runs/my-clip-check
+.\.venv-siglip2\Scripts\python.exe -m tools.verify_embedding --config configs/embedding/embedding.siglip2.yaml --output runs/my-siglip2-check
+.\.venv-siglip2\Scripts\python.exe -m tools.verify_embedding --config configs/embedding/embedding.clip.yaml --output runs/my-clip-check
 ```
 
 검증 도구는 실제 모델로 cold·warm·empty 인덱스와 이미지 2장·영어/한국어 문장 4개를 생성합니다. 출력 경로는 매번 새 이름을 지정합니다. CLIP은 512차원, 현재 SigLIP2는 768차원입니다. Git에는 코드와 설정을 저장하고, 가중치·캐시·실행 폴더·가상환경은 제외합니다. 브랜치 전환과 실험 절차는 `docs/모델_버전관리.md`에 있습니다.
@@ -47,10 +47,10 @@ SigLIP2 가중치는 `models/siglip2-base-224/75de2d55ec2d0b4efc50b3e9ad70dba96a
 ```powershell
 py -3.11 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install torch==2.7.1 torchvision==0.22.1 --index-url https://download.pytorch.org/whl/cpu
-.\.venv\Scripts\python.exe -m pip install -r requirements-siglip2.txt
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
-공통 `requirements.lock`은 G 담당이며, C의 의존성은 `requirements-embedding.txt`와 `requirements-siglip2.txt`, 실측 버전은 검증 보고서에 기록됩니다. 모델 ID·리비전·가중치 SHA256·차원은 각 YAML에 고정합니다. 공식 이미지 전처리와 tokenizer 파일 및 텍스트 처리 규칙의 해시는 `embedding_config.json`에 저장합니다. 현재 SigLIP2 구현은 FixRes 체크포인트용이며 NaFlex는 별도 구현이 필요합니다.
+C의 의존성은 루트의 `requirements.txt`에 있으며, 당시 검증 환경의 실측 버전은 검증 보고서에 기록되어 있습니다. 모델 ID·리비전·가중치 SHA256·차원은 각 YAML에 고정합니다. 공식 이미지 전처리와 tokenizer 파일 및 텍스트 처리 규칙의 해시는 `embedding_config.json`에 저장합니다. 현재 SigLIP2 구현은 FixRes 체크포인트용이며 NaFlex는 별도 구현이 필요합니다.
 
 ## 입력과 B 연결 계약
 
@@ -78,7 +78,7 @@ A의 samples는 이미 실제 프레임을 선택한 결과이므로 반환 시�
 
 ```powershell
 .\.venv311\Scripts\python.exe -m fixtures.embedding.generate
-.\.venv311\Scripts\python.exe -m embedding build --config configs/embedding.siglip2.yaml --samples fixtures/embedding/samples.jsonl --manifest fixtures/embedding/manifest.jsonl --data-root fixtures/embedding --output runs/c-example --cache .cache/embedding --frame-reader fixtures.embedding.reader:read_frame --decoder-id fixture-rgb-v1
+.\.venv311\Scripts\python.exe -m embedding build --config configs/embedding/embedding.siglip2.yaml --samples fixtures/embedding/samples.jsonl --manifest fixtures/embedding/manifest.jsonl --data-root fixtures/embedding --output runs/c-example --cache .cache/embedding --frame-reader fixtures.embedding.reader:read_frame --decoder-id fixture-rgb-v1
 .\.venv311\Scripts\python.exe -m embedding validate runs/c-example
 ```
 
@@ -96,7 +96,7 @@ A의 samples는 이미 실제 프레임을 선택한 결과이므로 반환 시�
 import numpy as np
 from embedding import create_encoder, load_config, validate_index
 
-encoder = create_encoder(load_config("configs/embedding.siglip2.yaml"))
+encoder = create_encoder(load_config("configs/embedding/embedding.siglip2.yaml"))
 validate_index("runs/c-example", expected_metadata=encoder.metadata)
 query_vectors = encoder.encode_text(["a white car near an intersection"])
 # encoder.encode_image([rgb_image])도 같은 모델의 float32 [N,d]를 반환합니다.

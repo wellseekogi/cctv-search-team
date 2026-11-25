@@ -45,7 +45,7 @@ def save(name: str, request: dict, response) -> None:
 
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
-    c = TestClient(create_app(load_config(ROOT / "configs/retrieval.yaml")))
+    c = TestClient(create_app(load_config(ROOT / "configs/retrieval/retrieval.yaml")))
 
     def text(name, **patch):
         body = {**BASE, **patch}
@@ -75,10 +75,10 @@ def main() -> None:
     with tempfile.TemporaryDirectory() as tmp:
         repo = Path(tmp) / "repo"
         shutil.copytree(ROOT / "fixtures", repo / "fixtures")
-        (repo / "configs").mkdir()
-        shutil.copy(ROOT / "configs/retrieval.yaml", repo / "configs/retrieval.yaml")
+        (repo / "configs/retrieval").mkdir(parents=True)
+        shutil.copy(ROOT / "configs/retrieval/retrieval.yaml", repo / "configs/retrieval/retrieval.yaml")
         (repo / "fixtures/d_small/run/vectors.npy").write_bytes(b"broken")
-        broken = TestClient(create_app(load_config(repo / "configs/retrieval.yaml")))
+        broken = TestClient(create_app(load_config(repo / "configs/retrieval/retrieval.yaml")))
         save("503_index_not_ready", {"method": "POST", "path": "/search", "json": BASE},
              broken.post("/search", json=BASE))
         save("200_health_not_ready", {"method": "GET", "path": "/health"}, broken.get("/health"))

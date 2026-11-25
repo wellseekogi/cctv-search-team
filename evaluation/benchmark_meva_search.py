@@ -138,7 +138,7 @@ def main():
     p.add_argument("--media", required=True, type=Path)
     p.add_argument("--hybrid-index", type=Path)
     p.add_argument("--geometry", type=Path, help="Pinned <camera>.geom.yml files for returned-box IoU")
-    p.add_argument("--embedding-config", type=Path, default=ROOT / "configs/embedding.siglip2.yaml")
+    p.add_argument("--embedding-config", type=Path, default=ROOT / "configs/embedding/embedding.siglip2.yaml")
     p.add_argument("--model-root", type=Path)
     p.add_argument("--device", default="cpu", choices=("cpu", "cuda"))
     p.add_argument("--output", type=Path, required=True)

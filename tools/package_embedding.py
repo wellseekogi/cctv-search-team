@@ -16,15 +16,14 @@ def main():
     parser.add_argument("--bundle", action="store_true", help="Include the local git-history.bundle")
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
-    selected = [root / "README.md", root / ".gitignore", root / ".gitattributes", root / "requirements-embedding.txt"]
-    selected.append(root / "requirements-siglip2.txt")
+    selected = [root / name for name in ("README.md", ".gitignore", ".gitattributes", "requirements.txt", "pyproject.toml")]
     if args.bundle:
         selected.append(root / "git-history.bundle")
     for run in args.run:
         path = (root / run).resolve()
         if not path.is_relative_to(root / "runs") or not path.is_dir():
             raise ValueError("Select an existing directory within runs/")
-    for folder in ["embedding", "rag", "configs", "fixtures", "tests", "tools", "docs", *args.run]:
+    for folder in ["src", "configs", "fixtures", "tests", "tools", "docs", *args.run]:
         selected.extend(p for p in (root / folder).rglob("*") if p.is_file()
                         and "__pycache__" not in p.parts and "cache" not in p.parts
                         and not p.name.endswith(".local.json") and not p.name.startswith(".env")

@@ -19,7 +19,7 @@ V2T1, V2T2 = "det01:v002:t001", "det01:v002:t002"
 
 @pytest.fixture(scope="session")
 def config():
-    return load_config(ROOT / "configs/retrieval.yaml")
+    return load_config(ROOT / "configs/retrieval/retrieval.yaml")
 
 
 @pytest.fixture(scope="session")
@@ -39,6 +39,6 @@ def fixture_copy(tmp_path):
     """수정해도 되는 예제 사본과 그 사본을 가리키는 설정 파일."""
     dst = tmp_path / "repo"
     shutil.copytree(ROOT / "fixtures", dst / "fixtures")
-    (dst / "configs").mkdir()
-    shutil.copy(ROOT / "configs/retrieval.yaml", dst / "configs/retrieval.yaml")
+    (dst / "configs/retrieval").mkdir(parents=True)
+    shutil.copy(ROOT / "configs/retrieval/retrieval.yaml", dst / "configs/retrieval/retrieval.yaml")
     return dst

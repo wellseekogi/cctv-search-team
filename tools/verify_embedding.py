@@ -21,7 +21,7 @@ from fixtures.embedding.reader import read_frame
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", required=True, help="Fresh verification output directory")
-    parser.add_argument("--config", default="configs/embedding.yaml")
+    parser.add_argument("--config", default="configs/embedding/embedding.siglip2.yaml")
     parser.add_argument("--device", choices=("cpu", "cuda"))
     args = parser.parse_args()
     root = Path(args.output)

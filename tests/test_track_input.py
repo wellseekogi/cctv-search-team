@@ -205,7 +205,7 @@ class TrackInputTests(unittest.TestCase):
         write_jsonl(self.root / "manifest.jsonl", [self.video])
         write_jsonl(self.root / "frames.jsonl", self.frames)
         write_jsonl(self.root / "tracks.jsonl", [observation(i) for i in range(5)])
-        return Namespace(config="configs/embedding.siglip2.yaml", manifest=self.root / "manifest.jsonl",
+        return Namespace(config="configs/embedding/embedding.siglip2.yaml", manifest=self.root / "manifest.jsonl",
                          video_id="v1", video=path, tracks=self.root / "tracks.jsonl",
                          frames=self.root / "frames.jsonl", output=self.root / "out",
                          batch_size=2, shard_size=2, min_confidence=0)

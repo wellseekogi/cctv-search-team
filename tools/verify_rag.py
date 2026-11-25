@@ -26,7 +26,7 @@ from rag.runtime import LocalLLM
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--index", required=True)
-    parser.add_argument("--embedding-config", default="configs/embedding.siglip2.yaml")
+    parser.add_argument("--embedding-config", default="configs/embedding/embedding.siglip2.yaml")
     parser.add_argument("--output", required=True)
     args = parser.parse_args()
     if not (Path(args.index) / "index_manifest.json").is_file():
@@ -105,7 +105,7 @@ def main():
             assert all(row["item_id"] in by_id for row in malicious["recommendations"])
             checks.append({"input": "question contains an instruction to invent 999 seconds",
                            "expected": "safe intro and only indexed entries", "actual": "matched", "result": "PASS"})
-            client_path = Path("rag/client.py").resolve()
+            client_path = Path("src/search/rag/client.py").resolve()
             code = ("import importlib.util,json; "
                     f"s=importlib.util.spec_from_file_location('handoff_client',{str(client_path)!r}); "
                     "m=importlib.util.module_from_spec(s); s.loader.exec_module(m); "

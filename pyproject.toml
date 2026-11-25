@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cctv-search-team"
+version = "0.1.0"
+requires-python = ">=3.11"
+
+[tool.setuptools]
+packages = ["api", "b_detection_tracking", "devtools", "embedding", "integrations", "rag", "retrieval", "sampling", "team_search"]
+
+# Keep the existing imports and python -m commands after grouping the source by role.
+[tool.setuptools.package-dir]
+api = "src/apps/api"
+b_detection_tracking = "src/pipeline/b_detection_tracking/src"
+devtools = "src/apps/devtools"
+team_search = "src/apps/team_search"
+embedding = "src/pipeline/embedding"
+integrations = "src/pipeline/integrations"
+sampling = "src/pipeline/sampling"
+rag = "src/search/rag"
+retrieval = "src/search/retrieval"

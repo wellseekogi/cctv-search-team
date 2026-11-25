@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 class PersonScopeTests(unittest.TestCase):
     def setUp(self):
-        self.config = json.loads((ROOT/'configs/person/sampling.yaml').read_text())
+        self.config = json.loads((ROOT/'configs/sampling/person/sampling.yaml').read_text())
         self.inputs = [read_jsonl(ROOT/'fixtures/event_trace'/n) for n in
                        ('manifest.jsonl', 'frames.jsonl', 'tracks.jsonl',
                         'video_status.jsonl', 'query_exclusions.jsonl')]

@@ -1,0 +1,41 @@
+# Install from the repository root. For CUDA, install matching PyTorch wheels first.
+-e .
+
+# Shared runtime and video decoding
+numpy==2.1.2
+Pillow==11.2.1
+PyYAML==6.0.2
+av==16.0.1
+filelock>=3
+
+# C: CLIP and SigLIP2 embeddings
+torch==2.7.1
+torchvision==0.22.1
+ftfy==6.3.1
+wcwidth==0.2.13
+regex==2024.11.6
+tqdm==4.67.1
+clip @ https://github.com/openai/CLIP/archive/d05afc436d78f1c48dc0dbf8e5980a9d471f35f6.zip
+transformers==4.53.0
+huggingface-hub==0.33.2
+tokenizers==0.21.2
+safetensors==0.5.3
+
+# B: Lite-DETR and ByteTrack
+ultralytics==8.4.89
+lap==0.5.13
+timm==0.9.16
+pycocotools==2.0.11
+addict==2.4.0
+yapf==0.40.1
+termcolor==3.3.0
+
+# API and web server
+fastapi==0.116.1
+uvicorn==0.35.0
+python-multipart==0.0.20
+pydantic>=2,<3
+
+# Tests
+pytest>=8,<9
+httpx>=0.27,<1
