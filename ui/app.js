@@ -193,7 +193,7 @@
     if (res.status !== 200) {
       const code = res.body && res.body.error && res.body.error.code;
       const rid = res.body && res.body.request_id;
-      el.results.innerHTML = ""; el.meta.textContent = "";
+      resetStage(); el.results.innerHTML = ""; el.meta.textContent = "";
       const detail = res.body && res.body.detail;
       return setStatus("error", `${typeof detail === "string" ? detail : ERR_KO[code] || "오류가 발생했습니다."} (HTTP ${res.status}${code ? ", " + code : ""}${rid ? ", " + rid : ""})`);
     }
@@ -207,7 +207,22 @@
 
   // ---------- 결과 ----------
   const fmt = (ms) => (ms / 1000).toFixed(2) + "s";
+  // 새 검색을 하면 이전 선택(영상·박스·정보)을 비워 새 결과와 섞이지 않게 한다.
+  function resetStage() {
+    current = null; stopAt = null; measuring = false; lastSeekErrorMs = null;
+    el.video.pause();
+    el.video.onloadedmetadata = null; el.video.onerror = null;
+    el.video.removeAttribute("src"); el.video.load();
+    el.stageEmpty.textContent = "결과를 선택하면 원본 영상이 여기에 표시됩니다.";
+    el.stageEmpty.hidden = false;
+    el.playSegment.disabled = true;
+    el.info.innerHTML = "";
+    window.__lastBox = null;
+    drawBox();
+  }
+
   function render(b) {
+    resetStage();
     el.results.innerHTML = "";
     el.meta.textContent = `request ${b.request_id} · index ${b.index_version} · 후보 ${b.total_candidates} · ${b.latency_ms}ms`;
     if (!b.results.length) { setStatus("empty", "검색 결과가 없습니다."); return; }
