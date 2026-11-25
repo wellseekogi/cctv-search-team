@@ -4,9 +4,19 @@
 
 ## 전체 영상 검색
 
-기본 검색은 F 목록의 MEVA 6개와 VIRAT 11개를 읽습니다. 영상마다 B의 200ms 사람 관측에 A의 `configs/person/hybrid.yaml`을 실행한 뒤, C가 A의 `samples.jsonl`에 있는 장면과 사람 crop만 임베딩합니다. 질문은 dev·eval 양쪽의 완성된 인덱스에서 검색하며 영상 전체를 통틀어 상위 K개를 반환합니다. 평가 점수 산출에는 기존 분할별 평가 명령을 사용합니다.
+기본 검색은 F 목록의 MEVA 6개와 VIRAT 11개를 읽습니다. 영상마다 B의 200ms 사람 관측에 A의 `configs/sampling/person/hybrid.yaml`을 실행한 뒤, C가 A의 `samples.jsonl`에 있는 장면과 사람 crop만 임베딩합니다. 질문은 dev·eval 양쪽의 완성된 인덱스에서 검색하며 영상 전체를 통틀어 상위 K개를 반환합니다. 평가 점수 산출에는 기존 분할별 평가 명령을 사용합니다.
 
-Python 3.11 환경에서 PyTorch와 torchvision을 설치하고 `python -m pip install -r requirements-full.txt`를 실행하세요. CUDA용 PyTorch를 설치하면 GPU를 사용할 수 있습니다. Windows 기본 실행은 다음과 같습니다.
+저장소 루트에서 Python 3.11 가상환경을 만들고 공통 의존성을 설치합니다. 아래는 Windows CPU 설치 명령입니다. CUDA 환경은 장비에 맞는 PyTorch 2.7.1과 torchvision 0.22.1을 먼저 설치합니다.
+
+```powershell
+py -3.11 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install torch==2.7.1 torchvision==0.22.1 --index-url https://download.pytorch.org/whl/cpu
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+```
+
+이미 가상환경이 있다면 같은 환경에서 `python -m pip install -r requirements.txt`를 실행하세요. 이 명령은 저장소 코드도 설치하여 기존 `python -m sampling`, `python -m api` 같은 실행 명령을 연결합니다.
+
+Windows에서 검색을 시작합니다.
 
 ```powershell
 .\run-search.cmd
@@ -74,6 +84,19 @@ B 산출물을 직접 쓰면 성공적으로 디코딩한 프레임은 전체 �
 ```
 
 인덱스 생성 시 새 출력 경로를 지정하세요. `ask --representation scene`으로 장면을, `ask --representation object`로 객체를 골라 검색할 수 있습니다. 위 실행기는 SigLIP2 순위를 반환합니다. C의 Qwen 기반 안내 문장과 HTTP API는 별도 [프레임 추천 연동 안내](docs/D_프레임추천_연동.md)에 있습니다.
+
+## 저장소 구조
+
+| 경로 | 역할 |
+|---|---|
+| `src/pipeline/` | A 샘플링, B 탐지·추적, C 임베딩, 모듈 간 입력 변환 |
+| `src/search/` | D 검색·순위와 로컬 RAG |
+| `src/apps/` | 통합 검색 CLI·웹 서버, D 단독 API, E 웹 화면, 로컬 점검 도구 |
+| `configs/` | 샘플링·임베딩·검색·RAG·평가 설정 |
+| `data/`, `fixtures/` | 데이터셋 메타데이터·B 임시 인계 목록과 테스트 입력 |
+| `evaluation/`, `tests/`, `tools/`, `docs/` | 평가, 자동 검사, 운영 도구, 실행 안내 |
+
+[D 단독 API 실행](docs/D_QUICKSTART.md) · [D 입력·응답 사양](docs/D_RETRIEVAL.md) · [E 웹 화면](src/apps/ui/README.md)
 
 ## 브랜치와 병합
 

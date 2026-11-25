@@ -28,7 +28,7 @@ class SamplingTests(unittest.TestCase):
             self.run_case()
 
     def setUp(self):
-        self.config = json.loads((ROOT / "configs/sampling.yaml").read_text(encoding="utf-8"))
+        self.config = json.loads((ROOT / "configs/sampling/sampling.yaml").read_text(encoding="utf-8"))
         self.inputs = [read_jsonl(ROOT / "fixtures/event_trace" / name) for name in
                        ("manifest.jsonl", "frames.jsonl", "tracks.jsonl", "video_status.jsonl", "query_exclusions.jsonl")]
 

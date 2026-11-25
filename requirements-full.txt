@@ -1,9 +1,0 @@
--r requirements-live.txt
-filelock>=3
-ultralytics==8.4.89
-lap==0.5.13
-timm==0.9.16
-pycocotools==2.0.11
-addict==2.4.0
-yapf==0.40.1
-termcolor==3.3.0

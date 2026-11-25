@@ -30,8 +30,8 @@
 저장소 루트에서 다음을 실행합니다.
 
 ```powershell
-python -m pip install -r requirements-d.txt
-python -m api --config configs/retrieval.yaml
+python -m pip install -r requirements.txt
+python -m api --config configs/retrieval/retrieval.yaml
 ```
 
 별도 터미널에서 아래 명령으로 네 요청을 다시 보낼 수 있습니다. 요청 ID와 소요 시간은 실행마다 달라집니다.

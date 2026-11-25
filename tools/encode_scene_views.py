@@ -31,7 +31,7 @@ def save_scene_views(folder, index_hash, vectors):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--index", type=Path, required=True)
-    parser.add_argument("--embedding-config", type=Path, default=ROOT / "configs/embedding.siglip2.yaml")
+    parser.add_argument("--embedding-config", type=Path, default=ROOT / "configs/embedding/embedding.siglip2.yaml")
     parser.add_argument("--model-root", type=Path)
     parser.add_argument("--device", choices=("cpu", "cuda", "auto"), default="cpu")
     args = parser.parse_args()

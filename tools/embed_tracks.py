@@ -86,7 +86,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ("tracks", "frames", "manifest", "video", "video-id", "output"):
         parser.add_argument("--" + name, required=True)
-    parser.add_argument("--config", default="configs/embedding.siglip2.yaml")
+    parser.add_argument("--config", default="configs/embedding/embedding.siglip2.yaml")
     parser.add_argument("--batch-size", type=int)
     parser.add_argument("--shard-size", type=int, default=4096)
     parser.add_argument("--min-confidence", type=float, default=0)

@@ -6,16 +6,16 @@ Python 3.11. A selects scene/person candidates from B frame/track observations. 
 
 ```powershell
 py -3.11 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements-motion.txt
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
 .\.venv\Scripts\python.exe -m unittest discover -s tests -q
-.\.venv\Scripts\python.exe -m sampling --input fixtures/event_trace --config configs/sampling.yaml --out runs/synthetic
+.\.venv\Scripts\python.exe -m sampling --input fixtures/event_trace --config configs/sampling/sampling.yaml --out runs/synthetic
 ```
 
-Synthetic fixture: expected 9 events, 5 object candidates, 8 scene candidates. The vehicle class in this historical synthetic fixture tests generic logic; it is not a real vehicle evaluation. Use configs/person/ for current MEVA person work. Motion tests use synthetic pixels.
+Synthetic fixture: expected 9 events, 5 object candidates, 8 scene candidates. The vehicle class in this historical synthetic fixture tests generic logic; it is not a real vehicle evaluation. Use configs/sampling/person/ for current MEVA person work. Motion tests use synthetic pixels.
 
 ## Reproduce the B/F integration
 
-B observations and F metadata are separate dependencies. This A branch includes only the six provisional B manifests from the v10 handoff under `metadata/baseline_T3/<camera>/manifest.PROVISIONAL.jsonl`. Obtain the approved B baseline_T3 per-camera input folders and F checkout separately. Existing v8/v10 handoff inputs have the required format:
+B observations and F metadata are separate dependencies. This A branch includes only the six provisional B manifests from the v10 handoff under `data/provisional/baseline_T3/<camera>/manifest.PROVISIONAL.jsonl`. Obtain the approved B baseline_T3 per-camera input folders and F checkout separately. Existing v8/v10 handoff inputs have the required format:
 
 ```text
 B-inputs/<camera>/frames.jsonl
@@ -35,11 +35,11 @@ Both paths are explicit. No existing local runs/reviews folder is required by th
 
 ## Provisional manifests included in this branch
 
-In the integrated checkout, pass `--b-manifests metadata/baseline_T3` to
+In the integrated checkout, pass `--b-manifests data/provisional/baseline_T3` to
 `tools/prepare_bf_v10.py` to read the submitted manifests directly alongside
 the external B observations. The original B input folders stay intact.
 
-The files under `metadata/baseline_T3/` are byte-for-byte copies from
+The files under `data/provisional/baseline_T3/` are byte-for-byte copies from
 `A_handoff_v10_BF_GitHub/runs/meva_baseline_T3_v8/inputs/` for G299, G340,
 G341, G421, G506 and G638. Copy each file into the corresponding B camera
 folder alongside `frames.jsonl` and `tracks.jsonl` before running the command
@@ -47,7 +47,7 @@ above. For example, from this checkout:
 
 ```powershell
 $bInputs = "C:/path/to/B-inputs"
-Get-ChildItem metadata/baseline_T3 -Directory | ForEach-Object {
+Get-ChildItem data/provisional/baseline_T3 -Directory | ForEach-Object {
     Copy-Item -LiteralPath (Join-Path $_.FullName "manifest.PROVISIONAL.jsonl") -Destination (Join-Path $bInputs $_.Name)
 }
 ```
@@ -76,7 +76,7 @@ B completion logs were not supplied: runs stay observed_partial/completion_pendi
 
 ## B reader
 
-Install requirements-b-reader.txt only for actual decoding. integrations/b_reader.py accepts CCTV_B_READER_CONFIG pointing to a local JSON containing b_reader_module, manifest, vision_config and data_root (paths relative to that JSON). Use the aliased manifest.B_ALIASED.jsonl produced by this tool and B src/b_video_io.py. It verifies original file hashes before reading and normalizes rgb to image_rgb. Do not commit local settings.
+`requirements.txt` includes PyAV for decoding. `src/pipeline/integrations/b_reader.py` accepts CCTV_B_READER_CONFIG pointing to a local JSON containing b_reader_module, manifest, vision_config and data_root (paths relative to that JSON). Use the aliased manifest.B_ALIASED.jsonl produced by this tool and `src/pipeline/b_detection_tracking/src/b_video_io.py`. It verifies original file hashes before reading and normalizes rgb to image_rgb. Do not commit local settings.
 
 ## Dependency revisions used for v10
 

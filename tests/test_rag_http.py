@@ -162,7 +162,7 @@ class RagHttpTests(unittest.TestCase):
                 recommend_frames("car", timeout=timeout)
 
     def test_client_file_can_be_imported_without_rag_package(self):
-        path = Path(__file__).resolve().parents[1] / "rag/client.py"
+        path = Path(__file__).resolve().parents[1] / "src/search/rag/client.py"
         spec = importlib.util.spec_from_file_location("d_standalone_client", path)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)

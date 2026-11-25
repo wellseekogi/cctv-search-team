@@ -1,12 +1,12 @@
 # D 담당 프레임 추천 연동
 
-D는 `rag/client.py` 한 파일을 복사하고 `recommend_frames()`를 호출하면 됩니다. 질문을 C의 PC로 보내면 C 서버가 질문을 임베딩하고 저장된 이미지 벡터에서 유사한 프레임을 찾아 영상 ID·프레임 번호·원본 초·유사도를 반환합니다. D 쪽에는 모델이나 PyTorch를 설치하지 않습니다.
+D는 `src/search/rag/client.py` 한 파일을 복사하고 `recommend_frames()`를 호출하면 됩니다. 질문을 C의 PC로 보내면 C 서버가 질문을 임베딩하고 저장된 이미지 벡터에서 유사한 프레임을 찾아 영상 ID·프레임 번호·원본 초·유사도를 반환합니다. D 쪽에는 모델이나 PyTorch를 설치하지 않습니다.
 
 다른 PC의 함수가 C의 모델을 실행하려면 C의 서버가 먼저 켜져 있어야 합니다. 같은 PC에서는 localhost, 다른 PC에서는 접근 가능한 LAN/VPN 주소와 API key를 사용합니다. 현재 시험은 localhost에서 완료했으며 실제 D PC의 네트워크 연결은 별도 확인해야 합니다.
 
 ## D가 받는 파일과 호출 예제
 
-`rag/client.py`를 D의 프로젝트에 `cctv_rag_client.py`로 복사합니다. 이 파일은 Python 표준 라이브러리만 사용하며 저장소의 다른 파일을 import하지 않습니다.
+`src/search/rag/client.py`를 D의 프로젝트에 `cctv_rag_client.py`로 복사합니다. 이 파일은 Python 표준 라이브러리만 사용하며 저장소의 다른 파일을 import하지 않습니다.
 
 ```python
 import os
@@ -77,7 +77,7 @@ score는 코사인 유사도이며 확률이나 정답 보장 수치가 아닙�
 
 ```powershell
 .\.venv-siglip2\Scripts\python.exe -m fixtures.embedding.generate
-.\.venv-siglip2\Scripts\python.exe -m embedding build --config configs/embedding.siglip2.yaml --samples fixtures/embedding/samples.jsonl --manifest fixtures/embedding/manifest.jsonl --data-root fixtures/embedding --output runs/team-index-01 --cache .cache/embedding --frame-reader fixtures.embedding.reader:read_frame --decoder-id fixture-rgb-v1
+.\.venv-siglip2\Scripts\python.exe -m embedding build --config configs/embedding/embedding.siglip2.yaml --samples fixtures/embedding/samples.jsonl --manifest fixtures/embedding/manifest.jsonl --data-root fixtures/embedding --output runs/team-index-01 --cache .cache/embedding --frame-reader fixtures.embedding.reader:read_frame --decoder-id fixture-rgb-v1
 .\.venv-siglip2\Scripts\python.exe -m rag serve --index runs/team-index-01
 ```
 
@@ -96,11 +96,11 @@ D는 안전하게 전달받은 키를 백엔드 환경변수 CCTV_RAG_API_KEY에
 
 ## LLM의 역할과 선정
 
-최초 에이전트 토의 기록은 `RAG_에이전트_토의.md`에 있습니다. 이후 사용자 요청으로 기본 모델을 **Qwen3.5-4B Q4_K_M**으로 교체했습니다. Unsloth의 `unsloth/Qwen3.5-4B-GGUF` 배포본이며 GGUF는 2,740,937,888바이트, CPU 런타임 ZIP은 24,730,921바이트입니다. URL·리비전·SHA256은 configs/rag-model.json에 고정했습니다. 이미지 입력용 mmproj는 현재 텍스트 안내 기능에 필요하지 않아 다운로드하지 않습니다.
+최초 에이전트 토의 기록은 `RAG_에이전트_토의.md`에 있습니다. 이후 사용자 요청으로 기본 모델을 **Qwen3.5-4B Q4_K_M**으로 교체했습니다. Unsloth의 `unsloth/Qwen3.5-4B-GGUF` 배포본이며 GGUF는 2,740,937,888바이트, CPU 런타임 ZIP은 24,730,921바이트입니다. URL·리비전·SHA256은 configs/rag/rag-model.json에 고정했습니다. 이미지 입력용 mmproj는 현재 텍스트 안내 기능에 필요하지 않아 다운로드하지 않습니다.
 
 SigLIP2는 GPU, Qwen은 CPU에서 실행합니다. Qwen의 실행 context는 2048, 출력 상한은 128토큰, CPU 스레드는 최대 4, 동시 요청은 1개입니다. 현재 4GB GPU를 임베딩과 공유하므로 LLM의 GPU 레이어는 0으로 유지합니다. 자연스러운 선택 질문 생성 시험에서 Qwen3.5-4B 프로세스 peak working set은 4,545,437,696바이트(약 4.55GB)였습니다. 모델 파일 크기와 실제 RAM 사용량은 다르며 전체 앱과 OS에도 별도 RAM이 필요합니다.
 
-이전 모델과 비교할 때는 다운로드 및 serve 명령에 `--manifest configs/rag-model.qwen3-0.6b.json`을 붙입니다. 기존 0.6B 가중치는 삭제하지 않았고 D의 함수 시그니처와 응답 형식은 동일합니다.
+이전 모델과 비교할 때는 다운로드 및 serve 명령에 `--manifest configs/rag/rag-model.qwen3-0.6b.json`을 붙입니다. 기존 0.6B 가중치는 삭제하지 않았고 D의 함수 시그니처와 응답 형식은 동일합니다.
 
 프레임·초·순위는 검색 코드가 확정합니다. LLM은 질문과 검색 후보 수를 받아, 여러 후보 중 어떤 것을 확인할지 묻는 자연스러운 한국어 한두 문장을 생성합니다. 후보가 하나면 그 장면을 확인할지 묻습니다. 고정 안내문 목록과 enum 제한은 제거했습니다. summary는 생성 문장, answer는 summary와 코드가 작성한 프레임 목록의 조합입니다. 예를 들면 “관련 장면 후보가 여러 개 있어요. 어떤 장면을 확인하시겠어요?” 뒤에 후보 목록이 붙습니다.
 
