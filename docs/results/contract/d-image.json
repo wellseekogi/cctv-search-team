@@ -1,0 +1,79 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/search/image",
+    "form": {
+      "gallery_id": "gallery_dev",
+      "top_k": "1",
+      "representation": "combined"
+    },
+    "image_file": "fixtures/d_small/queries/red_patch.png"
+  },
+  "status": 200,
+  "response": {
+    "schema_version": "cctv-3.0",
+    "request_id": "req_c5df0451e7b54f11",
+    "index_version": "idx_d_small_v1",
+    "gallery_id": "gallery_dev",
+    "representation": "combined",
+    "score_type": "rrf",
+    "total_candidates": 5,
+    "latency_ms": 21,
+    "results": [
+      {
+        "rank": 1,
+        "score": 0.032522,
+        "result_type": "track",
+        "item_id": "obj001",
+        "item_representation": "object",
+        "video_id": "v001",
+        "track_uid": "det01:v001:t007",
+        "start_ms": 200,
+        "end_ms": 2200,
+        "representative_ms": 1200,
+        "bbox": [
+          172.0,
+          200.0,
+          372.0,
+          360.0
+        ],
+        "width": 1920,
+        "height": 1080,
+        "class_name": "car",
+        "confidence": 0.9,
+        "quality_score": 0.404321,
+        "thumbnail_url": "/media/f_dd4dee66c792",
+        "crop_url": "/media/c_56c7ba95c627",
+        "video_url": "/media/v_db9a50138886",
+        "source_offset_ms": 0,
+        "object_rank": 2,
+        "scene_rank": 1,
+        "object_score": 0.8,
+        "scene_score": 1.0
+      }
+    ],
+    "scene_results": [
+      {
+        "rank": 1,
+        "score": 1.0,
+        "result_type": "scene",
+        "item_id": "scn002",
+        "video_id": "v001",
+        "track_uid": null,
+        "linked_track_uids": [
+          "det01:v001:t007",
+          "det01:v001:t008"
+        ],
+        "start_ms": 1600,
+        "end_ms": 3200,
+        "representative_ms": 2600,
+        "bbox": null,
+        "width": 1920,
+        "height": 1080,
+        "thumbnail_url": "/media/f_5b0b264807a2",
+        "video_url": "/media/v_db9a50138886",
+        "source_offset_ms": 0
+      }
+    ]
+  }
+}

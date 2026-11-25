@@ -18,7 +18,7 @@ from uuid import uuid4
 
 import uvicorn
 from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
-from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from PIL import Image, UnidentifiedImageError
 from pydantic import BaseModel, Field
@@ -29,6 +29,7 @@ from rag.assets import ensure_assets
 from rag.runtime import LocalLLM
 from .__main__ import ROOT, get_config
 from .live_store import LiveStore
+from .full import add_full_options, full_catalog, playback_file
 from .demo import DEMO_KEY, DEMO_NAME
 
 
@@ -40,7 +41,7 @@ class Turn(BaseModel):
 class Search(BaseModel):
     text: str = Field(min_length=1, max_length=500)
     history: list[Turn] = Field(default_factory=list, max_length=4)
-    gallery_id: str = "gallery_dev"
+    gallery_id: str | None = None
     video_ids: list[str] | None = None
     representation: Literal["combined", "scene", "object"] = "combined"
     top_k: int = Field(default=3, ge=1, le=50)
@@ -53,6 +54,7 @@ def create_app(args):
     async def lifespan(app):
         config = get_config(args)
         encoder = create_encoder(config)
+        app.state.full = full_catalog(args, config, encoder) if getattr(args, "full", False) else {}
         asset_root = ROOT / "models/local-rag"
         sibling = ROOT.parent / "cctv-search/models/local-rag"
         if not asset_root.exists() and sibling.is_dir():
@@ -86,9 +88,11 @@ def create_app(args):
     @app.get("/api/status")
     def status():
         store = app.state.store
+        full = app.state.full
         return {"llm_ready": app.state.llm.ready, "model": "Qwen3.5-4B",
                 "embedding": store.encoder.metadata["model_id"], "jobs": store.status(),
-                "vectors": sum(len(engine.items) for engine, _ in store.catalog.values())}
+                "default_gallery": "gallery_all" if full else "gallery_dev",
+                "videos": len(full), "vectors": sum(len(engine.items) for engine, _ in (full or store.catalog).values())}
 
     def enqueue(kind, key, name):
         try:
@@ -137,8 +141,12 @@ def create_app(args):
     def retrieve(query, image=None):
         started = time.perf_counter()
         store = app.state.store
-        catalog = store.catalog
-        if query.gallery_id != "gallery_dev":
+        gallery = query.gallery_id or ("gallery_all" if app.state.full else "gallery_dev")
+        if gallery == "gallery_all" and app.state.full:
+            catalog = app.state.full
+        elif gallery == "gallery_dev":
+            catalog = store.catalog
+        else:
             raise HTTPException(404, "등록되지 않은 데이터셋입니다.")
         if not catalog:
             raise HTTPException(409, "먼저 영상을 등록하고 검색 가능 상태를 확인하세요.")
@@ -203,7 +211,7 @@ def create_app(args):
         return reply
 
     @app.post("/search/image")
-    def search_image(image: UploadFile = File(), gallery_id: str = Form("gallery_dev"),
+    def search_image(image: UploadFile = File(), gallery_id: str | None = Form(None),
                      top_k: int = Form(3, ge=1, le=50), representation: str = Form("combined"),
                      video_ids: str = Form("[]")):
         raw = image.file.read(5000001)
@@ -221,7 +229,7 @@ def create_app(args):
 
     @app.get("/media/{key}/{index}/{kind}")
     def media(key: str, index: int, kind: Literal["frame", "video"]):
-        shard = app.state.store.catalog.get(key)
+        shard = app.state.full.get(key) or app.state.store.catalog.get(key)
         if not shard or not 0 <= index < len(shard[0].items):
             raise HTTPException(404)
         engine, videos = shard
@@ -229,7 +237,16 @@ def create_app(args):
         if kind == "frame":
             return FileResponse(within(engine.root, row["full_frame_path"]), media_type="image/png")
         path = videos[row["video_id"]][0]
+        if key in app.state.full:
+            path = playback_file(path, engine.root.parent)
         return FileResponse(path, media_type=mimetypes.guess_type(path.name)[0] or "video/mp4")
+
+    @app.get("/ui/config.js")
+    def ui_config():
+        script = (ROOT / "ui/config.js").read_text(encoding="utf-8")
+        if app.state.full:
+            script += '\nwindow.UI_CONFIG.default_gallery = "gallery_all";'
+        return Response(script, media_type="application/javascript", headers={"Cache-Control": "no-cache"})
 
     app.mount("/ui", StaticFiles(directory=ROOT / "ui", html=True), name="ui")
     return app
@@ -239,11 +256,14 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--port", type=int, default=8780)
     parser.add_argument("--llm-port", type=int, default=8781)
-    parser.add_argument("--store", type=Path, default=ROOT / "runs/live")
+    parser.add_argument("--store", type=Path, help="기존 이벤트 저장소 전용 모드")
+    add_full_options(parser)
     parser.add_argument("--embedding-config", type=Path, default=ROOT / "configs/embedding.siglip2.yaml")
     parser.add_argument("--model-root", type=Path)
     parser.add_argument("--device", choices=("cpu", "cuda", "auto"))
     args = parser.parse_args()
+    args.full = args.store is None
+    args.store = args.store or ROOT / "runs/live"
     with socket.socket() as sock:
         sock.bind(("127.0.0.1", args.port))
         server = uvicorn.Server(uvicorn.Config(create_app(args), timeout_keep_alive=5))
